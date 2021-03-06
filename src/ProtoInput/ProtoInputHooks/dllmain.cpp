@@ -17,112 +17,7 @@
 
 #include "TestHooks.h"
 
-// #include "imgui.h"
-
-int MessageBoxW_Hook(
-    HWND& hWnd,
-    LPCWSTR& lpText,
-    LPCWSTR& lpCaption,
-    UINT& uType)
-{
-    std::cout << "Hooked!" << std::endl;
-
-    lpText = L"hooked";
-    lpCaption = L"hooked!";
-
-    return 0;
-}
-
-
-/*
-HWND hGameWindow;
-// WNDPROC hGameWindowProc;
-bool menuShown = true;
-
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-// LRESULT CALLBACK windowProc_hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-// {
-//     // Toggle the overlay using the delete key
-//     if (uMsg == WM_KEYDOWN && wParam == VK_DELETE) {
-//         menuShown = !menuShown;
-//         return false;
-//     }
-//
-//     // If the overlay is shown, direct input to the overlay only
-//     if (menuShown) 
-//     {
-//     	//FIXME
-//         //CallWindowProc(ImGui_ImplWin32_WndProcHandler, hWnd, uMsg, wParam, lParam);
-//         return true;
-//     }
-//
-//     // Otherwise call the game's wndProc function
-//     return CallWindowProc(hGameWindowProc, hWnd, uMsg, wParam, lParam);
-// }
-
-void glSwapBuffers_hook(HDC& hDc)
-{
-    // MessageBoxA(NULL, "Hello", "Hello", MB_OK);
-    std::cout << "swap" << std::endl;
-	   //
-    // Initialize glew and imgui but only once
-    static bool imGuiInitialized = false;
-    if (!imGuiInitialized) {
-        imGuiInitialized = true;
-    
-        // Get the game's window from it's handle
-        hGameWindow = WindowFromDC(hDc);
-        std::cout << "hGameWindow = " << hGameWindow << std::endl;
-    
-        // Overwrite the game's wndProc function
-        // hGameWindowProc = (WNDPROC)SetWindowLongPtr(hGameWindow,
-        //                                             GWLP_WNDPROC, (LONG_PTR)windowProc_hook);
-    
-        // Init glew, create imgui context, init imgui
-		 glewInit();
-    ImGui::CreateContext();
-    	
-		
-    	//gives access violation
-	 ImGui_ImplWin32_Init(hGameWindow);
-
-
-    	
-    // ImGui_ImplOpenGL3_Init();
-    // ImGui::StyleColorsDark();
-    //     ImGui::GetStyle().AntiAliasedFill = false;
-    //     ImGui::GetStyle().AntiAliasedLines = false;
-    //     ImGui::CaptureMouseFromApp();
-    //     ImGui::GetStyle().WindowTitleAlign = ImVec2(0.5f, 0.5f);
-    //     std::cout << "Completed imgui init" << std::endl;
-    }
-	
-    //
-    // //TODO; toggle with getasynckeystate or something
-	   //
-    // // If the menu is shown, start a new frame and draw the demo window
-    // if (menuShown) {
-    //     ImGui_ImplOpenGL3_NewFrame();
-    //     ImGui_ImplWin32_NewFrame();
-    //     ImGui::NewFrame();
-    //     ImGui::ShowDemoWindow();
-    //     ImGui::Render();
-    //
-    //     // Draw the overlay
-    //     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    // }
-    
-
-    // return true;
-}
-
-BOOL SwapBuffers_Hook(HDC& hdc)
-{
-    std::cout << "SwapBuffers" << std::endl;
-    return TRUE;
-}
-*/
+#include "Gui.h"
 
 DWORD WINAPI StartThread(LPVOID lpParameter)
 {	
@@ -132,79 +27,21 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     
     std::cout << "Hooks DLL loaded" << std::endl;
 
-    TestHooks();
+    //MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
 	
-    // {
-    //     blackbone::Detour<decltype(&MessageBoxW)> detour{};
-    //
-    //     detour.Hook(
-    //         reinterpret_cast<blackbone::Detour<decltype(&MessageBoxW)>::type>(GetProcAddress(GetModuleHandleW(L"user32.dll"), "MessageBoxW")),
-    //         &MessageBoxW_Hook,
-    //         blackbone::HookType::Inline,
-    //         blackbone::CallOrder::HookFirst,
-    //         blackbone::ReturnMethod::UseOriginal
-    //     );
-    //
-    //     MessageBoxW(NULL, L"hello", L"world", MB_OK);
-    // }
+    TestHooks();
 
-    // {
-    //     blackbone::Detour<void(*)(HDC__*)> detour{};
-    //         	
-    //     detour.Hook(//TODO: might be "wglSwapBuffers"
-    //         reinterpret_cast<void(*)(HDC__*)>(GetProcAddress(GetModuleHandleW(L"opengl32.dll"), "glSwapBuffers")),
-    //         &glSwapBuffers_hook,
-    //         blackbone::HookType::Inline,
-    //         blackbone::CallOrder::HookLast,
-    //         blackbone::ReturnMethod::UseOriginal
-    //     );
-    // }
+    ShowGui();
 
-	// {
- //        blackbone::Detour<void(*)(HDC__*)> detour{};
- //
- //        //auto proc = GetProcAddress(GetModuleHandleW(L"gdi32full.dll"), "SwapBuffers");
-	// 	auto proc = GetProcAddress(GetModuleHandleW(L"opengl32.dll"), "wglSwapBuffers");
- //        // auto proc = GetProcAddress(GetModuleHandleW(L"gdi32full.dll"), "NtGdiSwapBuffers");
- //        // auto proc = GetProcAddress(GetModuleHandleW(L"gdi32.dll"), "GdiSwapBuffers");
- //        // auto proc = GetProcAddress(GetModuleHandleW(L"gdi32.dll"), "SwapBuffers");
- //    	
- //        std::cout << "proc = " << proc << std::endl;
- //    	
- //        bool res = detour.Hook(//TODO: might be "SwapBuffers"
- //            reinterpret_cast<void(*)(HDC__*)>(proc),
- //            &glSwapBuffers_hook,
- //            blackbone::HookType::HWBP,
- //            blackbone::CallOrder::HookLast,
- //            blackbone::ReturnMethod::UseOriginal
- //        );
- //
- //        std::cout << "hook success = " << res << std::endl;
- //    }
-
-    // {
-    //     blackbone::Detour<decltype(&SwapBuffers)> detour{};
-    //
-    //     //auto proc = GetProcAddress(GetModuleHandleW(L"gdi32full.dll"), "SwapBuffers");
-    //     // auto proc = GetProcAddress(GetModuleHandleW(L"opengl32.dll"), "wglSwapBuffers");
-    //     // auto proc = GetProcAddress(GetModuleHandleW(L"gdi32full.dll"), "NtGdiSwapBuffers");
-    //     // auto proc = GetProcAddress(GetModuleHandleW(L"gdi32.dll"), "GdiSwapBuffers");
-    //     auto proc = GetProcAddress(GetModuleHandleW(L"gdi32.dll"), "SwapBuffers");
-    //
-    //     std::cout << "proc = " << proc << std::endl;
-    //
-    //     bool res = detour.Hook(//TODO: might be "SwapBuffers"
-    //                            reinterpret_cast<blackbone::Detour<decltype(&SwapBuffers)>::type>(proc),
-    //                            (blackbone::Detour<decltype(&SwapBuffers)>::hktype )&SwapBuffers_Hook,
-    //                            blackbone::HookType::HWBP,
-    //                            blackbone::CallOrder::NoOriginal,
-    //                            blackbone::ReturnMethod::UseNew
-    //     );
-    //
-    //     std::cout << "hook success = " << res << std::endl;
-    // }
+    std::cout << "Reached end of startup/GUI thread" << std::endl;
 	
     return 0;
+}
+
+ extern "C" __declspec(dllexport) void Blah()
+{
+    std::cout << "blah" << std::endl;
+    StartThread(nullptr);
 }
 
 EASYHOOK_BOOL_EXPORT EasyHookDllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
@@ -220,11 +57,18 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
     {
-        HANDLE hThread = CreateThread(nullptr, 0,
-                                      (LPTHREAD_START_ROUTINE)StartThread, hModule, 0, 0);
-        if (hThread != nullptr)
-            CloseHandle(hThread);
+         //HANDLE hThread = CreateThread(nullptr, 0,
+                                     // (LPTHREAD_START_ROUTINE)StartThread, hModule, 0, 0);
+         //if (hThread != nullptr)
+         //    CloseHandle(hThread);
 
+
+
+         //auto blah = new std::thread(StartThread, nullptr);
+    		
+    		
+        // StartThread(nullptr);
+    		
         break;
     }
     case DLL_THREAD_ATTACH:

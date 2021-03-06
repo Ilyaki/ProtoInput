@@ -13,14 +13,28 @@
 
 int main()
 {
-	// if (auto hmod = LoadLibraryW(LR"(I:\Projects\ProtoInput\src\ProtoInput\x64\Debug\ProtoInputHooks.dll)"); hmod == 0)
-	// 	std::cerr << "(local) Failed to load DLL" << ", error = 0x" << std::hex << GetLastError() << std::dec << std::endl;
-	// else
-	// 	std::cout << "Local load successful" << std::endl;
-		
-	// auto pids = blackbone::Process::EnumByName(L"osu!.exe");
+	wchar_t pathchars[MAX_PATH];
+	GetModuleFileNameW(NULL, pathchars, MAX_PATH);
+	std::wstring folderpath = pathchars;
+	size_t pos = folderpath.find_last_of(L"\\");
+	if (pos != std::string::npos)
+		folderpath = folderpath.substr(0, pos + 1);
+	
+	std::wcout << L"Folder name = '" << folderpath << "'" <<  std::endl;
+
+	//TODO 64/32
+	auto dllpath = folderpath + L"ProtoInputHooks.dll";
+
+	auto dllhandle = LoadLibraryW(dllpath.c_str());
+
+	void (*functionPtr)();
+	void* proc = GetProcAddress(dllhandle, "Blah");
+	void(*func)(void) = (void(*)(void))(proc);
+	func();
+	
+	MessageBoxW(NULL, L"ZZzz", L"zzZz", MB_OK);
+	
 	auto pids = blackbone::Process::EnumByName(L"notepad.exe");
-	// auto pids = blackbone::Process::EnumByName(L"teeworlds.exe");
 	for (const auto& pid : pids)
 	{
 		std::cout << "Selected pid " << pid << std::endl;
@@ -32,7 +46,8 @@ int main()
 			blackbone::MakeRemoteFunction<decltype(&LoadLibraryW)>(proc, L"kernel32.dll", "LoadLibraryW"))
 		{
 			//auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x86\Debug\ProtoInputHooks.dll)");
-			auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x64\Debug\ProtoInputHooks.dll)");
+			//auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x64\Debug\ProtoInputHooks.dll)");
+			auto callRes = pLoadLibrary(dllpath.c_str());
 			if (!callRes.success())
 				std::cerr << "Remote call failed" << std::endl;
 			else if (callRes.result() == NULL)

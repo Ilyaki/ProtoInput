@@ -169,6 +169,7 @@ NTSTATUS InstallHook(const LPCWSTR moduleHandle, const LPCSTR proc, void* callBa
 	return result;
 }
 
+/*
 LRESULT CALLBACK WindowProc_Hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (static bool init = false; !init)
@@ -274,17 +275,18 @@ BOOL WINAPI glSwapBuffers_hook(HDC hdc)
 	
     return originalFunc(hdc);
 }
+*/
 
 
 void TestHooks()
 {
-	originalFunc = reinterpret_cast<wglSwapBuffers_t>(GetProcAddress(GetModuleHandleW(L"opengl32.dll"), "wglSwapBuffers"));
-	std::cout << "original function ptr = " << originalFunc << std::endl;
+	// originalFunc = reinterpret_cast<wglSwapBuffers_t>(GetProcAddress(GetModuleHandleW(L"opengl32.dll"), "wglSwapBuffers"));
+	// std::cout << "original function ptr = " << originalFunc << std::endl;
 	
-	InstallHook(L"user32", "GetMessageA", GetMessageA_Hook);
-	InstallHook(L"user32", "GetMessageW", GetMessageW_Hook);
-	InstallHook(L"user32", "PeekMessageA", PeekMessageA_Hook);
-	InstallHook(L"user32", "PeekMessageW", PeekMessageW_Hook);
+	// InstallHook(L"user32", "GetMessageA", GetMessageA_Hook);
+	// InstallHook(L"user32", "GetMessageW", GetMessageW_Hook);
+	// InstallHook(L"user32", "PeekMessageA", PeekMessageA_Hook);
+	// InstallHook(L"user32", "PeekMessageW", PeekMessageW_Hook);
 		
-	InstallHook(L"opengl32.dll", "wglSwapBuffers", &glSwapBuffers_hook);
+	// InstallHook(L"opengl32.dll", "wglSwapBuffers", &glSwapBuffers_hook);
 }
