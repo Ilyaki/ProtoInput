@@ -11,42 +11,43 @@
 #include <GL/wglew.h>
 #include <backends/imgui_impl_win32.h>
 #include <backends/imgui_impl_opengl3.h>
+#include "RawInput.h"
 
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;
-HWND    g_hwnd;
-//PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT;
-//PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT;
+HWND    protoHwnd;
 int     g_display_w = 800;
 int     g_display_h = 600;
 
 void CreateGlContext();
-void SetCurrentContext();
-bool SetSwapInterval(int interval); //0 - No Interval, 1 - Sync whit VSYNC, n - n times Sync with VSYNC
+bool SetSwapInterval(int interval);
 bool WGLExtensionSupported(const char* extension_name);
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-int ShowGui()
+unsigned long Proto::GuiThreadID = 0;
+
+int Proto::ShowGuiImpl()
 {
     auto hInstance = GetModuleHandle(NULL);
-	
+
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
     wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
-    wc.lpszClassName = L"NCUI";
+    const wchar_t* className = L"PROTOINPUTUI";
+    wc.lpszClassName = className;
     wc.style = CS_OWNDC;
     if (!RegisterClass(&wc))
         return 1;
-    g_hwnd = CreateWindowW(wc.lpszClassName, L"teste", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 640, 480, 0, 0, hInstance, 0);
+    protoHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 1200, 800, 0, 0, hInstance, 0);
 
     // Show the window
-    ShowWindow(g_hwnd, SW_SHOWDEFAULT);
-    UpdateWindow(g_hwnd);
+    ShowWindow(protoHwnd, SW_SHOWDEFAULT);
+    UpdateWindow(protoHwnd);
 
     //Prepare OpenGlContext
     CreateGlContext();
-    SetSwapInterval(1);
+    SetSwapInterval(1); //0 - No Interval, 1 - Sync with VSYNC, n - n times Sync with VSYNC
     glewInit();
 
     // Setup Dear ImGui binding
@@ -55,7 +56,7 @@ int ShowGui()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     //Init Win32
-    ImGui_ImplWin32_Init(g_hwnd);
+    ImGui_ImplWin32_Init(protoHwnd);
 
     //Init OpenGL Imgui Implementation
     // GL 3.0 + GLSL 130
@@ -63,11 +64,13 @@ int ShowGui()
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     //Set Window bg color
-    ImVec4 clear_color = ImVec4(1.000F, 1.000F, 1.000F, 1.0F);
+    ImVec4 clear_color = ImVec4(0.1f, 0.0f, 0.0f, 1.0f);
 
     // Setup style
-    ImGui::StyleColorsClassic();
+    ImGui::StyleColorsDark();
 
+    wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+    	
     // Main loop
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
@@ -89,16 +92,16 @@ int ShowGui()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
-        //show Main Window
-        ImGui::ShowDemoWindow();
-        // Rendering
+
+        Proto::RenderImgui();
+
         ImGui::Render();
-        wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+        //wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
         glViewport(0, 0, g_display_w, g_display_h);                 //Display Size got from Resize Command
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+        //wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
         SwapBuffers(g_HDCDeviceContext);
 
     }
@@ -109,13 +112,14 @@ int ShowGui()
     ImGui::DestroyContext();
     ImGui_ImplWin32_Shutdown();
 
-    DestroyWindow(g_hwnd);
-    UnregisterClass(_T("NCUI"), wc.hInstance);
+    DestroyWindow(protoHwnd);
+    UnregisterClassW(className, wc.hInstance);
 
     return 0;
 }
 
-extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -165,7 +169,7 @@ void CreateGlContext()
         0, 0, 0
     };
 
-    g_HDCDeviceContext = GetDC(g_hwnd);
+    g_HDCDeviceContext = GetDC(protoHwnd);
 
     int pixelFormal = ChoosePixelFormat(g_HDCDeviceContext, &pfd);
     SetPixelFormat(g_HDCDeviceContext, pixelFormal, &pfd);
@@ -179,10 +183,10 @@ bool SetSwapInterval(int interval)
     {
         // Extension is supported, init pointers.
         wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-    
+
         // this is another function from WGL_EXT_swap_control extension
         wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
-    
+
         wglSwapIntervalEXT(interval);
         return true;
     }
@@ -196,10 +200,10 @@ bool WGLExtensionSupported(const char* extension_name)
 {
     // this is pointer to function which returns pointer to string with list of all wgl extensions
     PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
-    
+
     // determine pointer to wglGetExtensionsStringEXT function
     _wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
-    
+
     if (strstr(_wglGetExtensionsStringEXT(), extension_name) == NULL)
     {
         // string was not found

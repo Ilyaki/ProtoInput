@@ -95,12 +95,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLEW;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,12 +116,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLEW;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -181,7 +183,11 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="Gui.h" />
-    <ClInclude Include="TestHooks.h" />
+    <ClInclude Include="Hook.h" />
+    <ClInclude Include="HookManager.h" />
+    <ClInclude Include="InstallHooks.h" />
+    <ClInclude Include="MessageBoxHook.h" />
+    <ClInclude Include="RawInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\lib\glew\src\glew.c" />
@@ -196,8 +202,12 @@
     <ClCompile Include="..\..\..\lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Gui.cpp" />
-    <ClCompile Include="Gui2.cpp" />
-    <ClCompile Include="TestHooks.cpp" />
+    <ClCompile Include="GuiImpl.cpp" />
+    <ClCompile Include="HookInstaller.cpp" />
+    <ClCompile Include="HookManager.cpp" />
+    <ClCompile Include="MessageBoxHook.cpp" />
+    <ClCompile Include="RawInput.cpp" />
+    <ClCompile Include="TempTestHooks.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

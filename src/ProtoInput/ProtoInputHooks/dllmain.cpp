@@ -4,44 +4,52 @@
 #include <BlackBone/Patterns/PatternSearch.h>
 #include <BlackBone/Process/RPC/RemoteFunction.hpp>
 #include <BlackBone/Syscalls/Syscall.h>
-#include <BlackBone/LocalHook/LocalHook.hpp>
-// #include <imgui/imgui.h>
-
-#include <GL/glew.h>
-
 #include <imgui.h>
-#include <backends/imgui_impl_win32.h>
-#include <backends/imgui_impl_opengl3.h>
 
 #include <easyhook.h>
 
-#include "TestHooks.h"
 
 #include "Gui.h"
+#include "RawInput.h"
+#include "HookManager.h"
+
+HMODULE dll_hModule;
+
+DWORD WINAPI GuiThread(LPVOID lpParameter)
+{
+    std::cout << "Starting gui thread" << std::endl;
+    Proto::ShowGuiImpl();
+
+    return 0;
+}
 
 DWORD WINAPI StartThread(LPVOID lpParameter)
 {	
     AllocConsole();
     FILE* f = new FILE();
     freopen_s(&f, "CONOUT$", "w", stdout);
+    freopen_s(&f, "CONOUT$", "w", stderr);
     
     std::cout << "Hooks DLL loaded" << std::endl;
 
-    //MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
+	// Useful to add a pause if we need to attach a debugger
+    // MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
+
+    HANDLE hGuiThread = CreateThread(nullptr, 0,
+                                  (LPTHREAD_START_ROUTINE)GuiThread, dll_hModule, CREATE_SUSPENDED, &Proto::GuiThreadID);
+  
+    Proto::RawInput::InitialiseRawInput();
+
+    Proto::HookManager::InstallHook(Proto::ProtoHookIDs::MessageBoxHookID);
 	
-    TestHooks();
+    ResumeThread(hGuiThread);
 
-    ShowGui();
-
-    std::cout << "Reached end of startup/GUI thread" << std::endl;
+    if (hGuiThread != nullptr)
+        CloseHandle(hGuiThread);
+		
+    std::cout << "Reached end of startup thread" << std::endl;
 	
     return 0;
-}
-
- extern "C" __declspec(dllexport) void Blah()
-{
-    std::cout << "blah" << std::endl;
-    StartThread(nullptr);
 }
 
 EASYHOOK_BOOL_EXPORT EasyHookDllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
@@ -57,17 +65,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
     {
-         //HANDLE hThread = CreateThread(nullptr, 0,
-                                     // (LPTHREAD_START_ROUTINE)StartThread, hModule, 0, 0);
-         //if (hThread != nullptr)
-         //    CloseHandle(hThread);
-
-
-
-         //auto blah = new std::thread(StartThread, nullptr);
+        dll_hModule = hModule;
     		
-    		
-        // StartThread(nullptr);
+         HANDLE hThread = CreateThread(nullptr, 0,
+                                      (LPTHREAD_START_ROUTINE)StartThread, hModule, 0, 0);
+         if (hThread != nullptr)
+             CloseHandle(hThread);
+
     		
         break;
     }

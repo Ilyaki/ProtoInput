@@ -25,38 +25,38 @@ int main()
 	//TODO 64/32
 	auto dllpath = folderpath + L"ProtoInputHooks.dll";
 
-	auto dllhandle = LoadLibraryW(dllpath.c_str());
 
-	void (*functionPtr)();
-	void* proc = GetProcAddress(dllhandle, "Blah");
-	void(*func)(void) = (void(*)(void))(proc);
-	func();
-	
-	MessageBoxW(NULL, L"ZZzz", L"zzZz", MB_OK);
-	
-	auto pids = blackbone::Process::EnumByName(L"notepad.exe");
-	for (const auto& pid : pids)
+	constexpr bool hookSelf = true;
+
+	if (hookSelf)
 	{
-		std::cout << "Selected pid " << pid << std::endl;
-
-		blackbone::Process proc;
-		proc.Attach(pid);
-
-		if (auto pLoadLibrary = 
-			blackbone::MakeRemoteFunction<decltype(&LoadLibraryW)>(proc, L"kernel32.dll", "LoadLibraryW"))
+		auto dllhandle = LoadLibraryW(dllpath.c_str());
+		std::cout << "Loaded dll, handle = " << dllhandle << std::endl;
+		MessageBoxW(NULL, L"Close to exit program", L"", MB_OK);
+	}
+	else
+	{
+		auto pids = blackbone::Process::EnumByName(L"notepad.exe");
+		for (const auto& pid : pids)
 		{
-			//auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x86\Debug\ProtoInputHooks.dll)");
-			//auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x64\Debug\ProtoInputHooks.dll)");
-			auto callRes = pLoadLibrary(dllpath.c_str());
-			if (!callRes.success())
-				std::cerr << "Remote call failed" << std::endl;
-			else if (callRes.result() == NULL)
-				std::cerr << "Failed to load DLL" << ", error = 0x" << std::hex << GetLastError() << std::dec << std::endl;
-			else
-				std::cout << "LoadLibrary remote call success\n" << std::endl;
+			std::cout << "Selected pid " << pid << std::endl;
+
+			blackbone::Process proc;
+			proc.Attach(pid);
+
+			if (auto pLoadLibrary =
+				blackbone::MakeRemoteFunction<decltype(&LoadLibraryW)>(proc, L"kernel32.dll", "LoadLibraryW"))
+			{
+				//auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x86\Debug\ProtoInputHooks.dll)");
+				//auto callRes = pLoadLibrary(LR"(I:\Projects\ProtoInput\src\ProtoInput\x64\Debug\ProtoInputHooks.dll)");
+				auto callRes = pLoadLibrary(dllpath.c_str());
+				if (!callRes.success())
+					std::cerr << "Remote call failed" << std::endl;
+				else if (callRes.result() == NULL)
+					std::cerr << "Failed to load DLL" << ", error = 0x" << std::hex << GetLastError() << std::dec << std::endl;
+				else
+					std::cout << "LoadLibrary remote call success\n" << std::endl;
+			}
 		}
 	}
-
-	// int x;
-	// std::cin >> x;
 }

@@ -1,3 +1,12 @@
 #pragma once
 
-int ShowGui();
+namespace Proto
+{
+
+extern unsigned long GuiThreadID;
+
+int ShowGuiImpl();
+
+void RenderImgui();
+
+}

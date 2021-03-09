@@ -24,10 +24,22 @@
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestHooks.h">
+    <ClInclude Include="Gui.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Gui.h">
+    <ClInclude Include="RawInput.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hook.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InstallHooks.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HookManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageBoxHook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,13 +77,25 @@
     <ClCompile Include="..\..\..\lib\imgui\backends\imgui_impl_win32.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="TestHooks.cpp">
+    <ClCompile Include="GuiImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HookInstaller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RawInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Gui2.cpp">
+    <ClCompile Include="TempTestHooks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageBoxHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HookManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
