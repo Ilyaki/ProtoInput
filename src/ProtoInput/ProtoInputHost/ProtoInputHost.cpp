@@ -26,7 +26,7 @@ int main()
 	auto dllpath = folderpath + L"ProtoInputHooks.dll";
 
 
-	constexpr bool hookSelf = true;
+	constexpr bool hookSelf = false;
 
 	if (hookSelf)
 	{
@@ -43,6 +43,7 @@ int main()
 
 			blackbone::Process proc;
 			proc.Attach(pid);
+			
 
 			if (auto pLoadLibrary =
 				blackbone::MakeRemoteFunction<decltype(&LoadLibraryW)>(proc, L"kernel32.dll", "LoadLibraryW"))

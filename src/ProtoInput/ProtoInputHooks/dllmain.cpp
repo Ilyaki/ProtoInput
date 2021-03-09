@@ -12,6 +12,7 @@
 #include "Gui.h"
 #include "RawInput.h"
 #include "HookManager.h"
+#include "MenuShortcut.h"
 
 HMODULE dll_hModule;
 
@@ -19,7 +20,7 @@ DWORD WINAPI GuiThread(LPVOID lpParameter)
 {
     std::cout << "Starting gui thread" << std::endl;
     Proto::ShowGuiImpl();
-
+   
     return 0;
 }
 
@@ -41,14 +42,14 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     Proto::RawInput::InitialiseRawInput();
 
     Proto::HookManager::InstallHook(Proto::ProtoHookIDs::MessageBoxHookID);
-	
+    	
     ResumeThread(hGuiThread);
 
     if (hGuiThread != nullptr)
         CloseHandle(hGuiThread);
 		
     std::cout << "Reached end of startup thread" << std::endl;
-	
+    	
     return 0;
 }
 
