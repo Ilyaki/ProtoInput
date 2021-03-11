@@ -2,15 +2,16 @@
 #include <vector>
 #include "Hook.h"
 #include "MessageBoxHook.h"
+#include "protoloader.h"
 
 namespace Proto
 {
 
-//TODO: move to an include header so can be called externally
-enum ProtoHookIDs : unsigned int
-{
-	MessageBoxHookID = 0
-};
+//NOTE: To add hook IDs, change protoloader.h in ProtoInputLoader\include
+// enum ProtoHookIDs : unsigned int
+// {
+// 	MessageBoxHookID = 0
+// };
 
 
 class HookManager

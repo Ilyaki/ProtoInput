@@ -13,12 +13,14 @@
 #include "RawInput.h"
 #include "HookManager.h"
 #include "MenuShortcut.h"
+#include "protoloader.h"
+#include "PipeCommunication.h"
 
 HMODULE dll_hModule;
 
 DWORD WINAPI GuiThread(LPVOID lpParameter)
 {
-    std::cout << "Starting gui thread" << std::endl;
+    std::cout << "Starting gui thread\n";
     Proto::ShowGuiImpl();
    
     return 0;
@@ -31,7 +33,7 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     freopen_s(&f, "CONOUT$", "w", stdout);
     freopen_s(&f, "CONOUT$", "w", stderr);
     
-    std::cout << "Hooks DLL loaded" << std::endl;
+    std::cout << "Hooks DLL loaded\n";
 
 	// Useful to add a pause if we need to attach a debugger
     // MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
@@ -41,14 +43,14 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
   
     Proto::RawInput::InitialiseRawInput();
 
-    Proto::HookManager::InstallHook(Proto::ProtoHookIDs::MessageBoxHookID);
-    	
+    Proto::StartPipeCommunication();
+	    
     ResumeThread(hGuiThread);
 
     if (hGuiThread != nullptr)
         CloseHandle(hGuiThread);
 		
-    std::cout << "Reached end of startup thread" << std::endl;
+    std::cout << "Reached end of startup thread\n";
     	
     return 0;
 }
@@ -72,8 +74,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                                       (LPTHREAD_START_ROUTINE)StartThread, hModule, 0, 0);
          if (hThread != nullptr)
              CloseHandle(hThread);
-
-    		
+             		
         break;
     }
     case DLL_THREAD_ATTACH:

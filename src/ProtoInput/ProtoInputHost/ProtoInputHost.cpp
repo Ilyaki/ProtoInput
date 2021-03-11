@@ -9,7 +9,7 @@
 #include <BlackBone/Syscalls/Syscall.h>
 #include <BlackBone/LocalHook/LocalHook.hpp>
 
-
+#include "protoloader.h"
 
 int main()
 {
@@ -23,10 +23,10 @@ int main()
 	std::wcout << L"Folder name = '" << folderpath << "'" <<  std::endl;
 
 	//TODO 64/32
-	auto dllpath = folderpath + L"ProtoInputHooks.dll";
+	//auto dllpath = folderpath + L"ProtoInputHooks.dll";
 
 
-	constexpr bool hookSelf = false;
+	/*constexpr bool hookSelf = false;
 
 	if (hookSelf)
 	{
@@ -59,5 +59,17 @@ int main()
 					std::cout << "LoadLibrary remote call success\n" << std::endl;
 			}
 		}
+	}*/
+
+	auto pids = blackbone::Process::EnumByName(L"notepad.exe");
+	for (const auto& pid : pids)
+	{
+		std::cout << "Selected pid " << pid << std::endl;
+
+		const auto instanceHandle = InjectRuntime(pid, folderpath.c_str());
+		InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 	}
+
+	// Don't want to end the pipe immediately
+	MessageBoxW(NULL, L"Close to exit program", L"", MB_OK);
 }
