@@ -101,6 +101,8 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 						HookManager::InstallHook(body->hookID);
 					else
 						HookManager::UninstallHook(body->hookID);
+
+					break;
 				}				
 			default:
 				{

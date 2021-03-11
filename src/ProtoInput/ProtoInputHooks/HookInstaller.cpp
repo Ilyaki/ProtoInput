@@ -31,6 +31,7 @@ std::tuple<NTSTATUS, HookInfo> InstallHook(void* address, void* callback)
 	{
 		// If the threadId in the ACL is set to 0,
 		// then internally EasyHook uses GetCurrentThreadId()
+		//TODO: could add the named pipe thread to the ACL list, just in case
 		ULONG ACLEntries[2] = { 0, Proto::GuiThreadID };
 
 		// Disable the hook for the provided threadIds, enable for all others

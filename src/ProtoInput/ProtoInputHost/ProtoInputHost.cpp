@@ -61,12 +61,26 @@ int main()
 		}
 	}*/
 
-	auto pids = blackbone::Process::EnumByName(L"notepad.exe");
-	for (const auto& pid : pids)
-	{
-		std::cout << "Selected pid " << pid << std::endl;
+	constexpr bool hookSelf = true;
 
-		const auto instanceHandle = InjectRuntime(pid, folderpath.c_str());
+	DWORD selectedPid = 0;
+
+	if (hookSelf)
+		selectedPid = GetCurrentProcessId();
+	else
+	{
+		auto pids = blackbone::Process::EnumByName(L"notepad.exe");
+		for (const auto& pid : pids)
+		{
+			std::cout << "Selected pid " << pid << std::endl;
+
+			selectedPid = pid;
+		}
+	}
+
+	if (selectedPid != 0)
+	{
+		const auto instanceHandle = InjectRuntime(selectedPid, folderpath.c_str());
 		InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 	}
 
