@@ -5,14 +5,10 @@
 #include "protoloader.h"
 #include "HookManager.h"
 
+#include "pipeinclude/pipeinclude.h"
+
 namespace Proto
 {
-
-struct NamedPipeMessage
-{
-	ProtoHookIDs hookID;
-	bool install;
-};
 
 std::wstring GetPipeName()
 {
@@ -26,50 +22,98 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 	
 	const auto pipeName = GetPipeName();
 	wprintf(L"Started pipe thread, using pipe %s\n", pipeName.c_str());
-	
-	HANDLE pipe = CreateFile(
-		pipeName.c_str(),
-		GENERIC_READ,
-		FILE_SHARE_READ,
-		NULL,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL
-	);
 
-	if (pipe == INVALID_HANDLE_VALUE)
+	// Just in case the dll is injected first, before the loader starts the pipe
+	HANDLE pipe;
+	int connectCount = 0;
+	do
 	{
-		fprintf(stderr, "Failed to open pipe\n");
+		pipe = CreateFile(
+			pipeName.c_str(),
+			GENERIC_READ,
+			FILE_SHARE_READ,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL
+		);
+
+		if (pipe == INVALID_HANDLE_VALUE)
+		{
+			if (connectCount++ < 10)
+			{
+				fprintf(stderr, "Failed to open pipe, trying again in 2s\n");
+				Sleep(2000);
+			}
+			else
+			{
+				fprintf(stderr, "Failed to open pipe, giving up!\n");
+			}
+		}
 	}
-	else
+	while (pipe == INVALID_HANDLE_VALUE);
+	
+	if (pipe != INVALID_HANDLE_VALUE)
 	{
-		NamedPipeMessage buff;
+		ProtoPipe::PipeMessageHeader msgHeader;
+		unsigned char messageBuffer[256];
+
 		DWORD numBytesRead = 0;
 		while (true)
 		{
 			BOOL success = ReadFile(
 				pipe,
-				&buff,
-				sizeof(NamedPipeMessage),
+				&msgHeader,
+				sizeof(ProtoPipe::PipeMessageHeader),
 				&numBytesRead,
 				NULL
 			);
 
 			if (success == 0)
 			{
-				fprintf(stderr, "Failed to read from pipe, last error = 0x%X\n", GetLastError());
+				fprintf(stderr, "Failed to read message header from pipe, last error = 0x%X\n", GetLastError());
 				break;
 			}
 
-			printf("Received pipe message, hook ID %d, install = %d\n", buff.hookID, buff.install);
+			printf("Received pipe header, message ID %d, message size = %d\n", msgHeader.messageType, msgHeader.messageSize);
+	
+			success = ReadFile(
+				pipe,
+				messageBuffer,
+				msgHeader.messageSize,
+				&numBytesRead,
+				NULL
+			);
 
-			if (buff.install)
-				HookManager::InstallHook(buff.hookID);
-			else
-				HookManager::UninstallHook(buff.hookID);	
+			if (success == 0)
+			{
+				fprintf(stderr, "Failed to read message body from pipe, last error = 0x%X\n", GetLastError());
+				break;
+			}
+
+			switch(msgHeader.messageType)
+			{
+			case ProtoPipe::PipeMessageType::SetupHook:
+				{
+					const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupHook*>(messageBuffer);
+					printf("Setup hook message: hook ID %d, install = %d\n", body->hookID, body->install);
+					if (body->install)
+						HookManager::InstallHook(body->hookID);
+					else
+						HookManager::UninstallHook(body->hookID);
+				}				
+			default:
+				{
+					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");
+					goto endPipe;
+				}
+			}
 		}
 	}
+	endPipe:
 
+	printf("End of pipe thread\n");
+	
 	CloseHandle(pipe);
 
 	return 0;

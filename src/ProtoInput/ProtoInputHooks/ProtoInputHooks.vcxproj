@@ -189,6 +189,7 @@
     <ClInclude Include="MenuShortcut.h" />
     <ClInclude Include="MessageBoxHook.h" />
     <ClInclude Include="PipeCommunication.h" />
+    <ClInclude Include="pipeinclude\pipeinclude.h" />
     <ClInclude Include="RawInput.h" />
   </ItemGroup>
   <ItemGroup>

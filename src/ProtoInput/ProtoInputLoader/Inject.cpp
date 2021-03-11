@@ -9,11 +9,7 @@
 #include <BlackBone/LocalHook/LocalHook.hpp>
 #include "TrackedInstances.h"
 
-struct NamedPipeMessage
-{
-	ProtoHookIDs hookID;
-	bool install;
-};
+#include "pipeinclude.h"
 
 bool Isx64(unsigned long pid)
 {
@@ -95,6 +91,43 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle InjectRuntime(unsigned long
 	}
 }
 
+template<typename Body>
+void SendPipeMessage(HANDLE pipe, ProtoPipe::PipeMessageType messageType, Body* body)
+{
+	ProtoPipe::PipeMessageHeader header
+	{
+		messageType,
+		sizeof(Body)
+	};
+
+	DWORD numBytesWritten = 0;
+	BOOL write = WriteFile(
+		pipe,
+		&header,
+		sizeof(ProtoPipe::PipeMessageHeader),
+		&numBytesWritten,
+		NULL
+	);
+
+	if (write)
+		std::cout << "Successfully sent message header" << std::endl;
+	else
+		std::cerr << "Failed to send message header" << std::endl;
+
+	write = WriteFile(
+		pipe,
+		body,
+		sizeof(Body),
+		&numBytesWritten,
+		NULL
+	);
+	
+	if (write)
+		std::cout << "Successfully sent message body" << std::endl;
+	else
+		std::cerr << "Failed to send message body" << std::endl;
+}
+
 void InstallUninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID, bool install)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
@@ -118,25 +151,13 @@ void InstallUninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookI
 			}			
 		}
 
-		NamedPipeMessage message
+		ProtoPipe::PipeMessageSetupHook message
 		{
-			hookID, install
+			hookID,
+			install
 		};
-		
-		
-		DWORD numBytesWritten = 0;
-		BOOL write = WriteFile(
-			instance.pipeHandle,
-			&message,
-			sizeof(NamedPipeMessage),
-			&numBytesWritten,
-			NULL
-		);
 
-		if (write)
-			std::cout << "Successfully sent message" << std::endl;
-		else
-			std::cerr << "Failed to send message" << std::endl;		
+		SendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupHook, &message);
 	}
 }
 

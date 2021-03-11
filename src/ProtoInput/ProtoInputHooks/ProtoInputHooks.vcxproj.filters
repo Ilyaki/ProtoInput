@@ -48,6 +48,9 @@
     <ClInclude Include="PipeCommunication.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="pipeinclude\pipeinclude.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
