@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <iostream>
 #include <vector>
+#include "HookManager.h"
 
 namespace Proto
 {
@@ -38,6 +39,8 @@ DWORD WINAPI RawInputWindowThread(LPVOID lpParameter)
 {
 	printf("Starting Raw Input window thread\n");
 
+	AddThreadToACL(GetCurrentThreadId());
+	
 	const auto hinstance = GetModuleHandle(nullptr);
 	
 	WNDCLASS wc = { 0 };

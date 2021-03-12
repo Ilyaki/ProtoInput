@@ -67,12 +67,4 @@ BOOL WINAPI PeekMessageW_Hook(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT w
 	return ret == FALSE ? FALSE : ((1 + FilterMessage(lpMsg)) / 2);
 }
 
-void TestHooks()
-{
-	// InstallHook(L"user32", "GetMessageA", GetMessageA_Hook);
-	// InstallHook(L"user32", "GetMessageW", GetMessageW_Hook);
-	// InstallHook(L"user32", "PeekMessageA", PeekMessageA_Hook);
-	// InstallHook(L"user32", "PeekMessageW", PeekMessageW_Hook);
-}
-
 }

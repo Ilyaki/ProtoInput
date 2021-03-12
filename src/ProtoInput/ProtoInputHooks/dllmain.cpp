@@ -21,6 +21,7 @@ HMODULE dll_hModule;
 DWORD WINAPI GuiThread(LPVOID lpParameter)
 {
     std::cout << "Starting gui thread\n";
+    Proto::AddThreadToACL(GetCurrentThreadId());
     Proto::ShowGuiImpl();
    
     return 0;
@@ -38,6 +39,8 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
 	// Useful to add a pause if we need to attach a debugger
     // MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
 
+    Proto::AddThreadToACL(GetCurrentThreadId());
+	
     HANDLE hGuiThread = CreateThread(nullptr, 0,
                                   (LPTHREAD_START_ROUTINE)GuiThread, dll_hModule, CREATE_SUSPENDED, &Proto::GuiThreadID);
   

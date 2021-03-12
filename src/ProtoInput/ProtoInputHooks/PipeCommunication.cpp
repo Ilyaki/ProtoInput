@@ -26,9 +26,11 @@ std::wstring GetPipeName()
 DWORD WINAPI PipeThread(LPVOID lpParameter)
 {
 	// Using printf because cout keeps interleaving with the other threads...
-	
+
 	const auto pipeName = GetPipeName();
 	wprintf(L"Started pipe thread, using pipe %s\n", pipeName.c_str());
+
+	AddThreadToACL(GetCurrentThreadId());
 
 	// Just in case the dll is injected first, before the loader starts the pipe
 	HANDLE pipe;
