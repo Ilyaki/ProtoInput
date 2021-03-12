@@ -21,3 +21,5 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 
 extern "C" __declspec(dllexport) void InstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
 extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
+
+extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle);

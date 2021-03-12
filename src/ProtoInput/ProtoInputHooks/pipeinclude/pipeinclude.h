@@ -7,7 +7,8 @@ namespace ProtoPipe
 
 enum class PipeMessageType
 {
-	SetupHook
+	SetupHook,
+	WakeUpProcess
 };
 
 struct PipeMessageHeader
@@ -20,6 +21,10 @@ struct PipeMessageSetupHook
 {
 	ProtoHookIDs hookID;
 	bool install;
+};
+
+struct PipeMessageWakeUpProcess
+{
 };
 
 }

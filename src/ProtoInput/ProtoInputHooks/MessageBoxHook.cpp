@@ -13,7 +13,7 @@ int WINAPI Hook_MessageBoxW(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT u
 
 void MessageBoxHook::ShowGuiStatus()
 {
-	ImGui::Button("Test");
+
 }
 
 void MessageBoxHook::InstallImpl()

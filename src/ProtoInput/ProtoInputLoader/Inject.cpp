@@ -140,7 +140,7 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 }
 
 template<typename Body>
-void SendPipeMessage(HANDLE pipe, ProtoPipe::PipeMessageType messageType, Body* body)
+void ProtoSendPipeMessage(HANDLE pipe, ProtoPipe::PipeMessageType messageType, Body* body)
 {
 	ProtoPipe::PipeMessageHeader header
 	{
@@ -205,7 +205,7 @@ void InstallUninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookI
 			install
 		};
 
-		SendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupHook, &message);
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupHook, &message);
 	}
 }
 
@@ -217,4 +217,14 @@ extern "C" __declspec(dllexport) void InstallHook(ProtoInstanceHandle instanceHa
 extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID)
 {
 	InstallUninstallHook(instanceHandle, hookID, false);
+}
+
+extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle)
+{
+	ProtoPipe::PipeMessageWakeUpProcess message
+	{
+	};
+
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+		ProtoSendPipeMessage(find->second.pipeHandle, ProtoPipe::PipeMessageType::WakeUpProcess, &message);
 }

@@ -2,10 +2,17 @@
 #include <Windows.h>
 #include "PipeCommunication.h"
 #include <iostream>
-#include "protoloader.h"
 #include "HookManager.h"
 
 #include "pipeinclude/pipeinclude.h"
+#include <imgui.h>
+
+
+
+#include "Gui.h"
+#include <TlHelp32.h>
+
+
 
 namespace Proto
 {
@@ -103,7 +110,46 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 						HookManager::UninstallHook(body->hookID);
 
 					break;
-				}				
+				}
+			case ProtoPipe::PipeMessageType::WakeUpProcess:
+			{
+				printf("Wake up process message\n");
+					
+				// Wake up the threads if they are suspended
+				//TODO: we might need to wait (mutex or sleep) for tasks to complete before waking up
+				{
+					HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, GetCurrentProcessId());
+					if (h != INVALID_HANDLE_VALUE) {
+						THREADENTRY32 te;
+						te.dwSize = sizeof(te);
+						if (Thread32First(h, &te)) {
+							do {
+								if (te.th32OwnerProcessID == GetCurrentProcessId() &&
+									te.th32OwnerProcessID != Proto::GuiThreadID &&
+									te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) +
+									sizeof(te.th32OwnerProcessID))
+								{
+									//TODO: maybe check the module isn't ProtoInputHooks to be safe (dont want to resume one of our threads that should be suspended)
+
+									if (auto hThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID); hThread != NULL)
+									{
+										printf("Waking thread %d\n", te.th32ThreadID);
+
+										ResumeThread(hThread);
+
+										CloseHandle(hThread);
+									}
+								}
+								te.dwSize = sizeof(te);
+							}
+							while (Thread32Next(h, &te));
+						}
+						CloseHandle(h);
+					}
+				}
+
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");
