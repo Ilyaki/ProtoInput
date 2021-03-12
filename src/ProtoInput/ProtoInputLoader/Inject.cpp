@@ -11,6 +11,18 @@
 
 #include "pipeinclude.h"
 
+#include "easyhook.h"
+
+extern "C" NTSTATUS __declspec(dllexport) __stdcall HookCompleteInjection(void* InInfo)
+{
+	return HookCompleteInjectionImpl(InInfo);
+}
+
+// extern "C" void __declspec(dllexport) __cdecl WakeupProcess()
+// {
+// 	RhWakeUpProcess();
+// }
+
 bool Isx64(unsigned long pid)
 {
 	blackbone::Process proc;
@@ -55,7 +67,7 @@ ProtoInstanceHandle CreateInstanceHandle(unsigned long pid)
 	return handle;
 }
 
-extern "C" __declspec(dllexport) ProtoInstanceHandle InjectRuntime(unsigned long pid, const wchar_t* dllFolderPath)
+extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath)
 {
 	const bool is64 = Isx64(pid);
 	std::cout << "Target is " << (is64 ? "64-bit" : "32-bit") << std::endl;
@@ -88,6 +100,42 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle InjectRuntime(unsigned long
 			std::cout << "LoadLibrary remote call success\n" << std::endl;
 			return CreateInstanceHandle(pid);
 		}
+	}
+
+	return 0;
+}
+
+extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
+	const wchar_t* exePath,
+	const wchar_t* commandLine,
+	unsigned long processCreationFlags,
+	const wchar_t* dllFolderPath,
+	unsigned long* outPid)
+{
+
+	auto dllpath = std::wstring(dllFolderPath);
+	dllpath += L"ProtoInputHooks.dll";
+
+	//FIXME: choose the dll whether or not 64
+	const auto dllPath64 = dllpath.c_str();
+	const auto dllPath32 = dllpath.c_str();
+
+	unsigned long pid;
+
+	auto res = RhCreateAndInject(const_cast<WCHAR*>(exePath), const_cast<WCHAR*>(commandLine),
+								 processCreationFlags, 0,
+								 const_cast<WCHAR*>(dllPath32), const_cast<WCHAR*>(dllPath64),
+								 nullptr, 0, &pid);
+
+	if (FAILED(res))
+	{
+		std::cerr << "Failed CreateAndInject, NTSTATUS = 0x" << std::hex << res << std::dec << std::endl;
+		*outPid = 0;
+	}
+	else
+	{
+		*outPid = pid;
+		return CreateInstanceHandle(pid);
 	}
 }
 

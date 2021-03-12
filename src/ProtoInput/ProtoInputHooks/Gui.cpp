@@ -133,9 +133,9 @@ void RenderImgui()
 {
 	ImGui::ShowDemoWindow();
 
-    RawInputMenu();
+	RawInputMenu();
 
-    HooksMenu();
+	HooksMenu();
 }
 
 }

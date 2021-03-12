@@ -383,7 +383,7 @@ Parameters:
 	}
 
 	// if WOW64 is not available then target must be 32-bit
-	pIsWow64Process = (IsWow64Process_PROC*)GetProcAddress(hKernel32, "IsWow64Process");
+    pIsWow64Process = (IsWow64Process_PROC*)GetProcAddress(hKernel32, "IsWow64Process");
 
 #ifdef _M_X64
 	// if the target is not WOW64, then it is 64-bit

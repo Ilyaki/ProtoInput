@@ -355,8 +355,10 @@ ABORT_ERROR:
 }
 
 
-EASYHOOK_NT_EXPORT HookCompleteInjection(LPREMOTE_INFO InInfo)
+EASYHOOK_NT_EXPORT HookCompleteInjectionImpl(void* _InInfo)
 {
+	LPREMOTE_INFO InInfo = (LPREMOTE_INFO)_InInfo;
+	
 /*
 Description:
 

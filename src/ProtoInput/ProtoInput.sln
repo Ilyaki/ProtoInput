@@ -5,7 +5,6 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtoInputHost", "ProtoInputHost\ProtoInputHost.vcxproj", "{91F50DCA-3875-4D2B-8B49-F2AD1DBDB209}"
 	ProjectSection(ProjectDependencies) = postProject
-		{CB79B90A-EC6B-49AD-B968-65ED140093B7} = {CB79B90A-EC6B-49AD-B968-65ED140093B7}
 		{564C672A-AEB8-4C04-A349-B125A3A552DB} = {564C672A-AEB8-4C04-A349-B125A3A552DB}
 	EndProjectSection
 EndProject
@@ -17,6 +16,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EasyHookDll", "..\..\lib\EasyHook\EasyHookDll\EasyHookDll.vcxproj", "{D087E484-DBC9-4A2E-8368-C1D0E524994D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtoInputLoader", "ProtoInputLoader\ProtoInputLoader.vcxproj", "{564C672A-AEB8-4C04-A349-B125A3A552DB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB79B90A-EC6B-49AD-B968-65ED140093B7} = {CB79B90A-EC6B-49AD-B968-65ED140093B7}
+		{D087E484-DBC9-4A2E-8368-C1D0E524994D} = {D087E484-DBC9-4A2E-8368-C1D0E524994D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

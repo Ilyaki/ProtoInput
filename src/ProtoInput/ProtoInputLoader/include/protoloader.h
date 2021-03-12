@@ -8,7 +8,16 @@ enum ProtoHookIDs : unsigned int
 	MessageBoxHookID = 0
 };
 
-extern "C" __declspec(dllexport) ProtoInstanceHandle InjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
+//TODO: add some documentation to the header file
+
+extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
+
+extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
+	const wchar_t* exePath, 
+	const wchar_t* commandLine,
+	unsigned long processCreationFlags,
+	const wchar_t* dllFolderPath,
+	unsigned long* outPid);
 
 extern "C" __declspec(dllexport) void InstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
 extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);

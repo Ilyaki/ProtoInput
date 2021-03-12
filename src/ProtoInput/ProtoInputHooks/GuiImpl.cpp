@@ -82,6 +82,7 @@ int Proto::ShowGuiImpl()
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         if (PeekMessage(&msg, protoHwnd, 0U, 0U, PM_REMOVE))
+        // if (PeekMessage(&msg, 0, 0U, 0U, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -96,12 +97,24 @@ int Proto::ShowGuiImpl()
         Proto::RenderImgui();
 
         ImGui::Render();
-        //wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+
+
+    	
+        // wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+
+
+    	
         glViewport(0, 0, g_display_w, g_display_h);                 //Display Size got from Resize Command
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        //wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+
+
+    	
+        // wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+
+
+    	
         SwapBuffers(g_HDCDeviceContext);
 
     }

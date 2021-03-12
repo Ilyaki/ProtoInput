@@ -72,7 +72,7 @@ DWORD WINAPI RawInputWindowThread(LPVOID lpParameter)
 
 		//TODO: need to check if there's an existing raw input window, then add it to a list of windows that we forward input onto.
 		// (separate the lists into 3 lists, mouse,kb, HID, as it'll be faster than looking up)
-
+		//TODO: add this thread to the easyhook ACL list (remember to add to ACL before installing any hooks!)
 		
 		
 		{

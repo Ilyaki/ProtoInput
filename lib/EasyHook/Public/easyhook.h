@@ -64,9 +64,13 @@ extern "C"{
 //     #endif
 // #endif
 
+
+	
 // For static linking:
 #define EASYHOOK_API                    __stdcall
 #define DRIVER_SHARED_API(type, decl)   typedef type EASYHOOK_API PROC_##decl; EXTERN_C type EASYHOOK_API decl 
+
+
 	
 /* 
     This is the typical sign that a defined method is exported...
@@ -82,6 +86,11 @@ extern "C"{
 #define MAX_THREAD_COUNT            128
 #define MAX_PASSTHRU_SIZE           1024 * 64
 
+
+	
+EASYHOOK_NT_EXPORT HookCompleteInjectionImpl(void* InInfo);
+
+	
 typedef struct _LOCAL_HOOK_INFO_* PLOCAL_HOOK_INFO;
 
 typedef struct _HOOK_TRACE_INFO_
