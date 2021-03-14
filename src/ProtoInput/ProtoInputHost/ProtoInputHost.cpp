@@ -10,6 +10,30 @@
 #include <BlackBone/LocalHook/LocalHook.hpp>
 
 #include "protoloader.h"
+#include <filesystem>
+
+bool CheckBuildTimings(const std::wstring& folderpath)
+{
+	//TODO: only if debug
+
+	const auto loaderPath32 = std::filesystem::path{ folderpath }.append("ProtoInputLoader32.dll");
+	const auto loaderPath64 = std::filesystem::path{ folderpath }.append("ProtoInputLoader64.dll");
+
+	const auto hookPath32 = std::filesystem::path{ folderpath }.append("ProtoInputHooks32.dll");
+	const auto hookPath64 = std::filesystem::path{ folderpath }.append("ProtoInputHooks64.dll");
+	
+	auto secLoader = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(loaderPath32) - last_write_time(loaderPath64))).count();
+	auto secHooks = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(hookPath32) - last_write_time(hookPath64))).count();
+	
+	constexpr int maximumDurationSec = 40;
+
+	if (secLoader > maximumDurationSec || secHooks > maximumDurationSec)
+	{
+		return IDCANCEL == MessageBoxW(NULL, L"Hooks32/64 or Loader32/64 are built at very different times\nMake sure you have compiled both", L"Warning", MB_OKCANCEL);
+	}
+
+	return false;
+}
 
 int main()
 {
@@ -22,8 +46,10 @@ int main()
 	
 	std::wcout << L"Folder name = '" << folderpath << "'" <<  std::endl;
 
-
-	constexpr bool runtime = true;
+	if (CheckBuildTimings(folderpath))
+		return 0;
+	
+	constexpr bool runtime = false;
 	constexpr bool hookSelf = true;
 
 	if (runtime)
@@ -56,9 +82,8 @@ int main()
 	}
 	else
 	{
-		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-		
-		auto path = LR"(I:\Software\osu\osu!.exe)";
+		auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		// auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 
 		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(

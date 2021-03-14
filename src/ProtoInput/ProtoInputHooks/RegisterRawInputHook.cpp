@@ -135,15 +135,6 @@ void RegisterRawInputHook::ShowGuiStatus()
 	ImGui::Checkbox("Forward raw input", &RawInput::forwardRawInput);
 }
 
-
-void WINAPI Hook_ExitProcess(
-	UINT uExitCode
-)
-{
-	printf("Blocked ExitProcess\n");
-	Sleep(100000);
-}
-
 void RegisterRawInputHook::InstallImpl()
 {
 	if (!installedAtLeastOnce)
@@ -154,9 +145,6 @@ void RegisterRawInputHook::InstallImpl()
 		usages[HID_USAGE_GENERIC_KEYBOARD] = true;
 		RawInput::SetUsageBitField(usages);
 	}
-
-	//FIXME: remove
-	InstallNamedHook(L"kernel32", "ExitProcess", Hook_ExitProcess);
 
 	auto [status, _hookInfo] = InstallNamedHook(L"user32", "RegisterRawInputDevices", Hook_RegisterRawInputDevices);
 	this->hookInfo = _hookInfo;

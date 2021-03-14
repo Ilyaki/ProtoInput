@@ -125,9 +125,10 @@ DWORD WINAPI RawInputWindowThread(LPVOID lpParameter)
 	while (msg.message != WM_QUIT)
 	{
 		//if (PeekMessage(&msg, RawInput::rawInputHwnd, 0U, 0U, PM_REMOVE))
-		if (GetMessage(&msg, RawInput::rawInputHwnd, 0U, 0U))
+		//if (GetMessage(&msg, RawInput::rawInputHwnd, 0U, 0U))
+		if (GetMessage(&msg, RawInput::rawInputHwnd, WM_INPUT, WM_INPUT))
 		{
-			if (msg.message == WM_INPUT)
+			// if (msg.message == WM_INPUT)
 			{				
 				RawInput::ProcessRawInput((HRAWINPUT)msg.lParam, GET_RAWINPUT_CODE_WPARAM(msg.wParam) == RIM_INPUT, msg);
 			}

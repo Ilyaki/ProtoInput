@@ -47,6 +47,8 @@ int Proto::ShowGuiImpl()
 
     //Prepare OpenGlContext
     CreateGlContext();
+
+	//TODO: this doesn't seem to work? (maybe needs newer opengl version)
     SetSwapInterval(1); //0 - No Interval, 1 - Sync with VSYNC, n - n times Sync with VSYNC
     glewInit();
 

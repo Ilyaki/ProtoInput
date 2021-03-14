@@ -75,10 +75,9 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsi
 	
 	blackbone::Process proc;
 	proc.Attach(pid);
-
-	//FIXME: choose the dll whether or not 64
+	
 	auto dllpath = std::wstring(dllFolderPath);
-	dllpath += L"ProtoInputHooks.dll";
+	dllpath += Isx64(pid) ? L"ProtoInputHooks64.dll" : L"ProtoInputHooks32.dll";
 	std::wcout << L"Using dll \"" << dllpath << L"\"" << std::endl;
 
 	// Blackbone LoadLibrary injection method
@@ -113,19 +112,15 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const wchar_t* dllFolderPath,
 	unsigned long* outPid)
 {
-
-	auto dllpath = std::wstring(dllFolderPath);
-	dllpath += L"ProtoInputHooks.dll";
-
-	//FIXME: choose the dll whether or not 64
-	const auto dllPath64 = dllpath.c_str();
-	const auto dllPath32 = dllpath.c_str();
+	const auto dllpath = std::wstring(dllFolderPath);
+	const auto dllpath32 = dllpath + L"ProtoInputHooks32.dll";
+	const auto dllpath64 = dllpath + L"ProtoInputHooks64.dll";
 
 	unsigned long pid;
 
 	auto res = RhCreateAndInject(const_cast<WCHAR*>(exePath), const_cast<WCHAR*>(commandLine),
 								 processCreationFlags, 0,
-								 const_cast<WCHAR*>(dllPath32), const_cast<WCHAR*>(dllPath64),
+								 const_cast<WCHAR*>(dllpath32.c_str()), const_cast<WCHAR*>(dllpath64.c_str()),
 								 nullptr, 0, &pid);
 
 	if (FAILED(res))
@@ -159,7 +154,9 @@ void ProtoSendPipeMessage(HANDLE pipe, ProtoPipe::PipeMessageType messageType, B
 	);
 
 	if (write)
-		std::cout << "Successfully sent message header" << std::endl;
+	{
+		// std::cout << "Successfully sent message header" << std::endl;
+	}
 	else
 		std::cerr << "Failed to send message header" << std::endl;
 
@@ -172,7 +169,9 @@ void ProtoSendPipeMessage(HANDLE pipe, ProtoPipe::PipeMessageType messageType, B
 	);
 	
 	if (write)
-		std::cout << "Successfully sent message body" << std::endl;
+	{
+		// std::cout << "Successfully sent message body" << std::endl;
+	}
 	else
 		std::cerr << "Failed to send message body" << std::endl;
 }
