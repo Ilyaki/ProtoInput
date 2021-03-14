@@ -124,7 +124,8 @@ DWORD WINAPI RawInputWindowThread(LPVOID lpParameter)
 	ZeroMemory(&msg, sizeof(msg));
 	while (msg.message != WM_QUIT)
 	{
-		if (PeekMessage(&msg, RawInput::rawInputHwnd, 0U, 0U, PM_REMOVE))
+		//if (PeekMessage(&msg, RawInput::rawInputHwnd, 0U, 0U, PM_REMOVE))
+		if (GetMessage(&msg, RawInput::rawInputHwnd, 0U, 0U))
 		{
 			if (msg.message == WM_INPUT)
 			{				
@@ -151,6 +152,9 @@ void RawInput::RefreshDevices()
 	auto deviceArray = std::make_unique<RAWINPUTDEVICELIST[]>(numDevices);
 	GetRawInputDeviceList(&deviceArray[0], &numDevices, sizeof(RAWINPUTDEVICELIST));
 
+	const auto oldKbCount = rawInputState.keyboardHandles.size();
+	const auto oldMouseCount = rawInputState.mouseHandles.size();
+	
 	rawInputState.keyboardHandles.clear();
 	rawInputState.mouseHandles.clear();
 	
@@ -174,6 +178,14 @@ void RawInput::RefreshDevices()
 	// Device handle 0
 	rawInputState.keyboardHandles.push_back(0);
 	rawInputState.mouseHandles.push_back(0);
+
+	if (oldKbCount != rawInputState.keyboardHandles.size() || oldMouseCount != rawInputState.mouseHandles.size())
+	{
+		rawInputState.currentKeyboardIndex = -1;
+		rawInputState.currentMouseIndex = -1;
+		rawInputState.currentMouseHandle = INVALID_HANDLE_VALUE;
+		rawInputState.currentKeyboardHandle = INVALID_HANDLE_VALUE;
+	}
 }
 
 void RawInput::AddWindowToForward(HWND hwnd)

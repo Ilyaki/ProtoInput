@@ -127,7 +127,7 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 						if (Thread32First(h, &te)) {
 							do {
 								if (te.th32OwnerProcessID == GetCurrentProcessId() &&
-									te.th32OwnerProcessID != Proto::GuiThreadID &&
+									(std::find(ACLThreads.begin(), ACLThreads.end(), te.th32OwnerProcessID) == ACLThreads.end()) &&
 									te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) +
 									sizeof(te.th32OwnerProcessID))
 								{

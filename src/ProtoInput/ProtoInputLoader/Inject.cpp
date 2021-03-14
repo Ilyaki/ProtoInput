@@ -12,6 +12,7 @@
 #include "pipeinclude.h"
 
 #include "easyhook.h"
+#include <filesystem>
 
 extern "C" NTSTATUS __declspec(dllexport) __stdcall HookCompleteInjection(void* InInfo)
 {

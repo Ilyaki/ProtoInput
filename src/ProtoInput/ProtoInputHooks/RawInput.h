@@ -9,8 +9,8 @@ namespace Proto
 
 struct RawInputState
 {
-	void* currentKeyboardHandle { nullptr };
-	void* currentMouseHandle { nullptr };
+	void* currentKeyboardHandle { INVALID_HANDLE_VALUE };
+	void* currentMouseHandle { INVALID_HANDLE_VALUE };
 
 	size_t currentKeyboardIndex = -1;
 	size_t currentMouseIndex = -1;
@@ -24,7 +24,6 @@ const size_t RawInputBufferSize = 1024;
 class RawInput
 {
 private:
-	static void RefreshDevices();
 	static std::bitset<9> usages;
 	static std::vector<HWND> forwardingWindows;
 
@@ -39,7 +38,8 @@ public:
 	static std::vector<RAWINPUT> rawinputs;
 	static RAWINPUT inputBuffer[RawInputBufferSize];
 
-
+	static void RefreshDevices();
+		
 	static void AddWindowToForward(HWND hwnd);
 	static void SetUsageBitField(std::bitset<9> _usages);
 	static std::bitset<9> GetUsageBitField();

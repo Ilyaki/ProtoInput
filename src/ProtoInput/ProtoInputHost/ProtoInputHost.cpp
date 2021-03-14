@@ -23,8 +23,8 @@ int main()
 	std::wcout << L"Folder name = '" << folderpath << "'" <<  std::endl;
 
 
-	constexpr bool runtime = false;
-	constexpr bool hookSelf = false;
+	constexpr bool runtime = true;
+	constexpr bool hookSelf = true;
 
 	if (runtime)
 	{
@@ -57,11 +57,14 @@ int main()
 	else
 	{
 		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		
 		auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
-		const auto instanceHandle = EasyHookInjectStartup(
-			path, L"", 0, folderpath.c_str(), &pid);
+
+		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
+				path, L"", 0, folderpath.c_str(), &pid);
 		
+
 		InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);

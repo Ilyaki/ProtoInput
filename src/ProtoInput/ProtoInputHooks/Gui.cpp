@@ -99,7 +99,9 @@ void RawInputMenu()
                 {
                     RawInput::rawInputState.currentKeyboardIndex = n;
                     RawInput::rawInputState.currentKeyboardHandle = RawInput::rawInputState.keyboardHandles[n];
-                    std::cout << "Selected keyboard raw input handle " << RawInput::rawInputState.currentKeyboardHandle << std::endl;
+
+                    printf("Selected raw input keyboard handle %d = 0x%X\n", 
+                           RawInput::rawInputState.currentKeyboardHandle, RawInput::rawInputState.currentKeyboardHandle);
                 }
             }
             ImGui::TreePop();
@@ -115,12 +117,20 @@ void RawInputMenu()
                 {
                     RawInput::rawInputState.currentMouseIndex = n;
                     RawInput::rawInputState.currentMouseHandle = RawInput::rawInputState.mouseHandles[n];
-                    std::cout << "Selected mouse raw input handle " << RawInput::rawInputState.currentMouseHandle << std::endl;
+                    
+                    printf("Selected raw input mouse handle %d = 0x%X\n",
+                           RawInput::rawInputState.currentMouseHandle, RawInput::rawInputState.currentMouseHandle);
                 }
             }
             ImGui::TreePop();
         }
 
+    	if (ImGui::Button("Refresh devices"))
+    	{
+            RawInput::RefreshDevices();
+    	}
+
+    	//TODO: remove
         if (ImGui::Button("Open message box"))
         {
             std::cout << "Open message box button thread = " << GetCurrentThreadId() << std::endl;

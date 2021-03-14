@@ -1,5 +1,6 @@
 #pragma once
 #include <easyhook.h>
+#include <vector>
 
 namespace Proto
 {
@@ -9,6 +10,8 @@ struct HookInfo
 	bool hasHook = false;
 	HOOK_TRACE_INFO info;
 };
+
+extern std::vector<unsigned long> ACLThreads;
 
 void AddThreadToACL(unsigned long threadID);
 
