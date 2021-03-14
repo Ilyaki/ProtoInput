@@ -51,6 +51,12 @@
     <ClInclude Include="pipeinclude\pipeinclude.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="RegisterRawInputHook.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetRawInputDataHook.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -111,6 +117,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PipeCommunication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisterRawInputHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GetRawInputDataHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

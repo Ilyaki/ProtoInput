@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Windows.h"
 #include "HookManager.h"
+#include <string>
 
 namespace Proto
 {
@@ -93,7 +94,7 @@ void RawInputMenu()
             for (unsigned int n = 0; n < RawInput::rawInputState.keyboardHandles.size(); n++)
             {
                 char buf[32];
-                sprintf(buf, "Handle %lld", (intptr_t)RawInput::rawInputState.keyboardHandles[n]);
+                sprintf(buf, "Handle %d", (intptr_t)RawInput::rawInputState.keyboardHandles[n]);
                 if (ImGui::Selectable(buf, RawInput::rawInputState.currentKeyboardIndex == n))
                 {
                     RawInput::rawInputState.currentKeyboardIndex = n;
@@ -109,7 +110,7 @@ void RawInputMenu()
             for (unsigned int n = 0; n < RawInput::rawInputState.mouseHandles.size(); n++)
             {
                 char buf[32];
-                sprintf(buf, "Handle %lld", (intptr_t)RawInput::rawInputState.mouseHandles[n]);
+                sprintf(buf, "Handle %d", (intptr_t)RawInput::rawInputState.mouseHandles[n]);
                 if (ImGui::Selectable(buf, RawInput::rawInputState.currentMouseIndex == n))
                 {
                     RawInput::rawInputState.currentMouseIndex = n;

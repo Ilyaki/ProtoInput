@@ -5,7 +5,9 @@ using ProtoInstanceHandle  = unsigned int;
 
 enum ProtoHookIDs : unsigned int
 {
-	MessageBoxHookID = 0
+	MessageBoxHookID = 0,
+	RegisterRawInputHookID,
+	GetRawInputDataHookID
 };
 
 //TODO: add some documentation to the header file

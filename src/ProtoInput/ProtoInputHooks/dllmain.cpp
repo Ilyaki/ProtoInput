@@ -37,7 +37,7 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     std::cout << "Hooks DLL loaded\n";
 
 	// Useful to add a pause if we need to attach a debugger
-    // MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
+    MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
 
     Proto::AddThreadToACL(GetCurrentThreadId());
 	

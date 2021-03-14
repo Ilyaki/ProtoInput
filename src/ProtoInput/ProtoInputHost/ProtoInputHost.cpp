@@ -34,12 +34,17 @@ int main()
 			selectedPid = GetCurrentProcessId();
 		else
 		{
-			auto pids = blackbone::Process::EnumByName(L"notepad.exe");
+			auto pids = blackbone::Process::EnumByName(L"osu!.exe");
 			for (const auto& pid : pids)
 			{
 				std::cout << "Selected pid " << pid << std::endl;
 
 				selectedPid = pid;
+				
+				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
+				// InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
+				// InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
+				// InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
 			}
 		}
 
@@ -51,11 +56,15 @@ int main()
 	}
 	else
 	{
+		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 		const auto instanceHandle = EasyHookInjectStartup(
-			LR"(C:\WINDOWS\system32\notepad.exe)", L"", 0, folderpath.c_str(), &pid);
+			path, L"", 0, folderpath.c_str(), &pid);
 		
 		InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
+		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
+		InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
 		WakeUpProcess(instanceHandle);
 	}
 
