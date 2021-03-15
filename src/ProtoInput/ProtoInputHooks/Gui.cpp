@@ -7,6 +7,7 @@
 #include "HookManager.h"
 #include <algorithm>
 #include "MessageFilterHook.h"
+#include "MessageList.h"
 
 namespace Proto
 {
@@ -187,7 +188,7 @@ void ControlsMenu()
 void RenderImgui()
 {
    // ImGui::ShowDemoWindow();
-   //  return;
+   // return;
 	
     const auto displaySize = ImGui::GetIO().DisplaySize;
 	
@@ -245,7 +246,7 @@ void RenderImgui()
                     }
                     if (ImGui::BeginTabItem("Block"))
                     {
-                        ImGui::Text("Message blocker");
+                        MessageList::ShowUI();
                         ImGui::EndTabItem();
                     }
                     ImGui::EndTabBar();

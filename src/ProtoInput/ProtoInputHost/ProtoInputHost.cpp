@@ -82,8 +82,8 @@ int main()
 	}
 	else
 	{
-		auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-		// auto path = LR"(I:\Software\osu\osu!.exe)";
+		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 
 		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(

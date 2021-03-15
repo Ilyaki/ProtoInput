@@ -200,6 +200,7 @@
     <ClInclude Include="MessageBoxHook.h" />
     <ClInclude Include="MessageFilter.h" />
     <ClInclude Include="MessageFilterHook.h" />
+    <ClInclude Include="MessageList.h" />
     <ClInclude Include="PipeCommunication.h" />
     <ClInclude Include="pipeinclude\pipeinclude.h" />
     <ClInclude Include="RawInput.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="MenuShortcut.cpp" />
     <ClCompile Include="MessageBoxHook.cpp" />
     <ClCompile Include="MessageFilterHook.cpp" />
+    <ClCompile Include="MessageList.cpp" />
     <ClCompile Include="PipeCommunication.cpp" />
     <ClCompile Include="RawInput.cpp" />
     <ClCompile Include="RegisterRawInputHook.cpp" />

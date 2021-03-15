@@ -2,6 +2,7 @@
 #include "MessageFilterHook.h"
 #include "MessageFilter.h"
 #include <imgui.h>
+#include "MessageList.h"
 
 namespace Proto
 {
@@ -26,7 +27,8 @@ bool MessageFilterAllow(unsigned int message, unsigned int lparam, unsigned int 
 
 inline BOOL FilterMessage(MSG* lpMsg)
 {
-	if (!MessageFilterAllow<PROTO_MESSAGE_FILTERS>(lpMsg->message, lpMsg->lParam, lpMsg->wParam, (intptr_t)lpMsg->hwnd))
+	if (!MessageFilterAllow<PROTO_MESSAGE_FILTERS>(lpMsg->message, lpMsg->lParam, lpMsg->wParam, (intptr_t)lpMsg->hwnd)
+		|| MessageList::IsBlocked(lpMsg->message))
 	{
 		//Massive performance benefits for returning a successful WM_NULL compared to causing an error in the application.
 		memset(lpMsg, 0, sizeof(MSG));
