@@ -195,6 +195,7 @@
     <ClInclude Include="Hook.h" />
     <ClInclude Include="HookManager.h" />
     <ClInclude Include="InstallHooks.h" />
+    <ClInclude Include="KarlaFont.h" />
     <ClInclude Include="MenuShortcut.h" />
     <ClInclude Include="MessageBoxHook.h" />
     <ClInclude Include="PipeCommunication.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="GuiImpl.cpp" />
     <ClCompile Include="HookInstaller.cpp" />
     <ClCompile Include="HookManager.cpp" />
+    <ClCompile Include="KarlaFont.cpp" />
     <ClCompile Include="MenuShortcut.cpp" />
     <ClCompile Include="MessageBoxHook.cpp" />
     <ClCompile Include="PipeCommunication.cpp" />

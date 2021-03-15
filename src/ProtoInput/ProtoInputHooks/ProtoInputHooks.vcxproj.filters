@@ -57,6 +57,9 @@
     <ClInclude Include="GetRawInputDataHook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="KarlaFont.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GetRawInputDataHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KarlaFont.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
