@@ -11,7 +11,7 @@
 
 #include "Gui.h"
 #include <TlHelp32.h>
-
+#include "MessageFilterHook.h"
 
 
 namespace Proto
@@ -110,6 +110,14 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 						HookManager::InstallHook(body->hookID);
 					else
 						HookManager::UninstallHook(body->hookID);
+
+					break;
+				}
+			case ProtoPipe::PipeMessageType::SetupMessageFilter:
+				{
+					const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupMessageFilter*>(messageBuffer);
+					printf("Setup message filter message: filter ID %d, enable = %d\n", body->filterID, body->enable);
+					MessageFilterHook::SetFilterEnabled(body->filterID, body->enable);
 
 					break;
 				}

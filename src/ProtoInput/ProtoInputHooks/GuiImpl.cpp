@@ -11,8 +11,7 @@
 #include <GL/wglew.h>
 #include <backends/imgui_impl_win32.h>
 #include <backends/imgui_impl_opengl3.h>
-#include "RawInput.h"
-#include "KarlaFont.h"
+#include "RawInput.h"\
 
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;

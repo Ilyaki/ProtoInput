@@ -219,6 +219,49 @@ extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instance
 	InstallUninstallHook(instanceHandle, hookID, false);
 }
 
+void EnableDisableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID, bool enable)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		if (!instance.clientConnected)
+		{
+			//FIXME: This NEEDs a timeout
+			std::cout << "Starting named pipe wait" << std::endl;
+
+			if (ConnectNamedPipe(instance.pipeHandle, NULL))
+			{
+				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
+				instance.clientConnected = true;
+			}
+			else
+			{
+				std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
+				return;
+			}
+		}
+
+		ProtoPipe::PipeMessageSetupMessageFilter message
+		{
+			filterID,
+			enable
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupMessageFilter, &message);
+	}
+}
+
+extern "C" __declspec(dllexport) void EnableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID)
+{
+	EnableDisableMessageFilter(instanceHandle, filterID, true);
+}
+
+extern "C" __declspec(dllexport) void DisableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID)
+{
+	EnableDisableMessageFilter(instanceHandle, filterID, false);
+}
+
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle)
 {
 	ProtoPipe::PipeMessageWakeUpProcess message

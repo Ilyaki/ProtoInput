@@ -195,9 +195,10 @@
     <ClInclude Include="Hook.h" />
     <ClInclude Include="HookManager.h" />
     <ClInclude Include="InstallHooks.h" />
-    <ClInclude Include="KarlaFont.h" />
     <ClInclude Include="MenuShortcut.h" />
     <ClInclude Include="MessageBoxHook.h" />
+    <ClInclude Include="MessageFilter.h" />
+    <ClInclude Include="MessageFilterHook.h" />
     <ClInclude Include="PipeCommunication.h" />
     <ClInclude Include="pipeinclude\pipeinclude.h" />
     <ClInclude Include="RawInput.h" />
@@ -220,13 +221,12 @@
     <ClCompile Include="GuiImpl.cpp" />
     <ClCompile Include="HookInstaller.cpp" />
     <ClCompile Include="HookManager.cpp" />
-    <ClCompile Include="KarlaFont.cpp" />
     <ClCompile Include="MenuShortcut.cpp" />
     <ClCompile Include="MessageBoxHook.cpp" />
+    <ClCompile Include="MessageFilterHook.cpp" />
     <ClCompile Include="PipeCommunication.cpp" />
     <ClCompile Include="RawInput.cpp" />
     <ClCompile Include="RegisterRawInputHook.cpp" />
-    <ClCompile Include="TempTestHooks.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

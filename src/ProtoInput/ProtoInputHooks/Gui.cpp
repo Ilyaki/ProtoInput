@@ -6,6 +6,7 @@
 #include "Windows.h"
 #include "HookManager.h"
 #include <algorithm>
+#include "MessageFilterHook.h"
 
 namespace Proto
 {
@@ -185,8 +186,8 @@ void ControlsMenu()
 
 void RenderImgui()
 {
-    // ImGui::ShowDemoWindow();
-    // return;
+   // ImGui::ShowDemoWindow();
+   //  return;
 	
     const auto displaySize = ImGui::GetIO().DisplaySize;
 	
@@ -210,10 +211,50 @@ void RenderImgui()
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(displaySize.x / 2, 0.0f), ImGuiCond_Once);
 
-        ImGui::Begin("Hooks", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin("Hooks/Filter", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
         const auto hooksWindowSize = ImVec2(ImGui::GetWindowSize().x, mainWindowSize.y);
         ImGui::SetWindowSize(hooksWindowSize);
-        HooksMenu();
+    	
+        if (ImGui::BeginTabBar("Tabs"))
+        {
+            if (ImGui::BeginTabItem("Hooks"))
+            {
+                HooksMenu();
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Message filter"))
+            {
+                if (ImGui::BeginTabBar("Filter tabs"))
+                {
+                    if (ImGui::BeginTabItem("Modify"))
+                    {
+                        if (!HookManager::IsInstalled(ProtoHookIDs::MessageFilterHookID))
+                        {
+                            ImGui::PushID(1337);
+                            ImGui::PushStyleColor(ImGuiCol_Text,
+                                                  (ImVec4)ImColor::HSV(35.0f/255.0f, 0.9f, 0.9f)
+                            );
+                            ImGui::Text("Warning: Message Filter hook is disabled.\nMessage filtering/blocking will not work!");
+                            ImGui::PopStyleColor(1);
+                            ImGui::PopID();
+                        }
+                    	
+                        MessageFilterHook::FilterGui();
+
+                        ImGui::EndTabItem();
+                    }
+                    if (ImGui::BeginTabItem("Block"))
+                    {
+                        ImGui::Text("Message blocker");
+                        ImGui::EndTabItem();
+                    }
+                    ImGui::EndTabBar();
+                }
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
+        }
+    	    	
         ImGui::End();
 
 

@@ -7,7 +7,13 @@ enum ProtoHookIDs : unsigned int
 {
 	MessageBoxHookID = 0,
 	RegisterRawInputHookID,
-	GetRawInputDataHookID
+	GetRawInputDataHookID,
+	MessageFilterHookID
+};
+
+enum ProtoMessageFilterIDs : unsigned int
+{
+	TestFilterID = 0,
 };
 
 //TODO: add some documentation to the header file
@@ -23,5 +29,9 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 
 extern "C" __declspec(dllexport) void InstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
 extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
+
+extern "C" __declspec(dllexport) void EnableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID);
+extern "C" __declspec(dllexport) void DisableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID);
+
 
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle);

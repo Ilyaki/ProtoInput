@@ -93,9 +93,13 @@ int main()
 		InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
+		InstallHook(instanceHandle, ProtoHookIDs::MessageFilterHookID);
+
+		EnableMessageFilter(instanceHandle, ProtoMessageFilterIDs::TestFilterID);
+		
 		WakeUpProcess(instanceHandle);
 	}
 
 	// Don't want to end the pipe immediately
-	MessageBoxW(NULL, L"Close to exit program", L"", MB_OK);
+	MessageBoxW(NULL, L"Close to exit ProtoInputHost", L"", MB_OK);
 }

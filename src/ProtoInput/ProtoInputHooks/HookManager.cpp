@@ -1,6 +1,7 @@
 #include "HookManager.h"
 #include "RegisterRawInputHook.h"
 #include "GetRawInputDataHook.h"
+#include "MessageFilterHook.h"
 
 namespace Proto
 {
@@ -12,6 +13,7 @@ HookManager::HookManager()
 	AddHook<MessageBoxHook>(ProtoHookIDs::MessageBoxHookID);
 	AddHook<RegisterRawInputHook>(ProtoHookIDs::RegisterRawInputHookID);
 	AddHook<GetRawInputDataHook>(ProtoHookIDs::GetRawInputDataHookID);
+	AddHook<MessageFilterHook>(ProtoHookIDs::MessageFilterHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

@@ -299,16 +299,17 @@ void RawInput::UnregisterGameFromRawInput()
 void RawInput::RegisterProtoForRawInput()
 {
 	int tryCount = 0;
-	
+
+	//TODO: use a mutex or something (this holds up the UI from updating). (Although it isn't really that important)
 	do
 	{
 		if (rawInputHwnd == nullptr)
 		{
-			printf("Trying to register for raw input, but window hasn't opened yet. Waiting 2s\n");
-			Sleep(2000);
+			printf("Trying to register for raw input, but window hasn't opened yet. Waiting 0.5s\n");
+			Sleep(500);
 		}
 	}
-	while (tryCount++ < 5);
+	while (tryCount++ < 20);
 
 	if (rawInputHwnd == nullptr)
 	{

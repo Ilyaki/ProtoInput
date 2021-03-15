@@ -57,7 +57,10 @@
     <ClInclude Include="GetRawInputDataHook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="KarlaFont.h">
+    <ClInclude Include="MessageFilter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageFilterHook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,9 +110,6 @@
     <ClCompile Include="Gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TempTestHooks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MessageBoxHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -128,7 +128,7 @@
     <ClCompile Include="GetRawInputDataHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KarlaFont.cpp">
+    <ClCompile Include="MessageFilterHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
