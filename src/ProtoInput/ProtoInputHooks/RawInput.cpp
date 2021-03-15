@@ -45,8 +45,8 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	
 	if (forwardRawInput)
 	{
-		if ((rawinput.header.dwType == RIM_TYPEMOUSE && usages[HID_USAGE_GENERIC_MOUSE] && rawinput.header.hDevice == rawInputState.currentMouseHandle) ||
-			(rawinput.header.dwType == RIM_TYPEKEYBOARD && usages[HID_USAGE_GENERIC_KEYBOARD] && rawinput.header.hDevice == rawInputState.currentKeyboardHandle))
+		if ((rawinput.header.dwType == RIM_TYPEMOUSE && usages[HID_USAGE_GENERIC_MOUSE] && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end()) ||
+			(rawinput.header.dwType == RIM_TYPEKEYBOARD && usages[HID_USAGE_GENERIC_KEYBOARD] && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end()))
 		{
 			for (const auto& hwnd : forwardingWindows)
 			{
@@ -146,8 +146,6 @@ DWORD WINAPI RawInputWindowThread(LPVOID lpParameter)
 
 void RawInput::RefreshDevices()
 {
-	//TODO: add a refresh button in the UI
-	
 	unsigned int numDevices = 0;
 	GetRawInputDeviceList(NULL, &numDevices, sizeof(RAWINPUTDEVICELIST));
 	auto deviceArray = std::make_unique<RAWINPUTDEVICELIST[]>(numDevices);
@@ -180,12 +178,45 @@ void RawInput::RefreshDevices()
 	rawInputState.keyboardHandles.push_back(0);
 	rawInputState.mouseHandles.push_back(0);
 
-	if (oldKbCount != rawInputState.keyboardHandles.size() || oldMouseCount != rawInputState.mouseHandles.size())
+	// Add the new devices to the deselected list
+	for (const auto mouse : rawInputState.mouseHandles)
 	{
-		rawInputState.currentKeyboardIndex = -1;
-		rawInputState.currentMouseIndex = -1;
-		rawInputState.currentMouseHandle = INVALID_HANDLE_VALUE;
-		rawInputState.currentKeyboardHandle = INVALID_HANDLE_VALUE;
+		if (std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), mouse) == rawInputState.selectedMouseHandles.end()
+			&& std::find(rawInputState.deselectedMouseHandles.begin(), rawInputState.deselectedMouseHandles.end(), mouse) == rawInputState.deselectedMouseHandles.end())
+		{
+			rawInputState.deselectedMouseHandles.push_back(mouse);
+		}
+	}
+	for (const auto keyboard : rawInputState.keyboardHandles)
+	{
+		if (std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), keyboard) == rawInputState.selectedKeyboardHandles.end()
+			&& std::find(rawInputState.deselectedKeyboardHandles.begin(), rawInputState.deselectedKeyboardHandles.end(), keyboard) == rawInputState.deselectedKeyboardHandles.end())
+		{
+			rawInputState.deselectedKeyboardHandles.push_back(keyboard);
+		}
+	}
+
+	// If any devices are unplugged, remove them
+	for (int i = rawInputState.selectedMouseHandles.size() - 1; i >= 0; --i)
+	{
+		if (std::find(rawInputState.mouseHandles.begin(), rawInputState.mouseHandles.end(), rawInputState.selectedMouseHandles[i]) == rawInputState.mouseHandles.end())
+			rawInputState.selectedMouseHandles.erase(rawInputState.selectedMouseHandles.begin() + i);
+	}
+	for (int i = rawInputState.deselectedMouseHandles.size() - 1; i >= 0; --i)
+	{
+		if (std::find(rawInputState.mouseHandles.begin(), rawInputState.mouseHandles.end(), rawInputState.deselectedMouseHandles[i]) == rawInputState.mouseHandles.end())
+			rawInputState.deselectedMouseHandles.erase(rawInputState.deselectedMouseHandles.begin() + i);
+	}
+	
+	for (int i = rawInputState.selectedKeyboardHandles.size() - 1; i >= 0; --i)
+	{
+		if (std::find(rawInputState.keyboardHandles.begin(), rawInputState.keyboardHandles.end(), rawInputState.selectedKeyboardHandles[i]) == rawInputState.keyboardHandles.end())
+			rawInputState.selectedMouseHandles.erase(rawInputState.selectedMouseHandles.begin() + i);
+	}
+	for (int i = rawInputState.deselectedKeyboardHandles.size() - 1; i >= 0; --i)
+	{
+		if (std::find(rawInputState.keyboardHandles.begin(), rawInputState.keyboardHandles.end(), rawInputState.deselectedKeyboardHandles[i]) == rawInputState.keyboardHandles.end())
+			rawInputState.deselectedKeyboardHandles.erase(rawInputState.deselectedKeyboardHandles.begin() + i);
 	}
 }
 

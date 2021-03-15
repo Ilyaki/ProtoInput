@@ -5,9 +5,63 @@
 #include <iostream>
 #include "Windows.h"
 #include "HookManager.h"
+#include <algorithm>
 
 namespace Proto
 {
+
+static void HelpMarker(const char* desc)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
+template<typename T>
+void HandleSelectableDualList(std::vector<T>& selected, std::vector<T>& deselected)
+{
+    std::sort(selected.begin(), selected.end());
+    std::sort(deselected.begin(), deselected.end());
+	
+    std::vector<T> toAddToB{};
+    std::vector<std::vector<T>::const_iterator> removeA{};
+    std::vector<std::vector<T>::const_iterator> removeB{};
+
+    for (size_t i = 0; i < selected.size(); ++i)
+    {
+        char buf[32];
+        sprintf(buf, "Handle %d", (intptr_t)selected[i]);
+        if (ImGui::Selectable(buf, true))
+        {
+            toAddToB.push_back(selected[i]);
+            removeA.push_back(selected.begin() + i);
+        }
+    }
+	
+    for (size_t i = 0; i < deselected.size(); ++i)
+    {
+        char buf[32];
+        sprintf(buf, "Handle %d", (intptr_t)deselected[i]);
+        if (ImGui::Selectable(buf, false))
+        {
+            selected.push_back(deselected[i]);
+            removeB.push_back(deselected.begin() + i);
+        }
+    }
+
+    for (const auto x : toAddToB)
+        deselected.push_back(x);
+    for (const auto x : removeA)
+        selected.erase(x);
+    for (const auto x : removeB)
+        deselected.erase(x);
+}
 
 void HooksMenu()
 {
@@ -85,39 +139,17 @@ void HooksMenu()
 
 void RawInputMenu()
 {
-    if (ImGui::TreeNode("Keyboard Raw Input Handle"))
+    if (ImGui::TreeNode("Mouse Raw Input Handle"))
     {
-        for (unsigned int n = 0; n < RawInput::rawInputState.keyboardHandles.size(); n++)
-        {
-            char buf[32];
-            sprintf(buf, "Handle %d", (intptr_t)RawInput::rawInputState.keyboardHandles[n]);
-            if (ImGui::Selectable(buf, RawInput::rawInputState.currentKeyboardIndex == n))
-            {
-                RawInput::rawInputState.currentKeyboardIndex = n;
-                RawInput::rawInputState.currentKeyboardHandle = RawInput::rawInputState.keyboardHandles[n];
-
-                printf("Selected raw input keyboard handle %d = 0x%X\n", 
-                       RawInput::rawInputState.currentKeyboardHandle, RawInput::rawInputState.currentKeyboardHandle);
-            }
-        }
+        HandleSelectableDualList(RawInput::rawInputState.selectedMouseHandles, RawInput::rawInputState.deselectedMouseHandles);
+    	
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Mouse Raw Input Handle"))
+    if (ImGui::TreeNode("Keyboard Raw Input Handle"))
     {
-        for (unsigned int n = 0; n < RawInput::rawInputState.mouseHandles.size(); n++)
-        {
-            char buf[32];
-            sprintf(buf, "Handle %d", (intptr_t)RawInput::rawInputState.mouseHandles[n]);
-            if (ImGui::Selectable(buf, RawInput::rawInputState.currentMouseIndex == n))
-            {
-                RawInput::rawInputState.currentMouseIndex = n;
-                RawInput::rawInputState.currentMouseHandle = RawInput::rawInputState.mouseHandles[n];
-                
-                printf("Selected raw input mouse handle %d = 0x%X\n",
-                       RawInput::rawInputState.currentMouseHandle, RawInput::rawInputState.currentMouseHandle);
-            }
-        }
+        HandleSelectableDualList(RawInput::rawInputState.selectedKeyboardHandles, RawInput::rawInputState.deselectedKeyboardHandles);
+
         ImGui::TreePop();
     }
 
@@ -129,6 +161,9 @@ void RawInputMenu()
 
 void RenderImgui()
 {
+    // ImGui::ShowDemoWindow();
+    // return;
+	
     const auto displaySize = ImGui::GetIO().DisplaySize;
 	
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
