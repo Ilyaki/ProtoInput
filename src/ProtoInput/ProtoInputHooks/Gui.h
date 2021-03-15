@@ -9,4 +9,7 @@ int ShowGuiImpl();
 
 void RenderImgui();
 
+void ToggleWindow();
+void SetWindowVisible(bool visible);
+
 }

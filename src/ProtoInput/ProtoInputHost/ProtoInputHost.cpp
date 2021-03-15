@@ -49,7 +49,7 @@ int main()
 	if (CheckBuildTimings(folderpath))
 		return 0;
 	
-	constexpr bool runtime = true;
+	constexpr bool runtime = false;
 	constexpr bool hookSelf = true;
 
 	if (runtime)

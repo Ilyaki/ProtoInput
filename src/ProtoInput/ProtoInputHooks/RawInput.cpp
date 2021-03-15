@@ -40,6 +40,33 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	UINT cbSize;
 	GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER));
 	GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER));
+
+	if (rawinput.header.dwType == RIM_TYPEKEYBOARD)
+	{
+		static bool keyDown = false;
+		if (rawinput.data.keyboard.Flags == RI_KEY_MAKE && !keyDown)
+		{
+			keyDown = true;
+
+			//TODO: this should be passed in by pipe as a state
+			constexpr int index = 1;
+						
+			// Key just pressed
+			const auto vkey = rawinput.data.keyboard.VKey;
+			if (index >= 1 && index <= 9 && (vkey == 0x30 + index) 
+				&& (GetAsyncKeyState(VK_RCONTROL) & ~1) != 0
+				&& (GetAsyncKeyState(VK_RMENU) & ~1) != 0
+				)
+			{
+				Proto::ToggleWindow();
+			}			
+		}
+
+		if (rawinput.data.keyboard.Flags == RI_KEY_BREAK && keyDown)
+		{
+			keyDown = false;
+		}
+	}
 	
 	//TODO: handle forwarding HID input
 	

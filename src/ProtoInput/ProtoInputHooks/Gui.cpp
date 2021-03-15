@@ -159,6 +159,28 @@ void RawInputMenu()
     }
 }
 
+void ControlsMenu()
+{
+	if (ImGui::Button("Hide GUI"))
+	{
+        SetWindowVisible(false);
+	}
+	
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Press right control + right alt + 1/2/3/4/... to open the GUI for instance 1/2/3/4/...");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }	
+
+	if (ImGui::Button("Toggle console"))
+	{
+		//TODO: toggle console button
+	}
+}
+
 void RenderImgui()
 {
     // ImGui::ShowDemoWindow();
@@ -202,7 +224,12 @@ void RenderImgui()
         ImGui::SetWindowSize(otherWindowSize);
         const auto otherWindowPos = ImGui::GetWindowPos();
 
-        if (ImGui::CollapsingHeader("Raw Input"))
+        if (ImGui::CollapsingHeader("Controls", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ControlsMenu();
+        }
+    	
+        if (ImGui::CollapsingHeader("Raw Input", ImGuiTreeNodeFlags_DefaultOpen))
         {
             RawInputMenu();
         }

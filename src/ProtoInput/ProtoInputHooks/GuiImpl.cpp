@@ -114,6 +114,16 @@ void SetupImGuiStyle(bool bStyleDark_, float alpha_)
     }
 }
 
+void Proto::ToggleWindow()
+{
+    SetWindowVisible(!IsWindowVisible(protoHwnd));
+}
+
+void Proto::SetWindowVisible(bool visible)
+{
+    ShowWindow(protoHwnd, visible ? SW_SHOW : SW_HIDE);
+}
+
 int Proto::ShowGuiImpl()
 {
     auto hInstance = GetModuleHandle(NULL);
@@ -165,6 +175,9 @@ int Proto::ShowGuiImpl()
     //Font
     // ImFont* font = io.Fonts->AddFontFromMemoryCompressedTTF(Karla_compressed_data, Karla_compressed_size, 18);
     // io.Fonts->Build();
+
+	//TODO: default to hidden
+    // ShowWindow(protoHwnd, SW_HIDE);
 	
     // Main loop
     MSG msg;
@@ -189,34 +202,37 @@ int Proto::ShowGuiImpl()
 
     	//TODO: implement a proper frame cap
         Sleep(15);
-    	
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
 
-        Proto::RenderImgui();
+        if (IsWindowVisible(protoHwnd))
+        {
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplWin32_NewFrame();
+            ImGui::NewFrame();
 
-        ImGui::Render();
+            Proto::RenderImgui();
 
-
-    	
-        // wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+            ImGui::Render();
 
 
-    	
-        glViewport(0, 0, g_display_w, g_display_h);                 //Display Size got from Resize Command
-        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+            // wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
 
 
-    	
-        // wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+
+            glViewport(0, 0, g_display_w, g_display_h);                 //Display Size got from Resize Command
+            glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+            glClear(GL_COLOR_BUFFER_BIT);
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-    	
-        SwapBuffers(g_HDCDeviceContext);
+
+            // wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
+
+
+
+            SwapBuffers(g_HDCDeviceContext);
+        }
 
     }
 
