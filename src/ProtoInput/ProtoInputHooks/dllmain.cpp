@@ -28,11 +28,12 @@ DWORD WINAPI GuiThread(LPVOID lpParameter)
 }
 
 DWORD WINAPI StartThread(LPVOID lpParameter)
-{	
+{
     AllocConsole();
     FILE* f = new FILE();
     freopen_s(&f, "CONOUT$", "w", stdout);
     freopen_s(&f, "CONOUT$", "w", stderr);
+    Proto::ConsoleHwnd = (intptr_t)FindWindowW(L"ConsoleWindowClass", NULL);
     
     std::cout << "Hooks DLL loaded\n";
 

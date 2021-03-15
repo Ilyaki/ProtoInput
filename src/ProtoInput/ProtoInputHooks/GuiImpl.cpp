@@ -124,6 +124,16 @@ void Proto::SetWindowVisible(bool visible)
     ShowWindow(protoHwnd, visible ? SW_SHOW : SW_HIDE);
 }
 
+void Proto::ToggleConsole()
+{
+    SetConsoleVisible(!IsWindowVisible((HWND)ConsoleHwnd));
+}
+
+void Proto::SetConsoleVisible(bool visible)
+{
+    ShowWindow((HWND)ConsoleHwnd, visible ? SW_SHOW : SW_HIDE);
+}
+
 int Proto::ShowGuiImpl()
 {
     auto hInstance = GetModuleHandle(NULL);
@@ -177,7 +187,8 @@ int Proto::ShowGuiImpl()
     // io.Fonts->Build();
 
 	//TODO: default to hidden
-    // ShowWindow(protoHwnd, SW_HIDE);
+    // SetWindowVisible(false);
+    // SetConsoleVisible(false);
 	
     // Main loop
     MSG msg;

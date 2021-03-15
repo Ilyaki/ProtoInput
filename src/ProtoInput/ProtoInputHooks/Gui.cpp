@@ -10,6 +10,8 @@
 namespace Proto
 {
 
+intptr_t ConsoleHwnd;
+
 static void HelpMarker(const char* desc)
 {
     ImGui::TextDisabled("(?)");
@@ -177,7 +179,7 @@ void ControlsMenu()
 
 	if (ImGui::Button("Toggle console"))
 	{
-		//TODO: toggle console button
+        ToggleConsole();
 	}
 }
 
