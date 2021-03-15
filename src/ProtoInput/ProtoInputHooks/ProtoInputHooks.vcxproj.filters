@@ -63,6 +63,9 @@
     <ClInclude Include="MessageFilterHook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FontData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

@@ -11,7 +11,8 @@
 #include <GL/wglew.h>
 #include <backends/imgui_impl_win32.h>
 #include <backends/imgui_impl_opengl3.h>
-#include "RawInput.h"\
+#include "RawInput.h"
+#include "FontData.h"
 
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;
@@ -182,8 +183,9 @@ int Proto::ShowGuiImpl()
     wglMakeCurrent(g_HDCDeviceContext, g_GLRenderContext);
 
     //Font
-    // ImFont* font = io.Fonts->AddFontFromMemoryCompressedTTF(Karla_compressed_data, Karla_compressed_size, 18);
-    // io.Fonts->Build();
+    ImFont* font = io.Fonts->AddFontFromMemoryCompressedTTF(Sweet16_compressed_data, Sweet16_compressed_size, 16);
+    io.Fonts->Build();
+
 
 	//TODO: default to hidden
     // SetWindowVisible(false);
