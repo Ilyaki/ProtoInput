@@ -7,11 +7,9 @@
 #include "pipeinclude/pipeinclude.h"
 #include <imgui.h>
 
-
-
-#include "Gui.h"
 #include <TlHelp32.h>
 #include "MessageFilterHook.h"
+#include "MessageList.h"
 
 
 namespace Proto
@@ -119,6 +117,21 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 					printf("Setup message filter message: filter ID %d, enable = %d\n", body->filterID, body->enable);
 					MessageFilterHook::SetFilterEnabled(body->filterID, body->enable);
 
+					break;
+				}
+			case ProtoPipe::PipeMessageType::SetupMessageBlock:
+				{
+					const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupMessageBlock*>(messageBuffer);
+					printf("Setup message block message: message ID %d, block = %d\n", body->message, body->block);
+					auto ptr = MessageList::GetBlocked(body->message);
+					if (ptr == nullptr)
+						fprintf(stderr, "Trying to set message block on message out of range: %d\n", body->message);
+					else
+					{
+						*ptr = body->block;
+						printf("Set message block to %s on message %d", body->block ? "enabled" : "disabled", body->message);
+					}
+					
 					break;
 				}
 			case ProtoPipe::PipeMessageType::WakeUpProcess:

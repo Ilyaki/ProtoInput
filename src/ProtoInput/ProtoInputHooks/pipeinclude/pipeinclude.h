@@ -9,7 +9,8 @@ enum class PipeMessageType
 {
 	SetupHook,
 	WakeUpProcess,
-	SetupMessageFilter
+	SetupMessageFilter,
+	SetupMessageBlock
 };
 
 struct PipeMessageHeader
@@ -28,6 +29,12 @@ struct PipeMessageSetupMessageFilter
 {
 	ProtoMessageFilterIDs filterID;
 	bool enable;
+};
+
+struct PipeMessageSetupMessageBlock
+{
+	unsigned int message;
+	bool block;
 };
 
 struct PipeMessageWakeUpProcess

@@ -82,8 +82,8 @@ int main()
 	}
 	else
 	{
-		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-		auto path = LR"(I:\Software\osu\osu!.exe)";
+		auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		// auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 
 		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
@@ -96,6 +96,9 @@ int main()
 		InstallHook(instanceHandle, ProtoHookIDs::MessageFilterHookID);
 
 		EnableMessageFilter(instanceHandle, ProtoMessageFilterIDs::TestFilterID);
+
+		EnableMessageBlock(instanceHandle, 0x00FF);
+
 		
 		WakeUpProcess(instanceHandle);
 	}

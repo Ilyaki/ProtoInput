@@ -262,6 +262,49 @@ extern "C" __declspec(dllexport) void DisableMessageFilter(ProtoInstanceHandle i
 	EnableDisableMessageFilter(instanceHandle, filterID, false);
 }
 
+void EnableDisableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int messageID, bool block)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		if (!instance.clientConnected)
+		{
+			//FIXME: This NEEDs a timeout
+			std::cout << "Starting named pipe wait" << std::endl;
+
+			if (ConnectNamedPipe(instance.pipeHandle, NULL))
+			{
+				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
+				instance.clientConnected = true;
+			}
+			else
+			{
+				std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
+				return;
+			}
+		}
+
+		ProtoPipe::PipeMessageSetupMessageBlock message
+		{
+			messageID,
+			block
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupMessageBlock, &message);
+	}
+}
+
+extern "C" __declspec(dllexport) void EnableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int messageID)
+{
+	EnableDisableMessageBlock(instanceHandle, messageID, true);
+}
+
+extern "C" __declspec(dllexport) void DisableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int messageID)
+{
+	EnableDisableMessageBlock(instanceHandle, messageID, false);
+}
+
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle)
 {
 	ProtoPipe::PipeMessageWakeUpProcess message

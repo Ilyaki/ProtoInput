@@ -33,5 +33,7 @@ extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instance
 extern "C" __declspec(dllexport) void EnableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID);
 extern "C" __declspec(dllexport) void DisableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessageFilterIDs filterID);
 
+extern "C" __declspec(dllexport) void EnableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int messageID);
+extern "C" __declspec(dllexport) void DisableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int messageID);
 
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle);
