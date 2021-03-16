@@ -1,4 +1,5 @@
 #pragma once
+#include <windows.h>
 #include <cstdint>
 
 namespace Proto
@@ -6,6 +7,7 @@ namespace Proto
 
 extern unsigned long GuiThreadID;
 extern intptr_t ConsoleHwnd;
+extern HWND ProtoGuiHwnd;
 
 int ShowGuiImpl();
 

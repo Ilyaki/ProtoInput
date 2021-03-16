@@ -8,10 +8,6 @@
 namespace Proto
 {
 
-//TODO: This is going to have problems with the EasyHook thread ACL since we are using multiple threads
-
-static HWND protoHwnd;
-
 std::vector<unsigned long> ACLThreads{};
 std::vector<HOOK_TRACE_INFO> trackedHooks{};
 
@@ -68,22 +64,6 @@ std::tuple<NTSTATUS, HookInfo> InstallHook(void* address, void* callback)
 	}
 	else
 	{
-		// If the threadId in the ACL is set to 0,
-		// then internally EasyHook uses GetCurrentThreadId()
-		// ULONG ACLEntries[2] = { 0, Proto::GuiThreadID };
-		//
-		// // Disable the hook for the provided threadIds, enable for all others
-		// const auto ACLres = LhSetExclusiveACL(ACLEntries, 2, &hHook);
-		//
-		// if (FAILED(ACLres))
-		// {
-		// 	std::cerr << "Error setting ACL, result = " << ACLres << ", error string: " << RtlGetLastErrorString() << std::endl;
-		// }
-		// else
-		// {
-		// 	std::cout << "Successfully installed hook, result: " << result << std::endl;
-		// }
-		
 		AddTrackedHook(hHook);
 	}
 
@@ -111,22 +91,6 @@ std::tuple<NTSTATUS, HookInfo> InstallNamedHook(const LPCWSTR moduleHandle, cons
 	}
 	else
 	{
-		// // If the threadId in the ACL is set to 0,
-		// // then internally EasyHook uses GetCurrentThreadId()
-		// ULONG ACLEntries[2] = { 0, Proto::GuiThreadID };
-		//
-		// // Disable the hook for the provided threadIds, enable for all others
-		// const auto ACLres = LhSetExclusiveACL(ACLEntries, 2, &hHook);
-		//
-		// if (FAILED(ACLres))
-		// {
-		// 	std::cerr << "Error setting ACL for " << name << " hook, ACLres = " << ACLres << ", error string: " << RtlGetLastErrorString() << std::endl;
-		// }
-		// else
-		// {
-		// 	std::cout << "Successfully installed " << name << " hook, in module: " << moduleHandle << ", result: " << result << std::endl;
-		// }
-		
 		AddTrackedHook(hHook);
 	}
 

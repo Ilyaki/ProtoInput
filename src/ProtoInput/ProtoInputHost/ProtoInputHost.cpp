@@ -97,8 +97,7 @@ int main()
 
 		EnableMessageFilter(instanceHandle, ProtoMessageFilterIDs::TestFilterID);
 
-		EnableMessageBlock(instanceHandle, 0x00FF);
-
+		// EnableMessageBlock(instanceHandle, 0x00FF); // WM_INPUT
 		
 		WakeUpProcess(instanceHandle);
 	}

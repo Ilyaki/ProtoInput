@@ -1,24 +1,36 @@
 #include "FocusHook.h"
 #include <imgui.h>
+#include "HwndSelector.h"
 
 namespace Proto
 {
 
 intptr_t* FocusHook::windowToReturn = nullptr;
 
+inline HWND GetHwnd()
+{
+	if (FocusHook::windowToReturn == nullptr)
+		return nullptr;
+	
+	if (*FocusHook::windowToReturn == 0)
+		HwndSelector::UpdateMainHwnd();
+
+	return (HWND)*FocusHook::windowToReturn;
+}
+
 HWND WINAPI Hook_GetForegroundWindow()
 {
-	return FocusHook::windowToReturn == nullptr ? nullptr : (HWND)*FocusHook::windowToReturn;
+	return GetHwnd();
 }
 
 HWND WINAPI Hook_WindowFromPoint(POINT Point)
 {
-	return FocusHook::windowToReturn == nullptr ? nullptr : (HWND)*FocusHook::windowToReturn;
+	return GetHwnd();
 }
 
 HWND WINAPI Hook_GetActiveWindow()
 {
-	return FocusHook::windowToReturn == nullptr ? nullptr : (HWND)*FocusHook::windowToReturn;
+	return GetHwnd();
 }
 
 BOOL WINAPI Hook_IsWindowEnabled(HWND hWnd)
@@ -28,12 +40,12 @@ BOOL WINAPI Hook_IsWindowEnabled(HWND hWnd)
 
 HWND WINAPI Hook_GetFocus()
 {
-	return FocusHook::windowToReturn == nullptr ? nullptr : (HWND)*FocusHook::windowToReturn;
+	return GetHwnd();
 }
 
 HWND WINAPI Hook_GetCapture()
 {
-	return FocusHook::windowToReturn == nullptr ? nullptr : (HWND)*FocusHook::windowToReturn;
+	return GetHwnd();
 }
 
 HWND WINAPI Hook_SetCapture(HWND inputHwnd)
@@ -46,29 +58,29 @@ BOOL WINAPI Hook_ReleaseCapture()
 	return TRUE;
 }
 
-HWND WINAPI Hook_SetActiveWindow(
-	HWND input
-)
+HWND WINAPI Hook_SetActiveWindow(HWND input)
 {
 	return input;
 }
 
-HWND WINAPI Hook_SetFocus(
-	HWND input
-)
+HWND WINAPI Hook_SetFocus(HWND input)
 {
 	return input;
 }
 
-BOOL WINAPI Hook_SetForegroundWindow(
-	HWND hWnd
-)
+BOOL WINAPI Hook_SetForegroundWindow(HWND hWnd)
 {
 	return true;
 }
 
 void FocusHook::ShowGuiStatus()
 {
+	if (static bool guiInit = false; !guiInit)
+	{
+		guiInit = true;
+		windowToReturn = &HwndSelector::selectedHwnd;
+	}
+	
 	if (IsInstalled() && needReinstalling)
 	{
 		ImGui::PushID(1234);
@@ -79,6 +91,11 @@ void FocusHook::ShowGuiStatus()
 		ImGui::PopStyleColor(1);
 		ImGui::PopID();
 	}
+
+	ImGui::Text("Window directing fake focus to: %d (0x%X)", windowToReturn == nullptr ? 0 : *windowToReturn, windowToReturn == nullptr ? 0 : *windowToReturn);
+
+	if (ImGui::Button("Find new main window"))
+		HwndSelector::UpdateMainHwnd();
 	
 	HookCheckbox("GetForegroundWindow", &enabledHookGetForegroundWindow);
 	HookCheckbox("WindowFromPoint", &enabledHookWindowFromPoint);
@@ -95,9 +112,7 @@ void FocusHook::ShowGuiStatus()
 
 void FocusHook::InstallImpl()
 {
-	//FIXME: set this up with the actual window
-	windowToReturn = new intptr_t();
-	*windowToReturn = 123456;
+	windowToReturn = &HwndSelector::selectedHwnd;
 
 	needReinstalling = false;
 	

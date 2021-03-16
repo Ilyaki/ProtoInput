@@ -176,28 +176,33 @@ void ProtoSendPipeMessage(HANDLE pipe, ProtoPipe::PipeMessageType messageType, B
 		std::cerr << "Failed to send message body" << std::endl;
 }
 
+void WaitClientConnect(Proto::ProtoInstance& instance)
+{
+	if (!instance.clientConnected)
+	{
+		//FIXME: This NEEDs a timeout
+		std::cout << "Starting named pipe wait" << std::endl;
+
+		if (ConnectNamedPipe(instance.pipeHandle, NULL))
+		{
+			std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
+			instance.clientConnected = true;
+		}
+		else
+		{
+			std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
+			return;
+		}
+	}
+}
+
 void InstallUninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID, bool install)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
 		auto& instance = find->second;
 
-		if (!instance.clientConnected)
-		{
-			//FIXME: This NEEDs a timeout
-			std::cout << "Starting named pipe wait" << std::endl;
-			
-			if (ConnectNamedPipe(instance.pipeHandle, NULL))
-			{
-				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
-				instance.clientConnected = true;
-			}
-			else
-			{
-				std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
-				return;
-			}			
-		}
+		WaitClientConnect(instance);
 
 		ProtoPipe::PipeMessageSetupHook message
 		{
@@ -225,22 +230,7 @@ void EnableDisableMessageFilter(ProtoInstanceHandle instanceHandle, ProtoMessage
 	{
 		auto& instance = find->second;
 
-		if (!instance.clientConnected)
-		{
-			//FIXME: This NEEDs a timeout
-			std::cout << "Starting named pipe wait" << std::endl;
-
-			if (ConnectNamedPipe(instance.pipeHandle, NULL))
-			{
-				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
-				instance.clientConnected = true;
-			}
-			else
-			{
-				std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
-				return;
-			}
-		}
+		WaitClientConnect(instance);
 
 		ProtoPipe::PipeMessageSetupMessageFilter message
 		{
@@ -268,22 +258,7 @@ void EnableDisableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int 
 	{
 		auto& instance = find->second;
 
-		if (!instance.clientConnected)
-		{
-			//FIXME: This NEEDs a timeout
-			std::cout << "Starting named pipe wait" << std::endl;
-
-			if (ConnectNamedPipe(instance.pipeHandle, NULL))
-			{
-				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
-				instance.clientConnected = true;
-			}
-			else
-			{
-				std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
-				return;
-			}
-		}
+		WaitClientConnect(instance);
 
 		ProtoPipe::PipeMessageSetupMessageBlock message
 		{
@@ -313,4 +288,21 @@ extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instance
 
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 		ProtoSendPipeMessage(find->second.pipeHandle, ProtoPipe::PipeMessageType::WakeUpProcess, &message);
+}
+
+extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle instanceHandle, uint64_t hwnd)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMesasgeUpdateMainWindowHandle message
+		{
+			hwnd
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::UpdateMainWindowHandle, &message);
+	}
 }

@@ -10,6 +10,7 @@
 #include <TlHelp32.h>
 #include "MessageFilterHook.h"
 #include "MessageList.h"
+#include "HwndSelector.h"
 
 
 namespace Proto
@@ -171,6 +172,26 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 					}
 				}
 
+				HwndSelector::UpdateMainHwnd();
+					
+				break;
+			}
+			case ProtoPipe::PipeMessageType::UpdateMainWindowHandle:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMesasgeUpdateMainWindowHandle*>(messageBuffer);
+					
+
+				if (body->hwnd == 0)
+				{
+					printf("Received message to research for the main window handle\n");
+					HwndSelector::UpdateMainHwnd();
+				}
+				else
+				{
+					printf("Received message to set main window handle to hwnd %lld (0x%llX)\n", body->hwnd, body->hwnd);
+					HwndSelector::selectedHwnd = body->hwnd;
+				}
+					
 				break;
 			}
 			default:

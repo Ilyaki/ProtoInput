@@ -1,13 +1,10 @@
 //https://github.com/ocornut/imgui/issues/2022
-
-#include "Gui.h"
-
 #include <Windows.h>
+#include "Gui.h"
 #include <stdio.h>
 #include "imgui.h"
 #include <GL/glew.h>  
 #include <gl/GL.h>
-#include <tchar.h>
 #include <GL/wglew.h>
 #include <backends/imgui_impl_win32.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -16,7 +13,7 @@
 
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;
-HWND    protoHwnd;
+HWND Proto::ProtoGuiHwnd = nullptr;
 int     g_display_w = 800;
 int     g_display_h = 600;
 
@@ -116,12 +113,12 @@ void SetupImGuiStyle(bool bStyleDark_, float alpha_)
 
 void Proto::ToggleWindow()
 {
-    SetWindowVisible(!IsWindowVisible(protoHwnd));
+    SetWindowVisible(!IsWindowVisible(ProtoGuiHwnd));
 }
 
 void Proto::SetWindowVisible(bool visible)
 {
-    ShowWindow(protoHwnd, visible ? SW_SHOW : SW_HIDE);
+    ShowWindow(ProtoGuiHwnd, visible ? SW_SHOW : SW_HIDE);
 }
 
 void Proto::ToggleConsole()
@@ -147,11 +144,11 @@ int Proto::ShowGuiImpl()
     wc.style = CS_OWNDC;
     if (!RegisterClass(&wc))
         return 1;
-    protoHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 1200, 800, 0, 0, hInstance, 0);
+    ProtoGuiHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 1200, 800, 0, 0, hInstance, 0);
 
     // Show the window
-    ShowWindow(protoHwnd, SW_SHOWDEFAULT);
-    UpdateWindow(protoHwnd);
+    ShowWindow(ProtoGuiHwnd, SW_SHOWDEFAULT);
+    UpdateWindow(ProtoGuiHwnd);
 
     //Prepare OpenGlContext
     CreateGlContext();
@@ -166,7 +163,7 @@ int Proto::ShowGuiImpl()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     //Init Win32
-    ImGui_ImplWin32_Init(protoHwnd);
+    ImGui_ImplWin32_Init(ProtoGuiHwnd);
 
     //Init OpenGL Imgui Implementation
     // GL 3.0 + GLSL 130
@@ -203,7 +200,7 @@ int Proto::ShowGuiImpl()
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 
     	
-    	if (PeekMessage(&msg, protoHwnd, 0U, 0U, PM_REMOVE))
+    	if (PeekMessage(&msg, ProtoGuiHwnd, 0U, 0U, PM_REMOVE))
         //if (GetMessage(&msg, protoHwnd, 0U, 0U))
         //if (PeekMessage(&msg, 0, 0U, 0U, PM_REMOVE))
         {
@@ -215,7 +212,7 @@ int Proto::ShowGuiImpl()
     	//TODO: implement a proper frame cap
         Sleep(15);
 
-        if (IsWindowVisible(protoHwnd))
+        if (IsWindowVisible(ProtoGuiHwnd))
         {
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
@@ -254,7 +251,7 @@ int Proto::ShowGuiImpl()
     ImGui::DestroyContext();
     ImGui_ImplWin32_Shutdown();
 
-    DestroyWindow(protoHwnd);
+    DestroyWindow(ProtoGuiHwnd);
     UnregisterClassW(className, wc.hInstance);
 
     return 0;
@@ -311,7 +308,7 @@ void CreateGlContext()
         0, 0, 0
     };
 
-    g_HDCDeviceContext = GetDC(protoHwnd);
+    g_HDCDeviceContext = GetDC(Proto::ProtoGuiHwnd);
 
     int pixelFormal = ChoosePixelFormat(g_HDCDeviceContext, &pfd);
     SetPixelFormat(g_HDCDeviceContext, pixelFormal, &pfd);

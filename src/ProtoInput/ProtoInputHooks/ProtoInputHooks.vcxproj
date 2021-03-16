@@ -196,6 +196,7 @@
     <ClInclude Include="Gui.h" />
     <ClInclude Include="Hook.h" />
     <ClInclude Include="HookManager.h" />
+    <ClInclude Include="HwndSelector.h" />
     <ClInclude Include="InstallHooks.h" />
     <ClInclude Include="MenuShortcut.h" />
     <ClInclude Include="MessageBoxHook.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="GuiImpl.cpp" />
     <ClCompile Include="HookInstaller.cpp" />
     <ClCompile Include="HookManager.cpp" />
+    <ClCompile Include="HwndSelector.cpp" />
     <ClCompile Include="MenuShortcut.cpp" />
     <ClCompile Include="MessageBoxHook.cpp" />
     <ClCompile Include="MessageFilterHook.cpp" />

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 // 0 means invalid handle
 using ProtoInstanceHandle  = unsigned int;
@@ -38,3 +39,5 @@ extern "C" __declspec(dllexport) void EnableMessageBlock(ProtoInstanceHandle ins
 extern "C" __declspec(dllexport) void DisableMessageBlock(ProtoInstanceHandle instanceHandle, unsigned int messageID);
 
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle);
+
+extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle instanceHandle, uint64_t hwnd = 0);

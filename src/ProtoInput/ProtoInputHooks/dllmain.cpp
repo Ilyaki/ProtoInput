@@ -5,16 +5,14 @@
 #include <BlackBone/Process/RPC/RemoteFunction.hpp>
 #include <BlackBone/Syscalls/Syscall.h>
 #include <imgui.h>
-
 #include <easyhook.h>
-
-
 #include "Gui.h"
 #include "RawInput.h"
 #include "HookManager.h"
 #include "MenuShortcut.h"
 #include "protoloader.h"
 #include "PipeCommunication.h"
+#include "HwndSelector.h"
 
 HMODULE dll_hModule;
 
@@ -36,10 +34,12 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     Proto::ConsoleHwnd = (intptr_t)FindWindowW(L"ConsoleWindowClass", NULL);
     
     std::cout << "Hooks DLL loaded\n";
-
+	
 	// Useful to add a pause if we need to attach a debugger
     MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
 
+    Proto::HwndSelector::UpdateMainHwnd();
+	
     Proto::AddThreadToACL(GetCurrentThreadId());
 	
     HANDLE hGuiThread = CreateThread(nullptr, 0,

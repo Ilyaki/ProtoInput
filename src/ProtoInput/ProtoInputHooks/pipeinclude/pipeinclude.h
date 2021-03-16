@@ -10,7 +10,8 @@ enum class PipeMessageType
 	SetupHook,
 	WakeUpProcess,
 	SetupMessageFilter,
-	SetupMessageBlock
+	SetupMessageBlock,
+	UpdateMainWindowHandle
 };
 
 struct PipeMessageHeader
@@ -39,6 +40,11 @@ struct PipeMessageSetupMessageBlock
 
 struct PipeMessageWakeUpProcess
 {
+};
+
+struct PipeMesasgeUpdateMainWindowHandle
+{
+	uint64_t hwnd = 0;
 };
 
 }

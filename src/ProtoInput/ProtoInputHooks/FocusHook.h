@@ -42,8 +42,7 @@ private:
 	};
 	
 public:
-	static intptr_t* windowToReturn;
-
+	static intptr_t * windowToReturn;
 	
 	const char* GetHookName() const override { return "Focus"; }
 	const char* GetHookDescription() const override
