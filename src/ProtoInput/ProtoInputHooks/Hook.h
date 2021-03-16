@@ -11,7 +11,7 @@ private:
 
 	virtual void InstallImpl(){};
 	virtual void UninstallImpl(){};
-	
+		
 public:
 	virtual ~Hook() = default;
 	virtual const char* GetHookName() const = 0;
@@ -24,6 +24,7 @@ public:
 
 	bool IsInstalled() const;
 };
+
 
 inline void Hook::Install()
 {

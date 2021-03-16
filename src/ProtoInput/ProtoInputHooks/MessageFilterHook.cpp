@@ -166,17 +166,10 @@ BOOL WINAPI Hook_PeekMessageW(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT w
 
 void MessageFilterHook::InstallImpl()
 {
-	auto [statusGW, _hookInfoGetMessageW] = InstallNamedHook(L"user32", "GetMessageW", Hook_GetMessageW);
-	this->hookInfoGetMessageW = _hookInfoGetMessageW;
-
-	auto [statusGA, _hookInfoGetMessageA] = InstallNamedHook(L"user32", "GetMessageA", Hook_GetMessageA);
-	this->hookInfoGetMessageA = _hookInfoGetMessageA;
-
-	auto [statusPW, _hookInfoPeekMessageW] = InstallNamedHook(L"user32", "PeekMessageW", Hook_PeekMessageW);
-	this->hookInfoPeekMessageW = _hookInfoPeekMessageW;
-
-	auto [statusPA, _hookInfoPeekMessageA] = InstallNamedHook(L"user32", "PeekMessageA", Hook_PeekMessageA);
-	this->hookInfoPeekMessageA = _hookInfoPeekMessageA;
+	hookInfoGetMessageW = std::get<1>(InstallNamedHook(L"user32", "GetMessageW", Hook_GetMessageW));
+	hookInfoGetMessageA = std::get<1>(InstallNamedHook(L"user32", "GetMessageA", Hook_GetMessageA));
+	hookInfoPeekMessageW = std::get<1>(InstallNamedHook(L"user32", "PeekMessageW", Hook_PeekMessageW));
+	hookInfoPeekMessageA = std::get<1>(InstallNamedHook(L"user32", "PeekMessageA", Hook_PeekMessageA));
 }
 
 void MessageFilterHook::UninstallImpl()

@@ -8,7 +8,8 @@ enum ProtoHookIDs : unsigned int
 	MessageBoxHookID = 0,
 	RegisterRawInputHookID,
 	GetRawInputDataHookID,
-	MessageFilterHookID
+	MessageFilterHookID,
+	FocusHooksHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int

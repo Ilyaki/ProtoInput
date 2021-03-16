@@ -57,8 +57,7 @@ UINT WINAPI Hook_GetRawInputData(
 
 void GetRawInputDataHook::InstallImpl()
 {
-	auto [status, _hookInfo] = InstallNamedHook(L"user32", "GetRawInputData", Hook_GetRawInputData);
-	this->hookInfo = _hookInfo;	
+	hookInfo = std::get<1>(InstallNamedHook(L"user32", "GetRawInputData", Hook_GetRawInputData));
 }
 
 void GetRawInputDataHook::UninstallImpl()

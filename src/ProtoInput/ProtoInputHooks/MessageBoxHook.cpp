@@ -18,8 +18,7 @@ void MessageBoxHook::ShowGuiStatus()
 
 void MessageBoxHook::InstallImpl()
 {
-	auto [status, _hookInfo] = InstallNamedHook(L"user32", "MessageBoxW", Hook_MessageBoxW);
-	this->hookInfo = _hookInfo;
+	hookInfo = std::get<1>(InstallNamedHook(L"user32", "MessageBoxW", Hook_MessageBoxW));
 }
 
 void MessageBoxHook::UninstallImpl()
