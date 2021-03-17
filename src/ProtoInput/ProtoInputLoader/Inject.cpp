@@ -29,7 +29,11 @@ bool Isx64(unsigned long pid)
 	blackbone::Process proc;
 	proc.Attach(pid);
 
-	bool is32 = proc.barrier().targetWow64 || (sizeof(intptr_t) == 4);
+	SYSTEM_INFO systemInfo;
+	GetNativeSystemInfo(&systemInfo);
+	
+	bool is32 = proc.barrier().targetWow64 || 
+		(systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL); // x86
 	return !is32;
 }
 
@@ -92,7 +96,7 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsi
 		}
 		else if (callRes.result() == NULL)
 		{
-			std::cerr << "Failed to load DLL" << ", error = 0x" << std::hex << GetLastError() << std::dec << std::endl;
+			std::cerr << "Failed to load DLL" << ", GetLastError = 0x" << std::hex << GetLastError() << std::dec << std::endl;
 			return 0;
 		}
 		else

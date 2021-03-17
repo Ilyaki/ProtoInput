@@ -17,7 +17,7 @@ RegisterRawInputHook* registerRawInputHookPtr = nullptr;
 BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize)
 {
 	if (logCallsToRegisterRawInput)
-		printf("Detected a call to RegisterRawInputDevices");
+		printf("Detected a call to RegisterRawInputDevices\n");
 	
 	HWND targetHWND = NULL;
 	std::bitset<9> usagesToForward{};
