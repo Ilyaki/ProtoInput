@@ -75,6 +75,9 @@
     <ClInclude Include="HwndSelector.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FakeMouse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HwndSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeMouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

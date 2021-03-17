@@ -8,6 +8,8 @@
 #include <algorithm>
 #include "MessageFilterHook.h"
 #include "MessageList.h"
+#include "FakeMouse.h"
+#include "HwndSelector.h"
 
 namespace Proto
 {
@@ -185,6 +187,13 @@ void ControlsMenu()
 	}
 }
 
+void InputStatusMenu()
+{
+    const auto& mouseState = FakeMouse::GetState();
+    ImGui::Text("Fake mouse position (%d, %d)", mouseState.x, mouseState.y);
+    ImGui::Text("Window dimensions: (%d, %d)", HwndSelector::windowWidth, HwndSelector::windowHeight);
+}
+
 void RenderImgui()
 {
    // ImGui::ShowDemoWindow();
@@ -210,7 +219,7 @@ void RenderImgui()
 
         ImGui::SetNextWindowSizeConstraints(ImVec2(200, displaySize.y), ImVec2(displaySize.x - 200, displaySize.y));
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(displaySize.x / 2, 0.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(displaySize.x * 0.7f, 0.0f), ImGuiCond_Once);
 
         ImGui::Begin("Hooks/Filter", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
         const auto hooksWindowSize = ImVec2(ImGui::GetWindowSize().x, mainWindowSize.y);
@@ -276,6 +285,11 @@ void RenderImgui()
         if (ImGui::CollapsingHeader("Raw Input", ImGuiTreeNodeFlags_DefaultOpen))
         {
             RawInputMenu();
+        }
+
+        if (ImGui::CollapsingHeader("Input Status", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            InputStatusMenu();
         }
 
         ImGui::End();

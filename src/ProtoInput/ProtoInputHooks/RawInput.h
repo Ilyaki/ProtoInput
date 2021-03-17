@@ -34,6 +34,8 @@ private:
 
 	static const std::vector<USAGE> usageTypesOfInterest;
 
+	static void ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle);
+	static void ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle);
 
 public:
 	static RawInputState rawInputState;

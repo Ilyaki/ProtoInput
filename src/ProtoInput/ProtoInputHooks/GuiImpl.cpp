@@ -141,10 +141,10 @@ int Proto::ShowGuiImpl()
     wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
     const wchar_t* className = L"PROTOINPUTUI";
     wc.lpszClassName = className;
-    wc.style = CS_OWNDC;
+    wc.style = CS_OWNDC | CS_NOCLOSE; 
     if (!RegisterClass(&wc))
         return 1;
-    ProtoGuiHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 1200, 800, 0, 0, hInstance, 0);
+    ProtoGuiHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 850, 500, 0, 0, hInstance, 0);
 
     // Show the window
     ShowWindow(ProtoGuiHwnd, SW_SHOWDEFAULT);
@@ -185,8 +185,8 @@ int Proto::ShowGuiImpl()
 
 
 	//TODO: default to hidden
-    // SetWindowVisible(false);
-    // SetConsoleVisible(false);
+    SetWindowVisible(true);
+    SetConsoleVisible(true);
 	
     // Main loop
     MSG msg;
@@ -204,9 +204,18 @@ int Proto::ShowGuiImpl()
         //if (GetMessage(&msg, protoHwnd, 0U, 0U))
         //if (PeekMessage(&msg, 0, 0U, 0U, PM_REMOVE))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-            continue;
+			// printf("Message = %d == 0x%X, WM_QUIT=%d, WM_CLOSE=%d\n", msg.message, msg.message, msg.message == WM_QUIT, msg.message == WM_CLOSE);
+			// if (msg.message == WM_CLOSE)
+			// {
+			// 	MessageBoxW(NULL, L"aah", L"", MB_OK);
+			// 	SetWindowVisible(false);
+			// }
+			// else
+			{
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+                continue;
+            }
         }
 
     	//TODO: implement a proper frame cap

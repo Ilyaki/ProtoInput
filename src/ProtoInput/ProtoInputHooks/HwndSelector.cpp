@@ -7,6 +7,7 @@ namespace Proto
 {
 
 intptr_t HwndSelector::selectedHwnd = 0;
+int HwndSelector::windowWidth, HwndSelector::windowHeight;
 
 struct HandleData
 {
@@ -39,7 +40,7 @@ BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
     return FALSE;
 }
 
-void HwndSelector::UpdateMainHwnd()
+void HwndSelector::UpdateMainHwnd(bool logOutput)
 {
     // Go through all the top level windows, select the first that's visible & belongs to the process
 	
@@ -48,13 +49,34 @@ void HwndSelector::UpdateMainHwnd()
 
     const auto hwnd = (intptr_t)data.hwnd;
 
-    if (hwnd == 0)
-        printf("Warning: UpdateMainHwnd didn't find a main window\n");
-    else
-		printf("UpdateMainHwnd found hwnd %d (0x%X)\n", hwnd, hwnd);
-
+    if (logOutput)
+    {
+        if (hwnd == 0)
+            printf("Warning: UpdateMainHwnd didn't find a main window\n");
+        else
+            printf("UpdateMainHwnd found hwnd %d (0x%X)\n", hwnd, hwnd);
+    }
+		
     if (data.hwnd != nullptr)
         selectedHwnd = (intptr_t)data.hwnd;
+}
+
+void HwndSelector::UpdateWindowBounds()
+{
+    RECT rect;
+    if (GetClientRect((HWND)selectedHwnd, &rect))
+    {
+        windowWidth = rect.right - rect.left;
+        windowHeight = rect.bottom - rect.top;
+    }
+    else
+        fprintf(stderr, "GetClientRect failed in update main window bounds\n");
+}
+
+void HwndSelector::SetSelectedHwnd(intptr_t set)
+{
+    selectedHwnd = set;
+    UpdateWindowBounds();
 }
 
 }

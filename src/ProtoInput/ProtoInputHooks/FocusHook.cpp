@@ -5,7 +5,7 @@
 namespace Proto
 {
 
-intptr_t* FocusHook::windowToReturn = nullptr;
+intptr_t const * FocusHook::windowToReturn = nullptr;
 
 inline HWND GetHwnd()
 {
@@ -78,7 +78,8 @@ void FocusHook::ShowGuiStatus()
 	if (static bool guiInit = false; !guiInit)
 	{
 		guiInit = true;
-		windowToReturn = &HwndSelector::selectedHwnd;
+		// windowToReturn = &HwndSelector::selectedHwnd;
+		windowToReturn = HwndSelector::GetSelectedHwndPtr();
 	}
 	
 	if (IsInstalled() && needReinstalling)
@@ -112,7 +113,7 @@ void FocusHook::ShowGuiStatus()
 
 void FocusHook::InstallImpl()
 {
-	windowToReturn = &HwndSelector::selectedHwnd;
+	windowToReturn = HwndSelector::GetSelectedHwndPtr();
 
 	needReinstalling = false;
 	

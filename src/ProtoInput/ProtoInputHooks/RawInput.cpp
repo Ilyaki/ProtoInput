@@ -5,6 +5,9 @@
 #include <iostream>
 #include <vector>
 #include "HookManager.h"
+#include "FakeMouse.h"
+#include <unordered_map>
+#include "HwndSelector.h"
 
 namespace Proto
 {
@@ -31,6 +34,48 @@ const std::vector<USAGE> RawInput::usageTypesOfInterest
 
 HWND RawInput::rawInputHwnd = nullptr;
 
+void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
+{
+	if ((data.usFlags & MOUSE_MOVE_ABSOLUTE) == MOUSE_MOVE_ABSOLUTE)
+	{
+		const bool isVirtualDesktop = (data.usFlags & MOUSE_VIRTUAL_DESKTOP) == MOUSE_VIRTUAL_DESKTOP;
+
+		// const int width = GetSystemMetrics(isVirtualDesktop ? SM_CXVIRTUALSCREEN : SM_CXSCREEN);
+		// const int height = GetSystemMetrics(isVirtualDesktop ? SM_CYVIRTUALSCREEN : SM_CYSCREEN);
+
+		static int widthVirtual = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+		static int widthNonVirtual = GetSystemMetrics(SM_CXSCREEN);
+		static int heightVirtual = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+		static int heightNonVirtual = GetSystemMetrics(SM_CYSCREEN);
+		
+		const int absoluteX = int((data.lLastX / 65535.0f) * (isVirtualDesktop ? widthVirtual : widthNonVirtual));
+		const int absoluteY = int((data.lLastY / 65535.0f) * (isVirtualDesktop ? heightVirtual : heightNonVirtual));
+
+		constexpr int initialValue = -1234567;
+
+		static std::unordered_map<HANDLE, std::pair<int, int>> oldPositions{};
+		
+		if (const auto find = oldPositions.find(deviceHandle); find != oldPositions.end())
+		{
+			FakeMouse::AddMouseDelta(absoluteX - find->second.first, absoluteY - find->second.second);
+		}
+		else
+		{
+			oldPositions.emplace(std::make_pair( deviceHandle, std::pair<int, int>{ absoluteX, absoluteY } ));
+		}		
+	}
+	else if (data.lLastX != 0 || data.lLastY != 0)
+	{
+		const int relativeX = data.lLastX;
+		const int relativeY = data.lLastY;
+		FakeMouse::AddMouseDelta(relativeX, relativeY);
+	}
+}
+
+void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle)
+{
+}
+
 void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, const MSG& msg)
 {
 	// printf("!");
@@ -41,22 +86,19 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER));
 	GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER));
 
-	if (rawinput.header.dwType == RIM_TYPEKEYBOARD)
+	//TODO: this should be passed in by pipe as a state
+	constexpr int index = 1;
+
+	// Shortcut to open UI (doesn't care about what keyboard is attached)
+	if (rawinput.header.dwType == RIM_TYPEKEYBOARD && index >= 1 && index <= 9 && (rawinput.data.keyboard.VKey == 0x30 + index))
 	{
 		static bool keyDown = false;
 		if (rawinput.data.keyboard.Flags == RI_KEY_MAKE && !keyDown)
 		{
 			keyDown = true;
 
-			//TODO: this should be passed in by pipe as a state
-			constexpr int index = 1;
-						
 			// Key just pressed
-			const auto vkey = rawinput.data.keyboard.VKey;
-			if (index >= 1 && index <= 9 && (vkey == 0x30 + index) 
-				&& (GetAsyncKeyState(VK_RCONTROL) & ~1) != 0
-				&& (GetAsyncKeyState(VK_RMENU) & ~1) != 0
-				)
+			if ((GetAsyncKeyState(VK_RCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_RMENU) & ~1) != 0)
 			{
 				Proto::ToggleWindow();
 			}			
@@ -67,29 +109,45 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 			keyDown = false;
 		}
 	}
+
+	// Need to occasionally update the window is case the main window changes (e.g. because of a launcher) or the main window is resized
+	if (rawinput.header.dwType == RIM_TYPEMOUSE && (rawinput.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
+	{
+		//TODO: This may waste CPU? (But need a way to update window otherwise)
+		//if (HwndSelector::GetSelectedHwnd() == 0)
+			HwndSelector::UpdateMainHwnd(false);
+
+		HwndSelector::UpdateWindowBounds();
+	}
+
 	
 	//TODO: handle forwarding HID input
 	
 	if (forwardRawInput)
 	{
-		if ((rawinput.header.dwType == RIM_TYPEMOUSE && usages[HID_USAGE_GENERIC_MOUSE] && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end()) ||
-			(rawinput.header.dwType == RIM_TYPEKEYBOARD && usages[HID_USAGE_GENERIC_KEYBOARD] && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end()))
+		const bool allowMouse = (rawinput.header.dwType == RIM_TYPEMOUSE && usages[HID_USAGE_GENERIC_MOUSE] && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end());
+		const bool allowKeyboard = (rawinput.header.dwType == RIM_TYPEKEYBOARD && usages[HID_USAGE_GENERIC_KEYBOARD] && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end());
+		
+		if (allowMouse || allowKeyboard)
 		{
+			if (allowMouse)
+				ProcessMouseInput(rawinput.data.mouse, rawinput.header.hDevice);
+			else if (allowKeyboard)
+				ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
+			
 			for (const auto& hwnd : forwardingWindows)
 			{
-				//PostMessageW(hwnd, msg.message, msg.wParam, msg.lParam);
-				//SendMessageW(hwnd, msg.message, msg.wParam, msg.lParam); (Blocks)
-
 				static size_t inputBufferCounter = 0;
+
+				// The game is going to lag behind the data we get by a few times, so store in an array and pass the index as a message parameter
 				
-				//rawinputs.push_back(rawinput);
 				inputBufferCounter = (inputBufferCounter + 1) % RawInputBufferSize;
 				inputBuffer[inputBufferCounter] = rawinput;
 
-				LPARAM x = (inputBufferCounter) | 0xAB000000;
-				// printf("Sending lparam 0x%X\n", x);
+				const LPARAM x = (inputBufferCounter) | 0xAB000000;
 				PostMessageW(hwnd, WM_INPUT, RIM_INPUT, x);
 			}
+
 		}
 	}
 
