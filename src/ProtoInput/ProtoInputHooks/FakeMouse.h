@@ -15,6 +15,7 @@ class FakeMouse
 public:
 	static const FakeMouseState& GetState() { return state; }
 	static void AddMouseDelta(int dx, int dy);
+	static void SetMousePos(int x, int y);
 };
 
 }

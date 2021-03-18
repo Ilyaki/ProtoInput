@@ -15,7 +15,7 @@ public:
 	const char* GetHookDescription() const override
 	{
 		return
-		"This hook forwards the raw input received by Proto Input to the game.\n"
+		"This hook forwards the raw input received by Proto Input to the game. "
 		"This is required for any game that uses raw input, or Proto Input will consume all the input.";
 	}
 	

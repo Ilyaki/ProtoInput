@@ -104,7 +104,7 @@ void MessageFilterHook::FilterGui()
 	{
 		ImGui::BeginGroup();
 		ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-		ImGui::Text("%s Filter: %s", name, *enabledPtr ? "Enabled" : "Disabled");
+		ImGui::TextWrapped("%s Filter: %s", name, *enabledPtr ? "Enabled" : "Disabled");
 
 		if (ImGui::Button("Enable") && !*enabledPtr)
 		{

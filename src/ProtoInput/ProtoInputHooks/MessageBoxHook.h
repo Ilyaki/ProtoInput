@@ -12,7 +12,7 @@ private:
 	
 public:
 	const char* GetHookName() const override { return "Message Box"; }
-	const char* GetHookDescription() const override { return "This hook will prevent the application from calling MessageBoxW"; }
+	const char* GetHookDescription() const override { return "This hook will prevent the application from calling MessageBoxW."; }
 	bool HasGuiStatus() const override { return true; }
 	void ShowGuiStatus() override;
 	void InstallImpl() override;

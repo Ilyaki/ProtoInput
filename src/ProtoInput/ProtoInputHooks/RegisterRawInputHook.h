@@ -24,10 +24,10 @@ public:
 	const char* GetHookDescription() const override
 	{
 		return
-		"Disconnects the game from raw input and subscribes our window instead.\n"
-		"We subscribe to raw input in the foreground and background so we always receive input.\n"
-		"Forwards raw input back to the original window.\n"
-		"Disabling this hook after it's installed may not fully uninstall it.\n";
+		"Disconnects the game from raw input and subscribes our window instead. "
+		"We subscribe to raw input in the foreground and background so we always receive input. "
+		"Forwards raw input back to the original window. "
+		"Disabling this hook after it's installed may not fully uninstall it. ";
 	}
 
 	bool HasGuiStatus() const override { return true; }

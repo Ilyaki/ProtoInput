@@ -4,6 +4,7 @@
 #include "MessageFilterHook.h"
 #include "FocusHook.h"
 #include "GetCursorPosHook.h"
+#include "SetCursorPosHook.h"
 
 namespace Proto
 {
@@ -18,6 +19,7 @@ HookManager::HookManager()
 	AddHook<MessageFilterHook>(ProtoHookIDs::MessageFilterHookID);
 	AddHook<FocusHook>(ProtoHookIDs::FocusHooksHookID);
 	AddHook<GetCursorPosHook>(ProtoHookIDs::GetCursorPosHookID);
+	AddHook<SetCursorPosHook>(ProtoHookIDs::SetCursorPosHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

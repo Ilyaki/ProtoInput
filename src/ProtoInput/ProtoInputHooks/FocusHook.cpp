@@ -88,12 +88,12 @@ void FocusHook::ShowGuiStatus()
 		ImGui::PushStyleColor(ImGuiCol_Text,
 							  (ImVec4)ImColor::HSV(35.0f / 255.0f, 0.9f, 0.9f)
 		);
-		ImGui::Text("Disable and enable the hook for changes to take effect");
+		ImGui::TextWrapped("Disable and enable the hook for changes to take effect");
 		ImGui::PopStyleColor(1);
 		ImGui::PopID();
 	}
 
-	ImGui::Text("Window directing fake focus to: %d (0x%X)", windowToReturn == nullptr ? 0 : *windowToReturn, windowToReturn == nullptr ? 0 : *windowToReturn);
+	ImGui::TextWrapped("Window directing fake focus to: %d (0x%X)", windowToReturn == nullptr ? 0 : *windowToReturn, windowToReturn == nullptr ? 0 : *windowToReturn);
 
 	if (ImGui::Button("Find new main window"))
 		HwndSelector::UpdateMainHwnd();

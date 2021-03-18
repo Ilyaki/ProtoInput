@@ -105,7 +105,7 @@ void HooksMenu()
     	
         ImGui::BeginGroup();
         ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-        ImGui::Text("%s Hook: %s", hook->GetHookName(), hook->IsInstalled() ? "Enabled" : "Disabled");
+        ImGui::TextWrapped("%s Hook: %s", hook->GetHookName(), hook->IsInstalled() ? "Enabled" : "Disabled");
 
     	// ImGui::SameLine();
         if (ImGui::Button("Enable") && !hook->IsInstalled())
@@ -190,8 +190,8 @@ void ControlsMenu()
 void InputStatusMenu()
 {
     const auto& mouseState = FakeMouse::GetState();
-    ImGui::Text("Fake mouse position (%d, %d)", mouseState.x, mouseState.y);
-    ImGui::Text("Window dimensions: (%d, %d)", HwndSelector::windowWidth, HwndSelector::windowHeight);
+    ImGui::TextWrapped("Fake mouse position (%d, %d)", mouseState.x, mouseState.y);
+    ImGui::TextWrapped("Window dimensions: (%d, %d)", HwndSelector::windowWidth, HwndSelector::windowHeight);
 }
 
 void RenderImgui()
@@ -242,9 +242,9 @@ void RenderImgui()
                         {
                             ImGui::PushID(1337);
                             ImGui::PushStyleColor(ImGuiCol_Text,
-                                                  (ImVec4)ImColor::HSV(35.0f/255.0f, 0.9f, 0.9f)
+                                                  (ImVec4)ImColor::HSV(35.0f / 255.0f, 0.9f, 0.9f)
                             );
-                            ImGui::Text("Warning: Message Filter hook is disabled.\nMessage filtering/blocking will not work!");
+                            ImGui::TextWrapped("Warning: Message Filter hook is disabled.\nMessage filtering/blocking will not work!");
                             ImGui::PopStyleColor(1);
                             ImGui::PopID();
                         }
@@ -255,6 +255,17 @@ void RenderImgui()
                     }
                     if (ImGui::BeginTabItem("Block"))
                     {
+                        if (!HookManager::IsInstalled(ProtoHookIDs::MessageFilterHookID))
+                        {
+                            ImGui::PushID(1337);
+                            ImGui::PushStyleColor(ImGuiCol_Text,
+                                                  (ImVec4)ImColor::HSV(35.0f / 255.0f, 0.9f, 0.9f)
+                            );
+                            ImGui::TextWrapped("Warning: Message Filter hook is disabled.\nMessage filtering/blocking will not work!");
+                            ImGui::PopStyleColor(1);
+                            ImGui::PopID();
+                        }
+                    	
                         MessageList::ShowUI();
                         ImGui::EndTabItem();
                     }
