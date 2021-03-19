@@ -206,14 +206,20 @@
     <ClInclude Include="InstallHooks.h" />
     <ClInclude Include="MenuShortcut.h" />
     <ClInclude Include="MessageBoxHook.h" />
-    <ClInclude Include="MessageFilter.h" />
+    <ClInclude Include="MessageFilterBase.h" />
+    <ClInclude Include="MessageFilters.h" />
     <ClInclude Include="MessageFilterHook.h" />
     <ClInclude Include="MessageList.h" />
+    <ClInclude Include="MouseActivateFilter.h" />
+    <ClInclude Include="MouseMoveFilter.h" />
     <ClInclude Include="PipeCommunication.h" />
     <ClInclude Include="pipeinclude\pipeinclude.h" />
     <ClInclude Include="RawInput.h" />
+    <ClInclude Include="RawInputFilter.h" />
     <ClInclude Include="RegisterRawInputHook.h" />
     <ClInclude Include="SetCursorPosHook.h" />
+    <ClInclude Include="WindowActivateAppFilter.h" />
+    <ClInclude Include="WindowActivateFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\lib\glew\src\glew.c" />

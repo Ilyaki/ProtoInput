@@ -96,8 +96,6 @@ int main()
 		InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::MessageFilterHookID);
 
-		EnableMessageFilter(instanceHandle, ProtoMessageFilterIDs::TestFilterID);
-
 		// EnableMessageBlock(instanceHandle, 0x00FF); // WM_INPUT
 		
 		WakeUpProcess(instanceHandle);

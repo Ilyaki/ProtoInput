@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Hooks">
       <UniqueIdentifier>{962a1f72-14be-43ee-b2eb-e4b50ae17607}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MessageFilters">
+      <UniqueIdentifier>{017a2168-ac43-4ded-a945-1ef32899ea5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -51,7 +54,7 @@
     <ClInclude Include="pipeinclude\pipeinclude.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageFilter.h">
+    <ClInclude Include="MessageFilterBase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="FontData.h">
@@ -98,6 +101,24 @@
     </ClInclude>
     <ClInclude Include="GetKeyboardStateHook.h">
       <Filter>Source Files\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageFilters.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RawInputFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseMoveFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseActivateFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowActivateFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowActivateAppFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

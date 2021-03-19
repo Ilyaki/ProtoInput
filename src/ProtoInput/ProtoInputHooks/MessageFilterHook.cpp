@@ -1,8 +1,8 @@
 #include "MessageBoxHook.h"
 #include "MessageFilterHook.h"
-#include "MessageFilter.h"
 #include <imgui.h>
 #include "MessageList.h"
+#include "MessageFilters.h"
 
 namespace Proto
 {
@@ -15,7 +15,7 @@ bool* IsFilterEnabled()
 }
 
 template<typename X, typename... T>
-bool MessageFilterAllow(unsigned int message, unsigned int lparam, unsigned int wparam, intptr_t hwnd)
+bool MessageFilterAllow(unsigned int message, unsigned int* lparam, unsigned int* wparam, intptr_t hwnd)
 {
 	bool a = (!*IsFilterEnabled<X>() || message < X::MessageMin() || message > X::MessageMax() || X::Filter(message, lparam, wparam, hwnd));
 	
@@ -27,7 +27,10 @@ bool MessageFilterAllow(unsigned int message, unsigned int lparam, unsigned int 
 
 inline BOOL FilterMessage(MSG* lpMsg)
 {
-	if (!MessageFilterAllow<PROTO_MESSAGE_FILTERS>(lpMsg->message, lpMsg->lParam, lpMsg->wParam, (intptr_t)lpMsg->hwnd)
+	lpMsg->pt.x = FakeMouseKeyboard::GetMouseState().x;
+	lpMsg->pt.y = FakeMouseKeyboard::GetMouseState().y;
+	
+	if (!MessageFilterAllow<PROTO_MESSAGE_FILTERS>(lpMsg->message, (unsigned int*)&lpMsg->lParam, &lpMsg->wParam, (intptr_t)lpMsg->hwnd)
 		|| MessageList::IsBlocked(lpMsg->message))
 	{
 		//Massive performance benefits for returning a successful WM_NULL compared to causing an error in the application.

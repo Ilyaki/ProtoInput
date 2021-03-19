@@ -20,7 +20,11 @@ enum ProtoHookIDs : unsigned int
 
 enum ProtoMessageFilterIDs : unsigned int
 {
-	TestFilterID = 0,
+	RawInputFilterID,
+	MouseMoveFilterID,
+	MouseActivateFilterID,
+	WindowActivateFilterID,
+	WindowActivateAppFilterID
 };
 
 //TODO: add some documentation to the header file
