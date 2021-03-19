@@ -1,5 +1,5 @@
 #include "GetCursorPosHook.h"
-#include "FakeMouse.h"
+#include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
 
 namespace Proto
@@ -9,7 +9,7 @@ BOOL WINAPI Hook_GetCursorPos(LPPOINT lpPoint)
 {	
 	if (lpPoint)
 	{
-		const auto& state = FakeMouse::GetState();
+		const auto& state = FakeMouseKeyboard::GetMouseState();
 		lpPoint->x = state.x;
 		lpPoint->y = state.y;
 		ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), lpPoint);

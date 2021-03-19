@@ -13,7 +13,7 @@ private:
 public:
 	const char* GetHookName() const override { return "Get Cursor Position"; }
 	const char* GetHookDescription() const override { return "Hooks the GetCursorPos function to return our 'fake' position"; }
-	bool HasGuiStatus() const override { return true; }
+	bool HasGuiStatus() const override { return false; }
 	void ShowGuiStatus() override;
 	void InstallImpl() override;
 	void UninstallImpl() override;

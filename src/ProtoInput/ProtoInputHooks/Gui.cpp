@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "MessageFilterHook.h"
 #include "MessageList.h"
-#include "FakeMouse.h"
+#include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
 
 namespace Proto
@@ -189,7 +189,7 @@ void ControlsMenu()
 
 void InputStatusMenu()
 {
-    const auto& mouseState = FakeMouse::GetState();
+    const auto& mouseState = FakeMouseKeyboard::GetMouseState();
     ImGui::TextWrapped("Fake mouse position (%d, %d)", mouseState.x, mouseState.y);
     ImGui::TextWrapped("Window dimensions: (%d, %d)", HwndSelector::windowWidth, HwndSelector::windowHeight);
 }

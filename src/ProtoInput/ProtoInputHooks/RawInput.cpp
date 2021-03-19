@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "HookManager.h"
-#include "FakeMouse.h"
+#include "FakeMouseKeyboard.h"
 #include <unordered_map>
 #include "HwndSelector.h"
 
@@ -36,6 +36,7 @@ HWND RawInput::rawInputHwnd = nullptr;
 
 void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 {
+	// Update fake mouse position
 	if ((data.usFlags & MOUSE_MOVE_ABSOLUTE) == MOUSE_MOVE_ABSOLUTE)
 	{
 		const bool isVirtualDesktop = (data.usFlags & MOUSE_VIRTUAL_DESKTOP) == MOUSE_VIRTUAL_DESKTOP;
@@ -51,13 +52,11 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 		const int absoluteX = int((data.lLastX / 65535.0f) * (isVirtualDesktop ? widthVirtual : widthNonVirtual));
 		const int absoluteY = int((data.lLastY / 65535.0f) * (isVirtualDesktop ? heightVirtual : heightNonVirtual));
 
-		constexpr int initialValue = -1234567;
-
 		static std::unordered_map<HANDLE, std::pair<int, int>> oldPositions{};
 		
 		if (const auto find = oldPositions.find(deviceHandle); find != oldPositions.end())
 		{
-			FakeMouse::AddMouseDelta(absoluteX - find->second.first, absoluteY - find->second.second);
+			FakeMouseKeyboard::AddMouseDelta(absoluteX - find->second.first, absoluteY - find->second.second);
 		}
 		else
 		{
@@ -68,18 +67,46 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 	{
 		const int relativeX = data.lLastX;
 		const int relativeY = data.lLastY;
-		FakeMouse::AddMouseDelta(relativeX, relativeY);
+		FakeMouseKeyboard::AddMouseDelta(relativeX, relativeY);
 	}
+
+	// Set vkeys (GetKeyState/etc can be used to get the mouse buttons state)
+	if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_LBUTTON, true);
+	if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_LBUTTON, false);
+
+	if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_MBUTTON, true);
+	if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_MBUTTON, false);
+
+	if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_RBUTTON, true);
+	if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_RBUTTON, false);
+
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_1_DOWN) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON1, true);
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_1_UP) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON1, false);
+
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_2_DOWN) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON2, true);
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_2_UP) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON2, false);
 }
 
 void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle)
 {
+	if ((data.Flags & RI_KEY_MAKE) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, true);
+	else if ((data.Flags & RI_KEY_BREAK) != 0)
+		FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, false);
 }
 
 void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, const MSG& msg)
-{
-	// printf("!");
-	
+{	
 	//TODO: error checking
 	RAWINPUT rawinput;
 	UINT cbSize;

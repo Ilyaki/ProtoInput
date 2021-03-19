@@ -5,6 +5,9 @@
 #include "FocusHook.h"
 #include "GetCursorPosHook.h"
 #include "SetCursorPosHook.h"
+#include "GetKeyStateHook.h"
+#include "GetAsyncKeyStateHook.h"
+#include "GetKeyboardStateHook.h"
 
 namespace Proto
 {
@@ -20,6 +23,9 @@ HookManager::HookManager()
 	AddHook<FocusHook>(ProtoHookIDs::FocusHooksHookID);
 	AddHook<GetCursorPosHook>(ProtoHookIDs::GetCursorPosHookID);
 	AddHook<SetCursorPosHook>(ProtoHookIDs::SetCursorPosHookID);
+	AddHook<GetKeyStateHook>(ProtoHookIDs::GetKeyStateHookID);
+	AddHook<GetAsyncKeyStateHook>(ProtoHookIDs::GetAsyncKeyStateHookID);
+	AddHook<GetKeyboardStateHook>(ProtoHookIDs::GetKeyboardStateHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

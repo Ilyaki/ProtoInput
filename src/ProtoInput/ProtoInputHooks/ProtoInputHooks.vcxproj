@@ -190,10 +190,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FakeMouse.h" />
+    <ClInclude Include="FakeMouseKeyboard.h" />
     <ClInclude Include="FocusHook.h" />
     <ClInclude Include="FontData.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GetAsyncKeyStateHook.h" />
     <ClInclude Include="GetCursorPosHook.h" />
+    <ClInclude Include="GetKeyboardStateHook.h" />
+    <ClInclude Include="GetKeyStateHook.h" />
     <ClInclude Include="GetRawInputDataHook.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="Hook.h" />
@@ -223,9 +227,12 @@
     <ClCompile Include="..\..\..\lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="FakeMouse.cpp" />
+    <ClCompile Include="FakeMouseKeyboard.cpp" />
     <ClCompile Include="FocusHook.cpp" />
+    <ClCompile Include="GetAsyncKeyStateHook.cpp" />
     <ClCompile Include="GetCursorPosHook.cpp" />
+    <ClCompile Include="GetKeyboardStateHook.cpp" />
+    <ClCompile Include="GetKeyStateHook.cpp" />
     <ClCompile Include="GetRawInputDataHook.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="GuiImpl.cpp" />

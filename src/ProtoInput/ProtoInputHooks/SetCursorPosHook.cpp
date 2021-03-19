@@ -1,7 +1,7 @@
 #include "SetCursorPosHook.h"
 #include <imgui.h>
 #include "HwndSelector.h"
-#include "FakeMouse.h"
+#include "FakeMouseKeyboard.h"
 
 namespace Proto
 {
@@ -19,7 +19,7 @@ BOOL WINAPI Hook_SetCursorPos(int X, int Y)
 		//SetCursorPos require screen coordinates (relative to 0,0 of monitor)
 		ScreenToClient((HWND)HwndSelector::GetSelectedHwnd(), &p);
 
-		FakeMouse::SetMousePos(p.x, p.y);
+		FakeMouseKeyboard::SetMousePos(p.x, p.y);
 	}
 	return TRUE;
 }
