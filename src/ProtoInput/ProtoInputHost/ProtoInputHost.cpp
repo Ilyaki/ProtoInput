@@ -49,8 +49,8 @@ int main()
 	if (CheckBuildTimings(folderpath))
 		return 0;
 	
-	constexpr bool runtime = false;
-	constexpr bool hookSelf = true;
+	constexpr bool runtime = true;
+	constexpr bool hookSelf = false;
 
 	if (runtime)
 	{
@@ -61,7 +61,7 @@ int main()
 		else
 		{
 			// auto pids = blackbone::Process::EnumByName(L"osu!.exe");
-			auto pids = blackbone::Process::EnumByName(L"Terraria.exe");
+			auto pids = blackbone::Process::EnumByName(L"hl2.exe");
 			for (const auto& pid : pids)
 			{
 				std::cout << "Selected pid " << pid << std::endl;

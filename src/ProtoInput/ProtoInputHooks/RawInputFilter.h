@@ -3,7 +3,6 @@
 #include "MessageFilterBase.h"
 #include "protoloader.h"
 
-
 namespace Proto
 {
 

@@ -9,12 +9,6 @@ namespace Proto
 
 struct RawInputState
 {
-	// void* currentKeyboardHandle { INVALID_HANDLE_VALUE };
-	// void* currentMouseHandle { INVALID_HANDLE_VALUE };
-	//
-	// size_t currentKeyboardIndex = -1;
-	// size_t currentMouseIndex = -1;
-
 	std::vector<void*> selectedKeyboardHandles{};
 	std::vector<void*> deselectedKeyboardHandles{};
 	std::vector<void*> selectedMouseHandles{};
@@ -22,6 +16,11 @@ struct RawInputState
 	
 	std::vector<void*> keyboardHandles{};
 	std::vector<void*> mouseHandles{};
+
+	//TODO: add to ui and pipe
+	bool sendMouseWheelMessages = true;
+	bool sendMouseButtonMessages = true;
+	bool sendMouseMoveMessages = true;
 };
 
 const size_t RawInputBufferSize = 1024;

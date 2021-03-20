@@ -40,6 +40,22 @@ public:
 	static void ClearAsyncKeyState(int vkey);
 	static bool IsKeyStatePressed(int vkey);
 	static bool IsAsyncKeyStatePressed(int vkey);
+
+	static unsigned int GetMouseMkFlags()
+	{
+#define PROTO_MMFKEY(x, y) ((FakeMouseKeyboard::IsKeyStatePressed(x)) ? (y) : (0))
+
+		return	PROTO_MMFKEY(VK_CONTROL, MK_CONTROL) |
+				PROTO_MMFKEY(VK_SHIFT, MK_SHIFT) |
+				PROTO_MMFKEY(VK_LBUTTON, MK_LBUTTON) |
+				PROTO_MMFKEY(VK_MBUTTON, MK_MBUTTON) |
+				PROTO_MMFKEY(VK_RBUTTON, MK_RBUTTON) |
+				PROTO_MMFKEY(VK_XBUTTON1, MK_XBUTTON1) |
+				PROTO_MMFKEY(VK_XBUTTON2, MK_XBUTTON2);
+
+#undef PROTO_MMFKEY
+
+	}
 };
 
 }

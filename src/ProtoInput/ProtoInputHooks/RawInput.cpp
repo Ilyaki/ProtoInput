@@ -8,6 +8,8 @@
 #include "FakeMouseKeyboard.h"
 #include <unordered_map>
 #include "HwndSelector.h"
+#include "MouseWheelFilter.h"
+#include <3rd_party/BeaEngine/headers/Includes/basic_types.h>
 
 namespace Proto
 {
@@ -86,15 +88,85 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 	if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) != 0)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_RBUTTON, false);
 
-	if ((data.usButtonFlags & RI_MOUSE_BUTTON_1_DOWN) != 0)
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN) != 0)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON1, true);
-	if ((data.usButtonFlags & RI_MOUSE_BUTTON_1_UP) != 0)
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_UP) != 0)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON1, false);
 
-	if ((data.usButtonFlags & RI_MOUSE_BUTTON_2_DOWN) != 0)
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN) != 0)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON2, true);
-	if ((data.usButtonFlags & RI_MOUSE_BUTTON_2_UP) != 0)
+	if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_UP) != 0)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(VK_XBUTTON2, false);
+
+
+	// This is used a lot in sending messages
+	const unsigned int mouseMkFlags = FakeMouseKeyboard::GetMouseMkFlags();
+	const unsigned int mousePointLparam = MAKELPARAM(FakeMouseKeyboard::GetMouseState().x, FakeMouseKeyboard::GetMouseState().y);
+	
+	
+	// Send mouse wheel
+	if (rawInputState.sendMouseWheelMessages)
+	{
+		if((data.usButtonFlags & RI_MOUSE_WHEEL) != 0)
+		{
+			const unsigned int wparam = data.usButtonData << 4
+				| MouseWheelFilter::protoInputSignature
+				| mouseMkFlags;
+
+			const unsigned int lparam = mousePointLparam;
+			
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEWHEEL, wparam, lparam);
+
+		}
+	}
+
+
+	// Send mouse button messages
+	if (rawInputState.sendMouseButtonMessages)
+	{
+		//FIXME: need a filter to only let through synthesized versions of these messages
+		
+		if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONDOWN, mouseMkFlags, mousePointLparam);
+		if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONUP, mouseMkFlags, mousePointLparam);
+
+		if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONDOWN, mouseMkFlags, mousePointLparam);
+		if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONUP, mouseMkFlags, mousePointLparam);
+
+		if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONDOWN, mouseMkFlags, mousePointLparam);
+		if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONUP, mouseMkFlags, mousePointLparam);
+
+		if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON1 << 4), mousePointLparam);
+		if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_UP) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON1 << 4), mousePointLparam);
+
+		if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON2 << 4), mousePointLparam);
+		if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_UP) != 0)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON2 << 4), mousePointLparam);
+	}
+
+
+
+	// WM_MOUSEMOVE
+	if (rawInputState.sendMouseMoveMessages)
+	{
+		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEMOVE, mouseMkFlags, mousePointLparam);
+	}
+
+
+	//FIXME: remove from here
+	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_ACTIVATE, WA_CLICKACTIVE, 0);
+	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_ACTIVATEAPP, TRUE, 0);
+	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_NCACTIVATE, TRUE, 0);
+	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_SETFOCUS, 0, 0);
+	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEACTIVATE, HwndSelector::GetSelectedHwnd(), 1);
 }
 
 void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle)
@@ -112,7 +184,8 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	UINT cbSize;
 	GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER));
 	GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER));
-
+	rawinput.header.wParam = RIM_INPUT; // Sent in the foreground
+	
 	//TODO: this should be passed in by pipe as a state
 	constexpr int index = 1;
 

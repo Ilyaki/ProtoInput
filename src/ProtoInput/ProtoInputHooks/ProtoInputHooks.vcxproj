@@ -212,6 +212,7 @@
     <ClInclude Include="MessageList.h" />
     <ClInclude Include="MouseActivateFilter.h" />
     <ClInclude Include="MouseMoveFilter.h" />
+    <ClInclude Include="MouseWheelFilter.h" />
     <ClInclude Include="PipeCommunication.h" />
     <ClInclude Include="pipeinclude\pipeinclude.h" />
     <ClInclude Include="RawInput.h" />
