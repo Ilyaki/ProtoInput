@@ -10,6 +10,7 @@
 #include "HwndSelector.h"
 #include "MouseWheelFilter.h"
 #include <3rd_party/BeaEngine/headers/Includes/basic_types.h>
+#include "MouseButtonFilter.h"
 
 namespace Proto
 {
@@ -37,7 +38,7 @@ const std::vector<USAGE> RawInput::usageTypesOfInterest
 HWND RawInput::rawInputHwnd = nullptr;
 
 void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
-{
+{	
 	// Update fake mouse position
 	if ((data.usFlags & MOUSE_MOVE_ABSOLUTE) == MOUSE_MOVE_ABSOLUTE)
 	{
@@ -112,10 +113,8 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 			const unsigned int wparam = data.usButtonData << 4
 				| MouseWheelFilter::protoInputSignature
 				| mouseMkFlags;
-
-			const unsigned int lparam = mousePointLparam;
-			
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEWHEEL, wparam, lparam);
+						
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEWHEEL, wparam, mousePointLparam);
 
 		}
 	}
@@ -123,33 +122,31 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 
 	// Send mouse button messages
 	if (rawInputState.sendMouseButtonMessages)
-	{
-		//FIXME: need a filter to only let through synthesized versions of these messages
-		
+	{		
 		if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONDOWN, mouseMkFlags, mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 		if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONUP, mouseMkFlags, mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 
 		if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONDOWN, mouseMkFlags, mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 		if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONUP, mouseMkFlags, mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 
 		if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONDOWN, mouseMkFlags, mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 		if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONUP, mouseMkFlags, mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 
 		if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON1 << 4), mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON1 << 4) | MouseButtonFilter::signature, mousePointLparam);
 		if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON1 << 4), mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON1 << 4) | MouseButtonFilter::signature, mousePointLparam);
 
 		if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON2 << 4), mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON2 << 4) | MouseButtonFilter::signature, mousePointLparam);
 		if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON2 << 4), mousePointLparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON2 << 4) | MouseButtonFilter::signature, mousePointLparam);
 	}
 
 
@@ -163,9 +160,30 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 
 void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle)
 {
-	if ((data.Flags & RI_KEY_MAKE) != 0)
+	const bool released = (data.Flags & RI_KEY_BREAK) != 0;
+	const bool pressed = !released;
+
+	if (pressed)
+	{
+		unsigned int lparam = 0;
+		lparam |= 1; // Repeat bit
+		lparam |= (data.MakeCode << 16); // Scan code
+		if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey)) lparam |= (1 << 30);
+		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, data.VKey, lparam);
+	}
+	else if (released)
+	{
+		unsigned int lparam = 0;
+		lparam |= 1; // Repeat count (always 1 for key up)
+		lparam |= (data.MakeCode << 16); // Scan code
+		lparam |= (1 << 30); // Previous key state (always 1 for key up)
+		lparam |= (1 << 31); // Transition state (always 1 for key up)
+		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, data.VKey, lparam);
+	}
+	
+	if (pressed)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, true);
-	else if ((data.Flags & RI_KEY_BREAK) != 0)
+	else if (released)
 		FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, false);
 }
 
@@ -217,8 +235,8 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	
 	if (forwardRawInput)
 	{
-		const bool allowMouse = (rawinput.header.dwType == RIM_TYPEMOUSE && usages[HID_USAGE_GENERIC_MOUSE] && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end());
-		const bool allowKeyboard = (rawinput.header.dwType == RIM_TYPEKEYBOARD && usages[HID_USAGE_GENERIC_KEYBOARD] && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end());
+		const bool allowMouse = (rawinput.header.dwType == RIM_TYPEMOUSE && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end());
+		const bool allowKeyboard = (rawinput.header.dwType == RIM_TYPEKEYBOARD && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end());
 		
 		if (allowMouse || allowKeyboard)
 		{
@@ -226,20 +244,22 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 				ProcessMouseInput(rawinput.data.mouse, rawinput.header.hDevice);
 			else if (allowKeyboard)
 				ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
-			
-			for (const auto& hwnd : forwardingWindows)
+
+			if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
 			{
-				static size_t inputBufferCounter = 0;
+				for (const auto& hwnd : forwardingWindows)
+				{
+					static size_t inputBufferCounter = 0;
 
-				// The game is going to lag behind the data we get by a few times, so store in an array and pass the index as a message parameter
-				
-				inputBufferCounter = (inputBufferCounter + 1) % RawInputBufferSize;
-				inputBuffer[inputBufferCounter] = rawinput;
+					// The game is going to lag behind the data we get by a few times, so store in an array and pass the index as a message parameter
 
-				const LPARAM x = (inputBufferCounter) | 0xAB000000;
-				PostMessageW(hwnd, WM_INPUT, RIM_INPUT, x);
+					inputBufferCounter = (inputBufferCounter + 1) % RawInputBufferSize;
+					inputBuffer[inputBufferCounter] = rawinput;
+
+					const LPARAM x = (inputBufferCounter) | 0xAB000000;
+					PostMessageW(hwnd, WM_INPUT, RIM_INPUT, x);
+				}
 			}
-
 		}
 	}
 
@@ -407,7 +427,7 @@ void RawInput::AddWindowToForward(HWND hwnd)
 }
 
 void RawInput::SetUsageBitField(std::bitset<9> _usages)
-{
+{	
 	usages = _usages;
 }
 

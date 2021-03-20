@@ -25,7 +25,8 @@ enum ProtoMessageFilterIDs : unsigned int
 	MouseActivateFilterID,
 	WindowActivateFilterID,
 	WindowActivateAppFilterID,
-	MouseWheelFilterID
+	MouseWheelFilterID,
+	MouseButtonFilterID
 };
 
 //TODO: add some documentation to the header file

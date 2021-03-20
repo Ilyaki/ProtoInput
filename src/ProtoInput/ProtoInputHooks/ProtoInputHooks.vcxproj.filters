@@ -126,6 +126,9 @@
     <ClInclude Include="FocusMessageLoop.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="MouseButtonFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

@@ -5,6 +5,7 @@
 #include "WindowActivateFilter.h"
 #include "WindowActivateAppFilter.h"
 #include "MouseWheelFilter.h"
+#include "MouseButtonFilter.h"
 
 namespace Proto
 {
@@ -16,6 +17,7 @@ MouseMoveFilter, \
 MouseActivateFilter, \
 WindowActivateFilter, \
 WindowActivateAppFilter, \
-MouseWheelFilter
+MouseWheelFilter, \
+MouseButtonFilter
 
 }
