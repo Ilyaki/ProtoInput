@@ -284,6 +284,29 @@ extern "C" __declspec(dllexport) void DisableMessageBlock(ProtoInstanceHandle in
 	EnableDisableMessageBlock(instanceHandle, messageID, false);
 }
 
+extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds,
+	bool wm_activate, bool wm_activateapp, bool wm_ncactivate, bool wm_setfocus, bool wm_mouseactivate)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageStartFocusMessageLoop message
+		{
+			milliseconds,
+			wm_activate,
+			wm_activateapp,
+			wm_ncactivate,
+			wm_setfocus,
+			wm_mouseactivate
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::StartFocusMessageLoop, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle)
 {
 	ProtoPipe::PipeMessageWakeUpProcess message

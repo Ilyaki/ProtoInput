@@ -41,14 +41,12 @@ private:
 			needReinstalling = true;
 	};
 	
-public:
-	static intptr_t const * windowToReturn;
-	
+public:	
 	const char* GetHookName() const override { return "Focus"; }
 	const char* GetHookDescription() const override
 	{
 		return
-		"Fakes window focus by returning the games window as the foreground window.";
+		"Fakes window focus by returning the games window as the foreground window. ";
 	}
 	bool HasGuiStatus() const override { return true; }
 	void ShowGuiStatus() override;

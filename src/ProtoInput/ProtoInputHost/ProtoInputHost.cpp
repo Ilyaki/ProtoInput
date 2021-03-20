@@ -97,6 +97,8 @@ int main()
 		InstallHook(instanceHandle, ProtoHookIDs::MessageFilterHookID);
 
 		// EnableMessageBlock(instanceHandle, 0x00FF); // WM_INPUT
+
+		StartFocusMessageLoop(instanceHandle, 5);
 		
 		WakeUpProcess(instanceHandle);
 	}

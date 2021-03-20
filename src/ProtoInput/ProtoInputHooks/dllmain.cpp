@@ -13,6 +13,7 @@
 #include "protoloader.h"
 #include "PipeCommunication.h"
 #include "HwndSelector.h"
+#include "FocusMessageLoop.h"
 
 HMODULE dll_hModule;
 
@@ -40,6 +41,8 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
 
     Proto::HwndSelector::UpdateMainHwnd();
+
+    Proto::FocusMessageLoop::SetupThread();
 	
     Proto::AddThreadToACL(GetCurrentThreadId());
 	

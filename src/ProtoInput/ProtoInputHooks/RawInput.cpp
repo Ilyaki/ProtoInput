@@ -159,14 +159,6 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 	{
 		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEMOVE, mouseMkFlags, mousePointLparam);
 	}
-
-
-	//FIXME: remove from here
-	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_ACTIVATE, WA_CLICKACTIVE, 0);
-	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_ACTIVATEAPP, TRUE, 0);
-	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_NCACTIVATE, TRUE, 0);
-	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_SETFOCUS, 0, 0);
-	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEACTIVATE, HwndSelector::GetSelectedHwnd(), 1);
 }
 
 void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle)

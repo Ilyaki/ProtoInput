@@ -192,6 +192,7 @@
     <ClInclude Include="FakeMouse.h" />
     <ClInclude Include="FakeMouseKeyboard.h" />
     <ClInclude Include="FocusHook.h" />
+    <ClInclude Include="FocusMessageLoop.h" />
     <ClInclude Include="FontData.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GetAsyncKeyStateHook.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FakeMouseKeyboard.cpp" />
     <ClCompile Include="FocusHook.cpp" />
+    <ClCompile Include="FocusMessageLoop.cpp" />
     <ClCompile Include="GetAsyncKeyStateHook.cpp" />
     <ClCompile Include="GetCursorPosHook.cpp" />
     <ClCompile Include="GetKeyboardStateHook.cpp" />

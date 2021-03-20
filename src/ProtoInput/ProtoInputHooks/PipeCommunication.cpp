@@ -11,7 +11,7 @@
 #include "MessageFilterHook.h"
 #include "MessageList.h"
 #include "HwndSelector.h"
-
+#include "FocusMessageLoop.h"
 
 namespace Proto
 {
@@ -180,7 +180,6 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMesasgeUpdateMainWindowHandle*>(messageBuffer);
 					
-
 				if (body->hwnd == 0)
 				{
 					printf("Received message to research for the main window handle\n");
@@ -193,6 +192,20 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 					HwndSelector::SetSelectedHwnd((intptr_t)body->hwnd);
 				}
 					
+				break;
+			}
+			case ProtoPipe::PipeMessageType::StartFocusMessageLoop:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageStartFocusMessageLoop*>(messageBuffer);
+
+				FocusMessageLoop::sleepMilliseconds = body->milliseconds;
+				FocusMessageLoop::messagesToSend.wm_activate = body->wm_activate;
+				FocusMessageLoop::messagesToSend.wm_activateapp = body->wm_activateapp;
+				FocusMessageLoop::messagesToSend.wm_mouseactivate = body->wm_mouseactivate;
+				FocusMessageLoop::messagesToSend.wm_ncactivate = body->wm_ncactivate;
+				FocusMessageLoop::messagesToSend.wm_setfocus = body->wm_setfocus;
+				FocusMessageLoop::StartMessageLoop();
+				
 				break;
 			}
 			default:

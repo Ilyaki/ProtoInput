@@ -10,6 +10,7 @@
 #include "MessageList.h"
 #include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
+#include "FocusMessageLoop.h"
 
 namespace Proto
 {
@@ -194,6 +195,23 @@ void InputStatusMenu()
     ImGui::TextWrapped("Window dimensions: (%d, %d)", HwndSelector::windowWidth, HwndSelector::windowHeight);
 }
 
+void FocusMessageLoopMenu()
+{
+    ImGui::TextWrapped("Focus message loop: %s", FocusMessageLoop::running ? "Running" : "Not running");
+
+    if (FocusMessageLoop::running && ImGui::Button("Pause"))
+        FocusMessageLoop::PauseMessageLoop();
+    else if (!FocusMessageLoop::running && ImGui::Button("Resume"))
+        FocusMessageLoop::StartMessageLoop();
+
+    ImGui::TextWrapped("Messages to send:");
+    ImGui::Checkbox("WM_ACTIVATE", &FocusMessageLoop::messagesToSend.wm_activate);
+    ImGui::Checkbox("WM_NCACTIVATE", &FocusMessageLoop::messagesToSend.wm_ncactivate);
+    ImGui::Checkbox("WM_ACTIVATEAPP", &FocusMessageLoop::messagesToSend.wm_activateapp);
+    ImGui::Checkbox("WM_SETFOCUS", &FocusMessageLoop::messagesToSend.wm_setfocus);
+    ImGui::Checkbox("WM_MOUSEACTIVATE", &FocusMessageLoop::messagesToSend.wm_mouseactivate);
+}
+
 void RenderImgui()
 {
    // ImGui::ShowDemoWindow();
@@ -301,6 +319,11 @@ void RenderImgui()
         if (ImGui::CollapsingHeader("Input Status", ImGuiTreeNodeFlags_DefaultOpen))
         {
             InputStatusMenu();
+        }
+
+        if (ImGui::CollapsingHeader("Focus Message Loop", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            FocusMessageLoopMenu();
         }
 
         ImGui::End();

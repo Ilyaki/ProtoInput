@@ -5,17 +5,12 @@
 namespace Proto
 {
 
-intptr_t const * FocusHook::windowToReturn = nullptr;
-
 inline HWND GetHwnd()
-{
-	if (FocusHook::windowToReturn == nullptr)
-		return nullptr;
-	
-	if (*FocusHook::windowToReturn == 0)
+{	
+	if (HwndSelector::GetSelectedHwnd() == 0)
 		HwndSelector::UpdateMainHwnd();
 
-	return (HWND)*FocusHook::windowToReturn;
+	return (HWND)HwndSelector::GetSelectedHwnd();
 }
 
 HWND WINAPI Hook_GetForegroundWindow()
@@ -74,14 +69,7 @@ BOOL WINAPI Hook_SetForegroundWindow(HWND hWnd)
 }
 
 void FocusHook::ShowGuiStatus()
-{
-	if (static bool guiInit = false; !guiInit)
-	{
-		guiInit = true;
-		// windowToReturn = &HwndSelector::selectedHwnd;
-		windowToReturn = HwndSelector::GetSelectedHwndPtr();
-	}
-	
+{	
 	if (IsInstalled() && needReinstalling)
 	{
 		ImGui::PushID(1234);
@@ -93,7 +81,7 @@ void FocusHook::ShowGuiStatus()
 		ImGui::PopID();
 	}
 
-	ImGui::TextWrapped("Window directing fake focus to: %d (0x%X)", windowToReturn == nullptr ? 0 : *windowToReturn, windowToReturn == nullptr ? 0 : *windowToReturn);
+	ImGui::TextWrapped("Window directing fake focus to: %d (0x%X)", HwndSelector::GetSelectedHwnd(), HwndSelector::GetSelectedHwnd());
 
 	if (ImGui::Button("Find new main window"))
 		HwndSelector::UpdateMainHwnd();
@@ -113,8 +101,6 @@ void FocusHook::ShowGuiStatus()
 
 void FocusHook::InstallImpl()
 {
-	windowToReturn = HwndSelector::GetSelectedHwndPtr();
-
 	needReinstalling = false;
 	
 	if (enabledHookGetForegroundWindow) hookInfoGetForegroundWindow = std::get<1>(InstallNamedHook(L"user32", "GetForegroundWindow", Hook_GetForegroundWindow));

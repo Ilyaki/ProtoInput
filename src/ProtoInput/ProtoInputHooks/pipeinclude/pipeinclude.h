@@ -11,7 +11,8 @@ enum class PipeMessageType
 	WakeUpProcess,
 	SetupMessageFilter,
 	SetupMessageBlock,
-	UpdateMainWindowHandle
+	UpdateMainWindowHandle,
+	StartFocusMessageLoop
 };
 
 struct PipeMessageHeader
@@ -45,6 +46,16 @@ struct PipeMessageWakeUpProcess
 struct PipeMesasgeUpdateMainWindowHandle
 {
 	uint64_t hwnd = 0;
+};
+
+struct PipeMessageStartFocusMessageLoop
+{
+	int milliseconds;
+	bool wm_activate;
+	bool wm_activateapp;
+	bool wm_ncactivate;
+	bool wm_setfocus;
+	bool wm_mouseactivate;
 };
 
 }

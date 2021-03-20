@@ -51,3 +51,6 @@ extern "C" __declspec(dllexport) void DisableMessageBlock(ProtoInstanceHandle in
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle);
 
 extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle instanceHandle, uint64_t hwnd = 0);
+
+extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds = 5,
+		bool wm_activate = true, bool wm_activateapp = true, bool wm_ncactivate = true, bool wm_setfocus = true, bool wm_mouseactivate = true);
