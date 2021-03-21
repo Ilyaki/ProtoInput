@@ -1,11 +1,12 @@
-#include <Windows.h>
 #include <string>
+#include <Windows.h>
 #include "PipeCommunication.h"
 #include <iostream>
 #include "HookManager.h"
+
 #include "pipeinclude/pipeinclude.h"
 #include <imgui.h>
-#include "InstallHooks.h"
+
 #include <TlHelp32.h>
 #include "MessageFilterHook.h"
 #include "MessageList.h"

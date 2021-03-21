@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Hook.h"
+#include "MessageBoxHook.h"
 #include "protoloader.h"
 
 namespace Proto

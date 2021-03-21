@@ -1,8 +1,6 @@
-#include <windows.h>
 #include "FocusHook.h"
 #include <imgui.h>
 #include "HwndSelector.h"
-#include "InstallHooks.h"
 
 namespace Proto
 {

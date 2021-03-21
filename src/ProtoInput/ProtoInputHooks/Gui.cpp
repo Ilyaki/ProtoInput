@@ -1,9 +1,9 @@
-#include <Windows.h>
 #include "Gui.h"
 #include "imgui.h"
 #include <cstdio>
 #include "RawInput.h"
 #include <iostream>
+#include "Windows.h"
 #include "HookManager.h"
 #include <algorithm>
 #include "MessageFilterHook.h"

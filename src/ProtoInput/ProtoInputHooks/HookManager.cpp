@@ -1,4 +1,3 @@
-#include <windows.h> // Don't remove this from here or it might break compilation...
 #include "HookManager.h"
 #include "RegisterRawInputHook.h"
 #include "GetRawInputDataHook.h"
@@ -17,6 +16,7 @@ HookManager HookManager::hookManagerInstance{};
 
 HookManager::HookManager()
 {
+	AddHook<MessageBoxHook>(ProtoHookIDs::MessageBoxHookID);
 	AddHook<RegisterRawInputHook>(ProtoHookIDs::RegisterRawInputHookID);
 	AddHook<GetRawInputDataHook>(ProtoHookIDs::GetRawInputDataHookID);
 	AddHook<MessageFilterHook>(ProtoHookIDs::MessageFilterHookID);
