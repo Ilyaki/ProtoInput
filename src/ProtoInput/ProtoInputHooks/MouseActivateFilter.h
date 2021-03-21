@@ -1,5 +1,5 @@
 #pragma once
-#include <WinUser.h>
+#include <windows.h>
 #include "MessageFilterBase.h"
 #include "protoloader.h"
 #include "HwndSelector.h"

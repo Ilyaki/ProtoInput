@@ -1,8 +1,9 @@
-#include "MessageBoxHook.h"
+#include <windows.h>
 #include "MessageFilterHook.h"
 #include <imgui.h>
 #include "MessageList.h"
 #include "MessageFilters.h"
+#include "InstallHooks.h"
 
 namespace Proto
 {

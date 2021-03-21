@@ -87,9 +87,6 @@
     <ClInclude Include="GetRawInputDataHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
-    <ClInclude Include="MessageBoxHook.h">
-      <Filter>Source Files\Hooks</Filter>
-    </ClInclude>
     <ClInclude Include="MessageFilterHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
@@ -207,9 +204,6 @@
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="GetRawInputDataHook.cpp">
-      <Filter>Source Files\Hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="MessageBoxHook.cpp">
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="MessageFilterHook.cpp">

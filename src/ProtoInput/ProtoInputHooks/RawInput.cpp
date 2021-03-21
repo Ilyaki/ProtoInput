@@ -1,7 +1,8 @@
+#include <windows.h>
 #include "RawInput.h"
 #include "Gui.h"
 #include <cassert>
-#include <windows.h>
+
 #include <iostream>
 #include <vector>
 #include "HookManager.h"
@@ -9,8 +10,8 @@
 #include <unordered_map>
 #include "HwndSelector.h"
 #include "MouseWheelFilter.h"
-#include <3rd_party/BeaEngine/headers/Includes/basic_types.h>
 #include "MouseButtonFilter.h"
+#include "InstallHooks.h"
 
 namespace Proto
 {

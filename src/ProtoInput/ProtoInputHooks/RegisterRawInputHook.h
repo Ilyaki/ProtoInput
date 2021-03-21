@@ -3,6 +3,7 @@
 #include "HookManager.h"
 #include <bitset>
 #include <hidusage.h>
+#include "InstallHooks.h"
 
 namespace Proto
 {

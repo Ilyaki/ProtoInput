@@ -2,6 +2,7 @@
 #include "Hook.h"
 #include "HookManager.h"
 #include "protoloader.h"
+#include "InstallHooks.h"
 
 namespace Proto
 {

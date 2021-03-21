@@ -14,6 +14,7 @@
 #include "PipeCommunication.h"
 #include "HwndSelector.h"
 #include "FocusMessageLoop.h"
+#include "InstallHooks.h"
 
 HMODULE dll_hModule;
 

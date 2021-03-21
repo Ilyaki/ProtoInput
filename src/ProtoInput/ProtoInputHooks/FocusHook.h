@@ -1,6 +1,7 @@
 #pragma once
 #include "HookManager.h"
 #include <imgui.h>
+#include "InstallHooks.h"
 
 namespace Proto
 {
