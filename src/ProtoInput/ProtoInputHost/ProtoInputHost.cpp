@@ -14,8 +14,6 @@
 
 bool CheckBuildTimings(const std::wstring& folderpath)
 {
-	//TODO: only if debug
-
 	const auto loaderPath32 = std::filesystem::path{ folderpath }.append("ProtoInputLoader32.dll");
 	const auto loaderPath64 = std::filesystem::path{ folderpath }.append("ProtoInputLoader64.dll");
 
@@ -29,7 +27,7 @@ bool CheckBuildTimings(const std::wstring& folderpath)
 
 	if (secLoader > maximumDurationSec || secHooks > maximumDurationSec)
 	{
-		return IDCANCEL == MessageBoxW(NULL, L"Hooks32/64 or Loader32/64 are built at very different times\nMake sure you have compiled both", L"Warning", MB_OKCANCEL);
+		return IDCANCEL == MessageBoxW(NULL, L"Hooks32/64 or Loader32/64 are built at very different times\nMake they have both been compiled", L"Warning", MB_OKCANCEL);
 	}
 
 	return false;
@@ -49,7 +47,7 @@ int main()
 	if (CheckBuildTimings(folderpath))
 		return 0;
 	
-	constexpr bool runtime = true;
+	constexpr bool runtime = false;
 	constexpr bool hookSelf = false;
 
 	if (runtime)
@@ -58,7 +56,7 @@ int main()
 
 		if (hookSelf)
 			selectedPid = GetCurrentProcessId();
-		else
+		else 
 		{
 			// auto pids = blackbone::Process::EnumByName(L"osu!.exe");
 			auto pids = blackbone::Process::EnumByName(L"hl2.exe");
@@ -78,7 +76,6 @@ int main()
 		if (selectedPid != 0)
 		{
 			const auto instanceHandle = BlackBoneInjectRuntime(selectedPid, folderpath.c_str());
-			InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 		}
 	}
 	else
@@ -89,9 +86,10 @@ int main()
 
 		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
 				path, L"", 0, folderpath.c_str(), &pid);
-		
 
-		InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
+		SetupState(instanceHandle, 3);
+		SetupMessagesToSend(instanceHandle, false, true, true, false);
+		
 		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
 		InstallHook(instanceHandle, ProtoHookIDs::MessageFilterHookID);
@@ -99,6 +97,7 @@ int main()
 		// EnableMessageBlock(instanceHandle, 0x00FF); // WM_INPUT
 
 		StartFocusMessageLoop(instanceHandle, 5);
+		
 		
 		WakeUpProcess(instanceHandle);
 	}

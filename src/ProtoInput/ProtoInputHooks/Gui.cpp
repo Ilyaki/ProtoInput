@@ -11,6 +11,7 @@
 #include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
 #include "FocusMessageLoop.h"
+#include "StateInfo.h"
 
 namespace Proto
 {
@@ -146,6 +147,11 @@ void HooksMenu()
 
 void RawInputMenu()
 {
+    ImGui::Checkbox("Send mouse movement messages", &RawInput::rawInputState.sendMouseMoveMessages);
+    ImGui::Checkbox("Send mouse button messages", &RawInput::rawInputState.sendMouseButtonMessages);
+    ImGui::Checkbox("Send mouse wheel messages", &RawInput::rawInputState.sendMouseWheelMessages);
+    ImGui::Checkbox("Send keyboard button messages", &RawInput::rawInputState.sendKeyboardPressMessages);
+	
     if (ImGui::TreeNode("Mouse Raw Input Handle"))
     {
         HandleSelectableDualList(RawInput::rawInputState.selectedMouseHandles, RawInput::rawInputState.deselectedMouseHandles);
@@ -210,6 +216,11 @@ void FocusMessageLoopMenu()
     ImGui::Checkbox("WM_ACTIVATEAPP", &FocusMessageLoop::messagesToSend.wm_activateapp);
     ImGui::Checkbox("WM_SETFOCUS", &FocusMessageLoop::messagesToSend.wm_setfocus);
     ImGui::Checkbox("WM_MOUSEACTIVATE", &FocusMessageLoop::messagesToSend.wm_mouseactivate);
+}
+
+static void InfoMenu()
+{
+    ImGui::TextWrapped("Instance index %d", StateInfo::info.instanceIndex);
 }
 
 void RenderImgui()
@@ -306,7 +317,12 @@ void RenderImgui()
         ImGui::SetWindowSize(otherWindowSize);
         const auto otherWindowPos = ImGui::GetWindowPos();
 
-        if (ImGui::CollapsingHeader("Controls", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::CollapsingHeader("Info", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
+        {
+            InfoMenu();
+        }
+    	
+        if (ImGui::CollapsingHeader("Controls", ImGuiTreeNodeFlags_DefaultOpen)) // ImGuiTreeNodeFlags_Leaf
         {
             ControlsMenu();
         }

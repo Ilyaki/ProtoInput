@@ -9,14 +9,12 @@
 namespace Proto
 {
 
-//TODO: add to ui
-//FIXME: turn this false or it will spam the log for some games
-bool logCallsToRegisterRawInput = true;
+bool RegisterRawInputHook::logCallsToRegisterRawInput = false;
 RegisterRawInputHook* registerRawInputHookPtr = nullptr;
 
 BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize)
 {
-	if (logCallsToRegisterRawInput)
+	if (RegisterRawInputHook::logCallsToRegisterRawInput)
 		printf("Detected a call to RegisterRawInputDevices\n");
 	
 	HWND targetHWND = NULL;
@@ -28,7 +26,7 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 		const auto targetI = pRawInputDevices[i].hwndTarget;
 		if (targetI != NULL && targetI != RawInput::rawInputHwnd)
 		{
-			if (targetHWND != NULL && targetHWND != targetI && logCallsToRegisterRawInput)
+			if (targetHWND != NULL && targetHWND != targetI && RegisterRawInputHook::logCallsToRegisterRawInput)
 				printf("WARNING: The game appears to have multiple hwnds subscribed to raw input. We are only using one\n");
 
 			targetHWND = targetI;
@@ -46,12 +44,12 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 
 	if (targetHWND == nullptr)
 	{
-		if (logCallsToRegisterRawInput)
+		if (RegisterRawInputHook::logCallsToRegisterRawInput)
 			printf("Couldn't find a hwnd subscribed to raw input (The call was probably to unsubscribe)\n");
 	}
 	else
 	{
-		if (logCallsToRegisterRawInput)
+		if (RegisterRawInputHook::logCallsToRegisterRawInput)
 			printf("Found raw input hwnd: 0x%X\n", targetHWND);
 		
 		registerRawInputHookPtr->AddWindowToForward(targetHWND, usagesToForward);
@@ -133,6 +131,7 @@ void RegisterRawInputHook::AddWindowToForward(HWND hwnd, std::bitset<9> usages)
 void RegisterRawInputHook::ShowGuiStatus()
 {
 	ImGui::Checkbox("Forward raw input", &RawInput::forwardRawInput);
+	ImGui::Checkbox("Log calls to registering raw input", &logCallsToRegisterRawInput);
 }
 
 void RegisterRawInputHook::InstallImpl()

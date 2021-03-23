@@ -16,7 +16,7 @@ DWORD WINAPI LoopThread(LPVOID lpParameter)
 {
 	printf("Starting focus message loop thread\n");
 
-	//TODO: could add a way to exit this loop on shutdown
+	//TODO: need to close the thread handle when application closes
 	//TODO: check how much cpu this uses
 
 	
@@ -48,6 +48,7 @@ void FocusMessageLoop::SetupThread()
 {
 	loopThread = CreateThread(nullptr, 0,(LPTHREAD_START_ROUTINE)LoopThread, 
 							  GetModuleHandle(0), CREATE_SUSPENDED, 0);
+		
 	running = false;
 }
 
@@ -64,6 +65,11 @@ void FocusMessageLoop::PauseMessageLoop()
 {
 	SuspendThread(loopThread);
 	running = false;
+}
+
+void FocusMessageLoop::Cleanup()
+{
+	CloseHandle(loopThread);
 }
 
 }

@@ -1,4 +1,5 @@
-#include "MessageBoxHook.h"
+#include "Hook.h"
+#include "InstallHooks.h"
 #include "MessageFilterHook.h"
 #include <imgui.h>
 #include "MessageList.h"
@@ -30,7 +31,7 @@ inline BOOL FilterMessage(MSG* lpMsg)
 	lpMsg->pt.x = FakeMouseKeyboard::GetMouseState().x;
 	lpMsg->pt.y = FakeMouseKeyboard::GetMouseState().y;
 	
-	if (!MessageFilterAllow<PROTO_MESSAGE_FILTERS>(lpMsg->message, (unsigned int*)&lpMsg->lParam, &lpMsg->wParam, (intptr_t)lpMsg->hwnd)
+	if (!MessageFilterAllow<PROTO_MESSAGE_FILTERS>(lpMsg->message, (unsigned int*)&lpMsg->lParam, (unsigned int*)&lpMsg->wParam, (intptr_t)lpMsg->hwnd)
 		|| MessageList::IsBlocked(lpMsg->message))
 	{
 		//Massive performance benefits for returning a successful WM_NULL compared to causing an error in the application.

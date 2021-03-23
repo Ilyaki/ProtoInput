@@ -189,6 +189,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Cleanup.h" />
     <ClInclude Include="FakeMouse.h" />
     <ClInclude Include="FakeMouseKeyboard.h" />
     <ClInclude Include="FocusHook.h" />
@@ -205,8 +206,6 @@
     <ClInclude Include="HookManager.h" />
     <ClInclude Include="HwndSelector.h" />
     <ClInclude Include="InstallHooks.h" />
-    <ClInclude Include="MenuShortcut.h" />
-    <ClInclude Include="MessageBoxHook.h" />
     <ClInclude Include="MessageFilterBase.h" />
     <ClInclude Include="MessageFilters.h" />
     <ClInclude Include="MessageFilterHook.h" />
@@ -221,6 +220,7 @@
     <ClInclude Include="RawInputFilter.h" />
     <ClInclude Include="RegisterRawInputHook.h" />
     <ClInclude Include="SetCursorPosHook.h" />
+    <ClInclude Include="StateInfo.h" />
     <ClInclude Include="WindowActivateAppFilter.h" />
     <ClInclude Include="WindowActivateFilter.h" />
   </ItemGroup>
@@ -235,6 +235,7 @@
     <ClCompile Include="..\..\..\lib\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\lib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Cleanup.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FakeMouseKeyboard.cpp" />
     <ClCompile Include="FocusHook.cpp" />
@@ -249,14 +250,13 @@
     <ClCompile Include="HookInstaller.cpp" />
     <ClCompile Include="HookManager.cpp" />
     <ClCompile Include="HwndSelector.cpp" />
-    <ClCompile Include="MenuShortcut.cpp" />
-    <ClCompile Include="MessageBoxHook.cpp" />
     <ClCompile Include="MessageFilterHook.cpp" />
     <ClCompile Include="MessageList.cpp" />
     <ClCompile Include="PipeCommunication.cpp" />
     <ClCompile Include="RawInput.cpp" />
     <ClCompile Include="RegisterRawInputHook.cpp" />
     <ClCompile Include="SetCursorPosHook.cpp" />
+    <ClCompile Include="StateInfo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

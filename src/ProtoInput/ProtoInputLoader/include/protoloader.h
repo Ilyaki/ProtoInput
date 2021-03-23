@@ -6,7 +6,6 @@ using ProtoInstanceHandle  = unsigned int;
 
 enum ProtoHookIDs : unsigned int
 {
-	MessageBoxHookID = 0,
 	RegisterRawInputHookID,
 	GetRawInputDataHookID,
 	MessageFilterHookID,
@@ -52,6 +51,11 @@ extern "C" __declspec(dllexport) void DisableMessageBlock(ProtoInstanceHandle in
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle);
 
 extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle instanceHandle, uint64_t hwnd = 0);
+
+extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex);
+
+extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, 
+									bool sendMouseWheelMessages = true, bool sendMouseButtonMessages = true, bool sendMouseMoveMessages = true, bool sendKeyboardPressMessages = true);
 
 extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds = 5,
 		bool wm_activate = true, bool wm_activateapp = true, bool wm_ncactivate = true, bool wm_setfocus = true, bool wm_mouseactivate = true);

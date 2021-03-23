@@ -16,7 +16,6 @@ HookManager HookManager::hookManagerInstance{};
 
 HookManager::HookManager()
 {
-	AddHook<MessageBoxHook>(ProtoHookIDs::MessageBoxHookID);
 	AddHook<RegisterRawInputHook>(ProtoHookIDs::RegisterRawInputHookID);
 	AddHook<GetRawInputDataHook>(ProtoHookIDs::GetRawInputDataHookID);
 	AddHook<MessageFilterHook>(ProtoHookIDs::MessageFilterHookID);

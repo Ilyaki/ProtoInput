@@ -12,6 +12,8 @@
 #include "MessageList.h"
 #include "HwndSelector.h"
 #include "FocusMessageLoop.h"
+#include "StateInfo.h"
+#include "RawInput.h"
 
 namespace Proto
 {
@@ -83,7 +85,7 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				break;
 			}
 
-			printf("Received pipe header, message ID %d, message size = %d\n", msgHeader.messageType, msgHeader.messageSize);
+			// printf("Received pipe header, message ID %d, message size = %d\n", msgHeader.messageType, msgHeader.messageSize);
 	
 			success = ReadFile(
 				pipe,
@@ -141,6 +143,8 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 					
 				// Wake up the threads if they are suspended
 				//TODO: we might need to wait (mutex or sleep) for tasks to complete before waking up
+				// Although as long as the host installs hooks first it should be fine...
+				
 				{
 					HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, GetCurrentProcessId());
 					if (h != INVALID_HANDLE_VALUE) {
@@ -153,8 +157,6 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 									te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) +
 									sizeof(te.th32OwnerProcessID))
 								{
-									//TODO: maybe check the module isn't ProtoInputHooks to be safe (dont want to resume one of our threads that should be suspended)
-
 									if (auto hThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, te.th32ThreadID); hThread != NULL)
 									{
 										printf("Waking thread %d\n", te.th32ThreadID);
@@ -206,6 +208,30 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				FocusMessageLoop::messagesToSend.wm_setfocus = body->wm_setfocus;
 				FocusMessageLoop::StartMessageLoop();
 				
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetupState:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupState*>(messageBuffer);
+
+				printf("Received setup state message, instance index = %d\n", body->instanceNumber);
+					
+				StateInfo::info.instanceIndex = body->instanceNumber;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetupMessagesToSend:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupMessagesToSend*>(messageBuffer);
+
+				printf("Received setup messages to send, send mouse move = %d, send mouse button = %d, send mouse wheel = %d, send keyboard = %d\n", 
+					   body->sendMouseMoveMessages ? 1 : 0, body->sendMouseButtonMessages ? 1 : 0, body->sendMouseWheelMessages ? 1 : 0, body->sendKeyboardPressMessages ? 1 : 0);
+
+				RawInput::rawInputState.sendMouseMoveMessages = body->sendMouseMoveMessages;
+				RawInput::rawInputState.sendMouseButtonMessages = body->sendMouseButtonMessages;
+				RawInput::rawInputState.sendMouseWheelMessages = body->sendMouseWheelMessages;
+				RawInput::rawInputState.sendKeyboardPressMessages = body->sendKeyboardPressMessages;
+					
 				break;
 			}
 			default:

@@ -11,6 +11,7 @@
 #include "MouseWheelFilter.h"
 #include <3rd_party/BeaEngine/headers/Includes/basic_types.h>
 #include "MouseButtonFilter.h"
+#include "StateInfo.h"
 
 namespace Proto
 {
@@ -163,22 +164,25 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 	const bool released = (data.Flags & RI_KEY_BREAK) != 0;
 	const bool pressed = !released;
 
-	if (pressed)
+	if (rawInputState.sendKeyboardPressMessages)
 	{
-		unsigned int lparam = 0;
-		lparam |= 1; // Repeat bit
-		lparam |= (data.MakeCode << 16); // Scan code
-		if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey)) lparam |= (1 << 30);
-		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, data.VKey, lparam);
-	}
-	else if (released)
-	{
-		unsigned int lparam = 0;
-		lparam |= 1; // Repeat count (always 1 for key up)
-		lparam |= (data.MakeCode << 16); // Scan code
-		lparam |= (1 << 30); // Previous key state (always 1 for key up)
-		lparam |= (1 << 31); // Transition state (always 1 for key up)
-		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, data.VKey, lparam);
+		if (pressed)
+		{
+			unsigned int lparam = 0;
+			lparam |= 1; // Repeat bit
+			lparam |= (data.MakeCode << 16); // Scan code
+			if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey)) lparam |= (1 << 30);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, data.VKey, lparam);
+		}
+		else if (released)
+		{
+			unsigned int lparam = 0;
+			lparam |= 1; // Repeat count (always 1 for key up)
+			lparam |= (data.MakeCode << 16); // Scan code
+			lparam |= (1 << 30); // Previous key state (always 1 for key up)
+			lparam |= (1 << 31); // Transition state (always 1 for key up)
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, data.VKey, lparam);
+		}
 	}
 	
 	if (pressed)
@@ -195,10 +199,9 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER));
 	GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER));
 	rawinput.header.wParam = RIM_INPUT; // Sent in the foreground
-	
-	//TODO: this should be passed in by pipe as a state
-	constexpr int index = 1;
 
+	const int index = StateInfo::info.instanceIndex;
+	
 	// Shortcut to open UI (doesn't care about what keyboard is attached)
 	if (rawinput.header.dwType == RIM_TYPEKEYBOARD && index >= 1 && index <= 9 && (rawinput.data.keyboard.VKey == 0x30 + index))
 	{

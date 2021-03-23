@@ -16,11 +16,11 @@ struct RawInputState
 	
 	std::vector<void*> keyboardHandles{};
 	std::vector<void*> mouseHandles{};
-
-	//TODO: add to ui and pipe
-	bool sendMouseWheelMessages = true;
-	bool sendMouseButtonMessages = true;
-	bool sendMouseMoveMessages = true;
+		
+	bool sendMouseWheelMessages = false;
+	bool sendMouseButtonMessages = false;
+	bool sendMouseMoveMessages = false;
+	bool sendKeyboardPressMessages = false;
 };
 
 const size_t RawInputBufferSize = 1024;

@@ -10,6 +10,7 @@
 #include <backends/imgui_impl_opengl3.h>
 #include "RawInput.h"
 #include "FontData.h"
+#include "Cleanup.h"
 
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;
@@ -147,7 +148,8 @@ int Proto::ShowGuiImpl()
     ProtoGuiHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 850, 500, 0, 0, hInstance, 0);
 
     // Show the window
-    ShowWindow(ProtoGuiHwnd, SW_SHOWDEFAULT);
+    // ShowWindow(ProtoGuiHwnd, SW_SHOWDEFAULT);
+    ShowWindow(ProtoGuiHwnd, SW_HIDE);
     UpdateWindow(ProtoGuiHwnd);
 
     //Prepare OpenGlContext
@@ -263,6 +265,9 @@ int Proto::ShowGuiImpl()
     DestroyWindow(ProtoGuiHwnd);
     UnregisterClassW(className, wc.hInstance);
 
+	//TODO: this is never actually called, need a new system for cleanup
+    ProtoPerformCleanup();
+	
     return 0;
 }
 

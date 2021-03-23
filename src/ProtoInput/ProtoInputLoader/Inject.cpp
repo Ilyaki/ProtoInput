@@ -307,6 +307,49 @@ extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle 
 	}
 }
 
+extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex)
+{
+	if (instanceIndex < 1)
+	{
+		fprintf(stderr, "Instance index out of range (must start at 1)\n");
+		return;
+	}
+	
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetupState message
+		{
+			instanceIndex
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupState, &message);
+	}
+}
+
+extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, bool sendMouseWheelMessages, bool sendMouseButtonMessages, bool sendMouseMoveMessages, bool sendKeyboardPressMessages)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetupMessagesToSend message
+		{
+			sendMouseWheelMessages,
+			sendMouseButtonMessages,
+			sendMouseMoveMessages,
+			sendKeyboardPressMessages
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupMessagesToSend, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void WakeUpProcess(ProtoInstanceHandle instanceHandle)
 {
 	ProtoPipe::PipeMessageWakeUpProcess message

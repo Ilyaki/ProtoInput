@@ -27,6 +27,7 @@ public:
 	static void SetupThread();
 	static void StartMessageLoop();
 	static void PauseMessageLoop();
+	static void Cleanup();
 };
 
 }

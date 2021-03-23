@@ -28,8 +28,7 @@ public:
 
 inline void Hook::Install()
 {
-	//TODO: remove these output lines
-	std::cout << "Installing hook " << GetHookName() << std::endl;
+	// std::cout << "Installing hook " << GetHookName() << std::endl;
 	isInstalled = true;
 
 	InstallImpl();
@@ -37,7 +36,7 @@ inline void Hook::Install()
 
 inline void Hook::Uninstall()
 {
-	std::cout << "Uninstalling hook " << GetHookName() << std::endl;
+	// std::cout << "Uninstalling hook " << GetHookName() << std::endl;
 	isInstalled = false;
 
 	UninstallImpl();

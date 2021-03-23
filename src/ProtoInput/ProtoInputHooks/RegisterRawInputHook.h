@@ -20,6 +20,8 @@ private:
 	void FindAlreadySubscribedWindows();
 
 public:
+	static bool logCallsToRegisterRawInput;
+	
 	const char* GetHookName() const override { return "Register Raw Input"; }
 	const char* GetHookDescription() const override
 	{

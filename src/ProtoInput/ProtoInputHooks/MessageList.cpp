@@ -1043,8 +1043,6 @@ bool* MessageList::GetBlocked(unsigned message)
 
 	if (message < 0 || message >= indexTable.size())
 	{
-		//TODO: remove (might spam if using user defined messages)
-		// printf("Message out of range: %d\n", message);
 		return nullptr;
 	}
 

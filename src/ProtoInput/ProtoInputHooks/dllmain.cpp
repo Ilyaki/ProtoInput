@@ -1,4 +1,5 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
+#include <windows.h>
 #include <iostream>
 #include <BlackBone/Process/Process.h>
 #include <BlackBone/Patterns/PatternSearch.h>
@@ -9,7 +10,6 @@
 #include "Gui.h"
 #include "RawInput.h"
 #include "HookManager.h"
-#include "MenuShortcut.h"
 #include "protoloader.h"
 #include "PipeCommunication.h"
 #include "HwndSelector.h"
@@ -66,14 +66,7 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
 // EasyHook entry point
 extern "C" __declspec(dllexport) void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO * inRemoteInfo)
 {
-    //MessageBoxW(NULL, L"NativeInjectionEntryPoint", L"", MB_OK);
-
-	
     printf("EasyHook NativeInjectionEntryPoint called\n");
-	
-    // //TODO: we might need to wait (mutex or sleep) for tasks to complete before waking up
-    // std::cout << "Waking up original process (if necessary)\n" << std::flush;
-    // RhWakeUpProcess();
 }
 
 EASYHOOK_BOOL_EXPORT EasyHookDllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);

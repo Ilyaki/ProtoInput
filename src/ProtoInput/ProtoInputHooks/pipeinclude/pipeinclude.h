@@ -12,7 +12,9 @@ enum class PipeMessageType
 	SetupMessageFilter,
 	SetupMessageBlock,
 	UpdateMainWindowHandle,
-	StartFocusMessageLoop
+	StartFocusMessageLoop,
+	SetupState,
+	SetupMessagesToSend
 };
 
 struct PipeMessageHeader
@@ -56,6 +58,19 @@ struct PipeMessageStartFocusMessageLoop
 	bool wm_ncactivate;
 	bool wm_setfocus;
 	bool wm_mouseactivate;
+};
+
+struct PipeMessageSetupState
+{
+	int instanceNumber;
+};
+
+struct PipeMessageSetupMessagesToSend
+{
+	bool sendMouseWheelMessages;
+	bool sendMouseButtonMessages;
+	bool sendMouseMoveMessages;
+	bool sendKeyboardPressMessages;
 };
 
 }
