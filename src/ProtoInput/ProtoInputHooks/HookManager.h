@@ -8,11 +8,6 @@ namespace Proto
 {
 
 //NOTE: To add hook IDs, change protoloader.h in ProtoInputLoader\include
-// enum ProtoHookIDs : unsigned int
-// {
-// 	MessageBoxHookID = 0
-// };
-
 
 class HookManager
 {

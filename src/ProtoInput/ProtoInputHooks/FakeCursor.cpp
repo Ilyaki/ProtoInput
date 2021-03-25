@@ -45,16 +45,22 @@ void FakeCursor::DrawCursor()
 	//TODO: width/height probably needs to change
     constexpr int cursorWidth = 40;
     constexpr int cursorHeight = 40;
-	
-    RECT fill{ oldX, oldY, oldX + cursorWidth, oldY + cursorHeight };
-    FillRect(hdc, &fill, transparencyBrush); // Note: window, not screen coordinates!
-	
+
+    if (oldHadShowCursor)
+    {
+        RECT fill{ oldX, oldY, oldX + cursorWidth, oldY + cursorHeight };
+        FillRect(hdc, &fill, transparencyBrush); // Note: window, not screen coordinates!
+    }
+
+    oldHadShowCursor = showCursor;
+
     POINT pos = { FakeMouseKeyboard::GetMouseState().x,FakeMouseKeyboard::GetMouseState().y };
     ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), &pos);
     ScreenToClient(pointerWindow, &pos);
 
-    DrawIcon(hdc, pos.x, pos.y, hIcon);
-    DrawIconEx(hdc, pos.x, pos.y, hIcon, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
+	if (showCursor)
+	    DrawIcon(hdc, pos.x, pos.y, hCursor);
+	    // DrawIconEx(hdc, pos.x, pos.y, hCursor, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
 	
     oldX = pos.x;
     oldY = pos.y;
@@ -128,7 +134,7 @@ void FakeCursor::StartInternal()
         hdc = GetDC(pointerWindow);
 
         //TODO: configurable cursor
-        hIcon = LoadCursorW(NULL, IDC_ARROW);
+        hCursor = LoadCursorW(NULL, IDC_ARROW);
 
         const auto threadHandle = CreateThread(nullptr, 0,
                               (LPTHREAD_START_ROUTINE)FakeCursorDrawLoopThread, GetModuleHandle(0), 0, 0);

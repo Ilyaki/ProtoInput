@@ -132,6 +132,9 @@
     <ClInclude Include="FakeCursor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="CursorVisibilityHook.h">
+      <Filter>Source Files\Hooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="FakeCursor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorVisibilityHook.cpp">
+      <Filter>Source Files\Hooks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

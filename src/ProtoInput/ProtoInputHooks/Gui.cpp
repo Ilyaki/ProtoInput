@@ -149,8 +149,10 @@ void HooksMenu()
 void RawInputMenu()
 {
     bool showFakeCursor = FakeCursor::IsDrawingEnabled();
-    if (ImGui::Checkbox("Show fake cursor", &showFakeCursor))
+    if (ImGui::Checkbox("Draw fake cursor", &showFakeCursor))
+    {
         FakeCursor::EnableDisableFakeCursor(showFakeCursor);
+    }
 	
     ImGui::Checkbox("Send mouse movement messages", &RawInput::rawInputState.sendMouseMoveMessages);
     ImGui::Checkbox("Send mouse button messages", &RawInput::rawInputState.sendMouseButtonMessages);

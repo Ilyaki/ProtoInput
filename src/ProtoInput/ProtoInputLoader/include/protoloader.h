@@ -14,7 +14,8 @@ enum ProtoHookIDs : unsigned int
 	SetCursorPosHookID,
 	GetKeyStateHookID,
 	GetAsyncKeyStateHookID,
-	GetKeyboardStateHookID
+	GetKeyboardStateHookID,
+	CursorVisibilityStateHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int

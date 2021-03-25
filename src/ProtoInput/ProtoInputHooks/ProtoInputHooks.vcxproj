@@ -190,6 +190,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Cleanup.h" />
+    <ClInclude Include="CursorVisibilityHook.h" />
     <ClInclude Include="FakeCursor.h" />
     <ClInclude Include="FakeMouse.h" />
     <ClInclude Include="FakeMouseKeyboard.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="..\..\..\lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Cleanup.cpp" />
+    <ClCompile Include="CursorVisibilityHook.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FakeCursor.cpp" />
     <ClCompile Include="FakeMouseKeyboard.cpp" />

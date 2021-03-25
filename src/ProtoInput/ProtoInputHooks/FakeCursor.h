@@ -13,12 +13,17 @@ class FakeCursor
 	HWND pointerWindow = nullptr;
 	HDC hdc;
 	HBRUSH transparencyBrush;
-	HCURSOR hIcon;
+	HCURSOR hCursor;
 	static constexpr auto transparencyKey = RGB(0, 0, 1);
 	
 	int oldX, oldY;
+	bool oldHadShowCursor = true;
 
+	// This is either on or off for a given game (ie. it doesn't change)
 	bool drawingEnabled = false;
+
+	// This changes when the hook detects SetCursor/ShowCursor
+	bool showCursor = true;
 	
 	void DrawCursor();
 	
@@ -41,6 +46,16 @@ public:
 	static HWND GetPointerWindow()
 	{
 		return state.pointerWindow;
+	}
+
+	static void SetCursorVisibility(bool visible)
+	{
+		state.showCursor = visible;
+	}
+
+	static void SetCursorHandle(HCURSOR newCursor)
+	{
+		state.hCursor = newCursor;
 	}
 	
 	static void EnableDisableFakeCursor(bool enable);
