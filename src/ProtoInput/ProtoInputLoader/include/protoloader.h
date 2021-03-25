@@ -59,3 +59,5 @@ extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle in
 
 extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds = 5,
 		bool wm_activate = true, bool wm_activateapp = true, bool wm_ncactivate = true, bool wm_setfocus = true, bool wm_mouseactivate = true);
+
+extern "C" __declspec(dllexport) void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable);

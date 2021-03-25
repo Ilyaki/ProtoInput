@@ -307,6 +307,23 @@ extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle 
 	}
 }
 
+void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetDrawFakeCursor message
+		{
+			enable
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDrawFakeCursor, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex)
 {
 	if (instanceIndex < 1)

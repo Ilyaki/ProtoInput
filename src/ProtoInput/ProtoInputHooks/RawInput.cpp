@@ -12,6 +12,7 @@
 #include <3rd_party/BeaEngine/headers/Includes/basic_types.h>
 #include "MouseButtonFilter.h"
 #include "StateInfo.h"
+#include "FakeCursor.h"
 
 namespace Proto
 {
@@ -157,6 +158,11 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 	{
 		PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MOUSEMOVE, mouseMkFlags, mousePointLparam);
 	}
+
+
+
+	// Fake cursor
+	FakeCursor::NotifyUpdatedCursorPosition();
 }
 
 void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle)

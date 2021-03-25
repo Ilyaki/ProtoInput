@@ -21,9 +21,9 @@ DWORD WINAPI LoopThread(LPVOID lpParameter)
 
 	
 	AddThreadToACL(GetCurrentThreadId());
-	
+		
 	while(true)
-	{
+	{		
 		const HWND hwnd = (HWND)HwndSelector::GetSelectedHwnd();
 		if (hwnd != nullptr)
 		{

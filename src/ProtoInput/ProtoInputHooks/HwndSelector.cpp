@@ -1,6 +1,7 @@
 #include "Gui.h"
 #include "HwndSelector.h"
 #include <cstdio>
+#include "FakeCursor.h"
 
 
 namespace Proto
@@ -22,7 +23,8 @@ BOOL IsMainWindow(HWND handle)
 		GetWindow(handle, GW_OWNER) == (HWND)0 && 
         IsWindowVisible(handle) &&
         handle != (HWND)Proto::ConsoleHwnd &&
-        handle != Proto::ProtoGuiHwnd;
+        handle != Proto::ProtoGuiHwnd &&
+        handle != FakeCursor::GetPointerWindow();
 }
 
 BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)

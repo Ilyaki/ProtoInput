@@ -129,6 +129,9 @@
     <ClInclude Include="StateInfo.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FakeCursor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -225,6 +228,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StateInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeCursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

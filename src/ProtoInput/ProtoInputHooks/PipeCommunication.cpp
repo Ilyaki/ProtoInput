@@ -14,6 +14,7 @@
 #include "FocusMessageLoop.h"
 #include "StateInfo.h"
 #include "RawInput.h"
+#include "FakeCursor.h"
 
 namespace Proto
 {
@@ -232,6 +233,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				RawInput::rawInputState.sendMouseWheelMessages = body->sendMouseWheelMessages;
 				RawInput::rawInputState.sendKeyboardPressMessages = body->sendKeyboardPressMessages;
 					
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetDrawFakeCursor:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetDrawFakeCursor*>(messageBuffer);
+
+				printf("Received message to %s fake cursor\n", body->enable ? "enable" : "disable");
+
+				FakeCursor::EnableDisableFakeCursor(body->enable);
+
 				break;
 			}
 			default:

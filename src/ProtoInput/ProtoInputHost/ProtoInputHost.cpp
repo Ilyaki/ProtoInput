@@ -48,7 +48,7 @@ int main()
 		return 0;
 	
 	constexpr bool runtime = false;
-	constexpr bool hookSelf = false;
+	constexpr bool hookSelf = true;
 
 	if (runtime)
 	{
@@ -96,8 +96,9 @@ int main()
 
 		// EnableMessageBlock(instanceHandle, 0x00FF); // WM_INPUT
 
-		StartFocusMessageLoop(instanceHandle, 5);
-		
+		StartFocusMessageLoop(instanceHandle);
+
+		SetDrawFakeCursor(instanceHandle, true);
 		
 		WakeUpProcess(instanceHandle);
 	}

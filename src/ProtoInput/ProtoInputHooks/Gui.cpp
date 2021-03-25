@@ -12,6 +12,7 @@
 #include "HwndSelector.h"
 #include "FocusMessageLoop.h"
 #include "StateInfo.h"
+#include "FakeCursor.h"
 
 namespace Proto
 {
@@ -147,6 +148,10 @@ void HooksMenu()
 
 void RawInputMenu()
 {
+    bool showFakeCursor = FakeCursor::IsDrawingEnabled();
+    if (ImGui::Checkbox("Show fake cursor", &showFakeCursor))
+        FakeCursor::EnableDisableFakeCursor(showFakeCursor);
+	
     ImGui::Checkbox("Send mouse movement messages", &RawInput::rawInputState.sendMouseMoveMessages);
     ImGui::Checkbox("Send mouse button messages", &RawInput::rawInputState.sendMouseButtonMessages);
     ImGui::Checkbox("Send mouse wheel messages", &RawInput::rawInputState.sendMouseWheelMessages);

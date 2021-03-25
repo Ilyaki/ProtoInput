@@ -14,7 +14,8 @@ enum class PipeMessageType
 	UpdateMainWindowHandle,
 	StartFocusMessageLoop,
 	SetupState,
-	SetupMessagesToSend
+	SetupMessagesToSend,
+	SetDrawFakeCursor
 };
 
 struct PipeMessageHeader
@@ -71,6 +72,11 @@ struct PipeMessageSetupMessagesToSend
 	bool sendMouseButtonMessages;
 	bool sendMouseMoveMessages;
 	bool sendKeyboardPressMessages;
+};
+
+struct PipeMessageSetDrawFakeCursor
+{
+	bool enable;
 };
 
 }

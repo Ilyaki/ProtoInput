@@ -14,15 +14,19 @@
 #include "PipeCommunication.h"
 #include "HwndSelector.h"
 #include "FocusMessageLoop.h"
+#include "Gui.h"
+#include "FakeCursor.h"
 
 HMODULE dll_hModule;
 
 DWORD WINAPI GuiThread(LPVOID lpParameter)
 {
     std::cout << "Starting gui thread\n";
-    Proto::AddThreadToACL(GetCurrentThreadId());
+
+	Proto::AddThreadToACL(GetCurrentThreadId());
+
     Proto::ShowGuiImpl();
-   
+
     return 0;
 }
 
@@ -36,13 +40,15 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     Proto::SetConsoleVisible(false);
 
     std::cout << "Hooks DLL loaded\n";
-	
+
 	// Useful to add a pause if we need to attach a debugger
     MessageBoxW(NULL, L"Press OK to start", L"", MB_OK);
-
+    	
     Proto::HwndSelector::UpdateMainHwnd();
 
     Proto::FocusMessageLoop::SetupThread();
+
+    Proto::FakeCursor::Initialise();
 	
     Proto::AddThreadToACL(GetCurrentThreadId());
 	
