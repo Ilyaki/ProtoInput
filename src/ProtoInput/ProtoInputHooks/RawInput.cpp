@@ -112,7 +112,7 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 	{
 		if((data.usButtonFlags & RI_MOUSE_WHEEL) != 0)
 		{
-			const unsigned int wparam = data.usButtonData << 4
+			const unsigned int wparam = (data.usButtonData << 16)
 				| MouseWheelFilter::protoInputSignature
 				| mouseMkFlags;
 						

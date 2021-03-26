@@ -19,7 +19,7 @@ public:
 			*wparam = (*wparam) & (~protoInputSignature);
 			return true;
 		}
-
+		
 		return false;
 	}
 

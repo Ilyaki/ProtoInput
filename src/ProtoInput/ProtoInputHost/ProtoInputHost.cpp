@@ -59,7 +59,7 @@ int main()
 		else 
 		{
 			// auto pids = blackbone::Process::EnumByName(L"osu!.exe");
-			auto pids = blackbone::Process::EnumByName(L"EoCApp.exe");
+			auto pids = blackbone::Process::EnumByName(L"Terraria.exe");
 			for (const auto& pid : pids)
 			{
 				std::cout << "Selected pid " << pid << std::endl;

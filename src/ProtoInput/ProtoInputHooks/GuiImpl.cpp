@@ -213,7 +213,8 @@ int Proto::ShowGuiImpl()
 			// 	SetWindowVisible(false);
 			// }
 			// else
-			{
+                		
+    		{
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
                 continue;

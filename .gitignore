@@ -5,3 +5,4 @@ bin
 .vs
 out
 Release
+/src/ProtoInput/ProtoInputHost/imgui.ini
