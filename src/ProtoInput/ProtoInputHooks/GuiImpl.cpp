@@ -145,7 +145,7 @@ int Proto::ShowGuiImpl()
     wc.style = CS_OWNDC | CS_NOCLOSE; 
     if (!RegisterClass(&wc))
         return 1;
-    ProtoGuiHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 850, 500, 0, 0, hInstance, 0);
+    ProtoGuiHwnd = CreateWindowW(wc.lpszClassName, L"Proto Input", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 950, 700, 0, 0, hInstance, 0);
 
     // Show the window
     // ShowWindow(ProtoGuiHwnd, SW_SHOWDEFAULT);

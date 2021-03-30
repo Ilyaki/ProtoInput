@@ -32,9 +32,23 @@ static void HelpMarker(const char* desc)
     }
 }
 
+void ShowTooltip(const char* text)
+{
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(text);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
 template<typename T>
 void HandleSelectableDualList(std::vector<T>& selected, std::vector<T>& deselected)
 {
+    const char* prefix = "  ";
+	
     std::sort(selected.begin(), selected.end());
     std::sort(deselected.begin(), deselected.end());
 	
@@ -45,7 +59,7 @@ void HandleSelectableDualList(std::vector<T>& selected, std::vector<T>& deselect
     for (size_t i = 0; i < selected.size(); ++i)
     {
         char buf[32];
-        sprintf(buf, "Handle %d", (intptr_t)selected[i]);
+        sprintf(buf, "%sHandle %d", prefix, (intptr_t)selected[i]);
         if (ImGui::Selectable(buf, true))
         {
             toAddToB.push_back(selected[i]);
@@ -56,7 +70,7 @@ void HandleSelectableDualList(std::vector<T>& selected, std::vector<T>& deselect
     for (size_t i = 0; i < deselected.size(); ++i)
     {
         char buf[32];
-        sprintf(buf, "Handle %d", (intptr_t)deselected[i]);
+        sprintf(buf, "%sHandle %d", prefix, (intptr_t)deselected[i]);
         if (ImGui::Selectable(buf, false))
         {
             selected.push_back(deselected[i]);
@@ -159,14 +173,14 @@ void RawInputMenu()
     ImGui::Checkbox("Send mouse wheel messages", &RawInput::rawInputState.sendMouseWheelMessages);
     ImGui::Checkbox("Send keyboard button messages", &RawInput::rawInputState.sendKeyboardPressMessages);
 	
-    if (ImGui::TreeNode("Mouse Raw Input Handle"))
+    if (ImGui::TreeNode("Selected mouse devices"))
     {
         HandleSelectableDualList(RawInput::rawInputState.selectedMouseHandles, RawInput::rawInputState.deselectedMouseHandles);
     	
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Keyboard Raw Input Handle"))
+    if (ImGui::TreeNode("Selected keyboard devices"))
     {
         HandleSelectableDualList(RawInput::rawInputState.selectedKeyboardHandles, RawInput::rawInputState.deselectedKeyboardHandles);
 
@@ -185,20 +199,16 @@ void ControlsMenu()
 	{
         SetWindowVisible(false);
 	}
-	
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted("Press right control + right alt + 1/2/3/4/... to open the GUI for instance 1/2/3/4/...");
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }	
+    ShowTooltip("Press right control + right alt + 1/2/3/4/... to open the GUI for instance 1/2/3/4/...");
 
 	if (ImGui::Button("Toggle console"))
 	{
         ToggleConsole();
 	}
+
+    ImGui::Checkbox("Lock input shortcut", &RawInput::lockInputToggleEnabled);
+    ShowTooltip("If this is enabled, pressing the Home key will lock the keyboard and mouse input. "
+					"Input lock should only be enabled from inside the hooks for debugging/scripting purposes. ");
 }
 
 void InputStatusMenu()

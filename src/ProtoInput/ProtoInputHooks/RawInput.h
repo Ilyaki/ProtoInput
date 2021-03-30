@@ -44,6 +44,8 @@ public:
 	static std::vector<RAWINPUT> rawinputs;
 	static RAWINPUT inputBuffer[RawInputBufferSize];
 
+	static bool lockInputToggleEnabled;
+	
 	static void RefreshDevices();
 		
 	static void AddWindowToForward(HWND hwnd);

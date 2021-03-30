@@ -9,10 +9,10 @@
 #include <unordered_map>
 #include "HwndSelector.h"
 #include "MouseWheelFilter.h"
-#include <3rd_party/BeaEngine/headers/Includes/basic_types.h>
 #include "MouseButtonFilter.h"
 #include "StateInfo.h"
 #include "FakeCursor.h"
+#include "protoinpututil.h"
 
 namespace Proto
 {
@@ -21,6 +21,7 @@ RawInputState RawInput::rawInputState{};
 std::bitset<9> RawInput::usages;
 std::vector<HWND> RawInput::forwardingWindows{};
 bool RawInput::forwardRawInput = true;
+bool RawInput::lockInputToggleEnabled = false;
 
 
 RAWINPUT RawInput::inputBuffer[RawInputBufferSize];
@@ -237,6 +238,21 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 			HwndSelector::UpdateMainHwnd(false);
 
 		HwndSelector::UpdateWindowBounds();
+	}
+
+
+	if (lockInputToggleEnabled && rawinput.header.dwType == RIM_TYPEKEYBOARD && rawinput.data.keyboard.VKey == VK_HOME && rawinput.data.keyboard.Message == WM_KEYUP)
+	{
+		static bool locked = false;
+		locked = !locked;
+		printf(locked ? "Locking input\n" : "Unlocking input\n");
+		
+		LockInput(locked);
+		
+		if (locked)
+			SuspendExplorer();
+		else
+			RestartExplorer();
 	}
 
 	

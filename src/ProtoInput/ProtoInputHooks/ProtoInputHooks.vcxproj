@@ -103,7 +103,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;$(SolutionDir)ProtoInputUtil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
@@ -111,8 +111,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)build\Win32\Debug;$(SolutionDir)..\..\lib\EasyHook\Build\x86\netfx4-Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)build\Win32\Debug;$(SolutionDir)..\..\lib\EasyHook\Build\x86\netfx4-Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -125,7 +125,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;$(SolutionDir)ProtoInputUtil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
@@ -133,8 +133,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)build\x64\Debug;$(SolutionDir)..\..\lib\EasyHook\Build\x64\netfx4-Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)build\x64\Debug;$(SolutionDir)..\..\lib\EasyHook\Build\x64\netfx4-Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -149,7 +149,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;$(SolutionDir)ProtoInputUtil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -158,8 +158,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\lib\EasyHook\Build\x86\netfx4-Release;$(SolutionDir)build\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)..\..\lib\EasyHook\Build\x86\netfx4-Release;$(SolutionDir)build\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -174,7 +174,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\lib\BlackBone\src;$(SolutionDir)..\..\lib\imgui;$(SolutionDir)..\..\lib\glew\include;$(SolutionDir)..\..\lib\EasyHook\Public;$(SolutionDir)ProtoInputLoader\include;$(SolutionDir)ProtoInputUtil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -183,8 +183,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\lib\EasyHook\Build\x64\netfx4-Release;$(SolutionDir)build\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)..\..\lib\EasyHook\Build\x64\netfx4-Release;$(SolutionDir)build\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
