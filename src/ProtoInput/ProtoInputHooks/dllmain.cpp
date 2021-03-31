@@ -36,7 +36,8 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
     FILE* f = new FILE();
     freopen_s(&f, "CONOUT$", "w", stdout);
     freopen_s(&f, "CONOUT$", "w", stderr);
-    Proto::ConsoleHwnd = (intptr_t)FindWindowW(L"ConsoleWindowClass", NULL);
+    // Proto::ConsoleHwnd = (intptr_t)FindWindowW(L"ConsoleWindowClass", NULL);
+    Proto::ConsoleHwnd = (intptr_t)GetConsoleWindow();
     Proto::SetConsoleVisible(false);
 
     std::cout << "Hooks DLL loaded\n";

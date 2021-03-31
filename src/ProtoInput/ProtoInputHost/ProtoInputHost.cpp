@@ -47,35 +47,31 @@ int main()
 	if (CheckBuildTimings(folderpath))
 		return 0;
 	
-	constexpr bool runtime = false;
+	constexpr bool runtime = true;
 	constexpr bool hookSelf = false;
 
 	if (runtime)
 	{
-		DWORD selectedPid = 0;
-
 		if (hookSelf)
-			selectedPid = GetCurrentProcessId();
+			const auto instanceHandle = BlackBoneInjectRuntime(GetCurrentProcessId(), folderpath.c_str());
 		else 
 		{
-			// auto pids = blackbone::Process::EnumByName(L"osu!.exe");
-			auto pids = blackbone::Process::EnumByName(L"hl2.exe");
+			auto pids = blackbone::Process::EnumByName(L"osu!.exe");
+			// auto pids = blackbone::Process::EnumByName(L"hl2.exe");
 			for (const auto& pid : pids)
 			{
 				std::cout << "Selected pid " << pid << std::endl;
 
-				selectedPid = pid;
+				const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
+
 				
 				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
 				// InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 				// InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
 				// InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
-			}
-		}
+				
 
-		if (selectedPid != 0)
-		{
-			const auto instanceHandle = BlackBoneInjectRuntime(selectedPid, folderpath.c_str());
+			}
 		}
 	}
 	else

@@ -9,6 +9,7 @@
 #include "GetAsyncKeyStateHook.h"
 #include "GetKeyboardStateHook.h"
 #include "CursorVisibilityHook.h"
+#include "ClipCursorHook.h"
 
 namespace Proto
 {
@@ -27,6 +28,7 @@ HookManager::HookManager()
 	AddHook<GetAsyncKeyStateHook>(ProtoHookIDs::GetAsyncKeyStateHookID);
 	AddHook<GetKeyboardStateHook>(ProtoHookIDs::GetKeyboardStateHookID);
 	AddHook<CursorVisibilityHook>(ProtoHookIDs::CursorVisibilityStateHookID);
+	AddHook<ClipCursorHook>(ProtoHookIDs::ClipCursorHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

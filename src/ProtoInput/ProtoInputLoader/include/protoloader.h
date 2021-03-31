@@ -6,7 +6,7 @@ using ProtoInstanceHandle  = unsigned int;
 
 enum ProtoHookIDs : unsigned int
 {
-	RegisterRawInputHookID,
+	RegisterRawInputHookID = 0,
 	GetRawInputDataHookID,
 	MessageFilterHookID,
 	FocusHooksHookID,
@@ -15,12 +15,13 @@ enum ProtoHookIDs : unsigned int
 	GetKeyStateHookID,
 	GetAsyncKeyStateHookID,
 	GetKeyboardStateHookID,
-	CursorVisibilityStateHookID
+	CursorVisibilityStateHookID,
+	ClipCursorHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
 {
-	RawInputFilterID,
+	RawInputFilterID = 0,
 	MouseMoveFilterID,
 	MouseActivateFilterID,
 	WindowActivateFilterID,
