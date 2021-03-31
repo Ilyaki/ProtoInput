@@ -162,16 +162,34 @@ void HooksMenu()
 
 void RawInputMenu()
 {
+    bool externalFreezeInput = RawInput::rawInputState.externalFreezeInput;
+    ImGui::Checkbox("External freeze fake input", &externalFreezeInput);
+    ShowTooltip("Stops sending fake/virtual input to the game. This can only be set from the API, for scripting tools. ");
+	
+    ImGui::Checkbox("Freeze fake input", &RawInput::rawInputState.freezeInput);
+    ShowTooltip("Stops sending fake/virtual input to the game. Use this when debugging/scripting. ");
+	
+    ImGui::Checkbox("Freeze fake input while GUI opened", &RawInput::rawInputState.freezeInputWhileGuiOpened);
+    ShowTooltip("Stops sending fake/virtual input to the game while the GUI is opened. "
+					"Use this when debugging/scripting so you don't accidentally control the game changing the GUI settings. ");
+
+    ImGui::Separator();
+	
+	
     bool showFakeCursor = FakeCursor::IsDrawingEnabled();
     if (ImGui::Checkbox("Draw fake cursor", &showFakeCursor))
     {
         FakeCursor::EnableDisableFakeCursor(showFakeCursor);
     }
+
+    ImGui::Separator();
 	
     ImGui::Checkbox("Send mouse movement messages", &RawInput::rawInputState.sendMouseMoveMessages);
     ImGui::Checkbox("Send mouse button messages", &RawInput::rawInputState.sendMouseButtonMessages);
     ImGui::Checkbox("Send mouse wheel messages", &RawInput::rawInputState.sendMouseWheelMessages);
     ImGui::Checkbox("Send keyboard button messages", &RawInput::rawInputState.sendKeyboardPressMessages);
+
+    ImGui::Separator();
 	
     if (ImGui::TreeNode("Selected mouse devices"))
     {

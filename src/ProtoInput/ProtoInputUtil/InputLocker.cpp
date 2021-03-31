@@ -59,7 +59,7 @@ DWORD WINAPI LoopThread(LPVOID lpParameter)
 	return 0;
 }
 
-extern "C" __declspec(dllexport) void LockInput(bool lock)
+extern "C" __declspec(dllexport) unsigned int LockInput(bool lock)
 {
 	isLocked = lock;
 
@@ -89,4 +89,6 @@ extern "C" __declspec(dllexport) void LockInput(bool lock)
 			SuspendThread(threadHandle);
 		}
 	}
+
+	return (threadHandle != nullptr) ? GetThreadId(threadHandle) : 0;
 }

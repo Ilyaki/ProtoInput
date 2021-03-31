@@ -119,6 +119,7 @@ void Proto::ToggleWindow()
 
 void Proto::SetWindowVisible(bool visible)
 {
+    RawInput::rawInputState.guiOpened = visible;
     ShowWindow(ProtoGuiHwnd, visible ? SW_SHOW : SW_HIDE);
 }
 

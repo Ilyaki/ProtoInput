@@ -21,6 +21,12 @@ struct RawInputState
 	bool sendMouseButtonMessages = false;
 	bool sendMouseMoveMessages = false;
 	bool sendKeyboardPressMessages = false;
+
+	// 'Freeze' input means don't send any input to the game, so it doesn't interfere when setting things up
+	bool externalFreezeInput = false;
+	bool freezeInput = false;
+	bool freezeInputWhileGuiOpened = true;
+	bool guiOpened = false; // This is just a copy of the variable
 };
 
 const size_t RawInputBufferSize = 1024;

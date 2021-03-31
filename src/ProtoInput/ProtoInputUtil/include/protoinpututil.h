@@ -2,8 +2,8 @@
 
 // Note: when adding any functions, make sure to add the pragma comments in protoinpututilpragma.h
 
-
-extern "C" __declspec(dllexport) void LockInput(bool lock);
+// Returns the thread handle of the loop thread
+extern "C" __declspec(dllexport) unsigned int LockInput(bool lock);
 
 // What this does and why:
 // explorer.exe is responsible for the desktop window, the taskbar, start menu etc.

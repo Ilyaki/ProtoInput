@@ -245,6 +245,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetExternalFreezeFakeInput:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetExternalFreezeFakeInput*>(messageBuffer);
+
+				printf("Received message to set external freeze fake input to %s\n", body->freezeEnabled ? "enabled" : "disabled");
+
+				RawInput::rawInputState.externalFreezeInput = body->freezeEnabled;
+				
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");

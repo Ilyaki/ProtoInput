@@ -241,13 +241,23 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	}
 
 
+	// Lock input toggle
 	if (lockInputToggleEnabled && rawinput.header.dwType == RIM_TYPEKEYBOARD && rawinput.data.keyboard.VKey == VK_HOME && rawinput.data.keyboard.Message == WM_KEYUP)
 	{
 		static bool locked = false;
 		locked = !locked;
 		printf(locked ? "Locking input\n" : "Unlocking input\n");
-		
-		LockInput(locked);
+
+		// Add the looping thread to the ACL so it can still use ClipCursor, etc
+		static unsigned int loopThreadId = 0;
+		static bool alreadyAddToACL = false;
+		loopThreadId = LockInput(locked);
+		if (!alreadyAddToACL && loopThreadId != 0)
+		{
+			alreadyAddToACL = true;
+			printf("Adding loop thread %d to ACL\n", loopThreadId);
+			AddThreadToACL(loopThreadId);
+		}
 		
 		if (locked)
 			SuspendExplorer();
@@ -258,7 +268,7 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	
 	//TODO: handle forwarding HID input
 	
-	if (forwardRawInput)
+	if (!rawInputState.externalFreezeInput && !rawInputState.freezeInput && (!rawInputState.freezeInputWhileGuiOpened || !rawInputState.guiOpened) && forwardRawInput)
 	{
 		const bool allowMouse = (rawinput.header.dwType == RIM_TYPEMOUSE && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end());
 		const bool allowKeyboard = (rawinput.header.dwType == RIM_TYPEKEYBOARD && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end());

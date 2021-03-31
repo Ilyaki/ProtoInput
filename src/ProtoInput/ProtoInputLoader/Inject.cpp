@@ -324,6 +324,23 @@ void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable)
 	}
 }
 
+extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetExternalFreezeFakeInput message
+		{
+			enableFreeze
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetExternalFreezeFakeInput, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex)
 {
 	if (instanceIndex < 1)

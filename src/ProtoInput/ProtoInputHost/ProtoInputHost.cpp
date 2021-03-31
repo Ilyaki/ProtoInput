@@ -64,7 +64,6 @@ int main()
 
 				const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
 
-				
 				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
 				// InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
 				// InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);

@@ -15,7 +15,8 @@ enum class PipeMessageType
 	StartFocusMessageLoop,
 	SetupState,
 	SetupMessagesToSend,
-	SetDrawFakeCursor
+	SetDrawFakeCursor,
+	SetExternalFreezeFakeInput
 };
 
 struct PipeMessageHeader
@@ -77,6 +78,11 @@ struct PipeMessageSetupMessagesToSend
 struct PipeMessageSetDrawFakeCursor
 {
 	bool enable;
+};
+
+struct PipeMessageSetExternalFreezeFakeInput
+{
+	bool freezeEnabled;
 };
 
 }
