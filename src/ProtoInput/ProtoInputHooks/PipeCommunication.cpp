@@ -39,7 +39,7 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 	int connectCount = 0;
 	do
 	{
-		pipe = CreateFile(
+		pipe = CreateFileW(
 			pipeName.c_str(),
 			GENERIC_READ,
 			FILE_SHARE_READ,
@@ -59,6 +59,7 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			else
 			{
 				fprintf(stderr, "Failed to open pipe, giving up!\n");
+				break;
 			}
 		}
 	}
@@ -66,6 +67,8 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 	
 	if (pipe != INVALID_HANDLE_VALUE)
 	{
+		printf("Successfully connected pipe \"%ws\"\n", pipeName.c_str());
+		
 		ProtoPipe::PipeMessageHeader msgHeader;
 		unsigned char messageBuffer[256];
 

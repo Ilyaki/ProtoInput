@@ -18,13 +18,13 @@ namespace Proto
 {
 
 RawInputState RawInput::rawInputState{};
-std::bitset<9> RawInput::usages;
+std::bitset<9> RawInput::usages{};
 std::vector<HWND> RawInput::forwardingWindows{};
 bool RawInput::forwardRawInput = true;
 bool RawInput::lockInputToggleEnabled = false;
 
 
-RAWINPUT RawInput::inputBuffer[RawInputBufferSize];
+RAWINPUT RawInput::inputBuffer[RawInputBufferSize]{};
 std::vector<RAWINPUT> RawInput::rawinputs{};
 
 const std::vector<USAGE> RawInput::usageTypesOfInterest
@@ -280,7 +280,9 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 			else if (allowKeyboard)
 				ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
 
-			if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
+			//FIXME: uncomment
+			// if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
+			if ((allowMouse) || (allowKeyboard))
 			{
 				for (const auto& hwnd : forwardingWindows)
 				{

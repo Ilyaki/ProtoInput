@@ -34,6 +34,9 @@ enum ProtoMessageFilterIDs : unsigned int
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
 
+extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
+extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookStealthInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
+
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const wchar_t* exePath, 
 	const wchar_t* commandLine,

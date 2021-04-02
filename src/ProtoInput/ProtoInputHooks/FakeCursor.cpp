@@ -71,6 +71,8 @@ DWORD WINAPI FakeCursorDrawLoopThread(LPVOID lpParameter)
     printf("Fake cursor draw loop thread start\n");
     Proto::AddThreadToACL(GetCurrentThreadId());
     FakeCursor::state.StartDrawLoopInternal();
+
+    return 0;
 }
 
 void FakeCursor::StartDrawLoopInternal()

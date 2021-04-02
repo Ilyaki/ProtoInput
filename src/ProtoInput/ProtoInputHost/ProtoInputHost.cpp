@@ -56,13 +56,14 @@ int main()
 			const auto instanceHandle = BlackBoneInjectRuntime(GetCurrentProcessId(), folderpath.c_str());
 		else 
 		{
-			auto pids = blackbone::Process::EnumByName(L"osu!.exe");
+			auto pids = blackbone::Process::EnumByName(L"payday2_win32_release.exe");
 			// auto pids = blackbone::Process::EnumByName(L"hl2.exe");
 			for (const auto& pid : pids)
 			{
 				std::cout << "Selected pid " << pid << std::endl;
 
 				const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
+				// const auto instanceHandle = EasyHookStealthInjectRuntime(pid, folderpath.c_str());
 
 				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
 				// InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
