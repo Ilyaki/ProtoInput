@@ -18,7 +18,10 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 		printf("Detected a call to RegisterRawInputDevices\n");
 	
 	HWND targetHWND = NULL;
-	std::bitset<9> usagesToForward{};
+	
+	// Do a copy since it might already have some values set
+	// (some games will use multiple calls to RegisterRawInputDevices instead of passing an array)
+	std::bitset<9> usagesToForward = RawInput::GetUsageBitField(); 
 
 	for (size_t i = 0; i < uiNumDevices; i++)
 	{
@@ -37,6 +40,7 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 				fprintf(stderr, "Raw input usUsage out of range\n");
 			else
 			{
+				printf("Hook_RegisterRawInputDevices detected usage 0x%x\n", usage);
 				usagesToForward[usage] = true;
 			}
 		}

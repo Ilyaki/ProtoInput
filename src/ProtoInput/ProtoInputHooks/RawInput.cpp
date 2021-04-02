@@ -280,9 +280,8 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 			else if (allowKeyboard)
 				ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
 
-			//FIXME: uncomment
-			// if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
-			if ((allowMouse) || (allowKeyboard))
+			if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
+			// if ((allowMouse) || (allowKeyboard))
 			{
 				for (const auto& hwnd : forwardingWindows)
 				{

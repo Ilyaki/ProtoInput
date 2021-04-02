@@ -76,7 +76,8 @@ int main()
 	}
 	else
 	{
-		auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+		auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
 		// auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 
