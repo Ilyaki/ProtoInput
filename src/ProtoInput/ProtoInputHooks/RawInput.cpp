@@ -453,6 +453,30 @@ void RawInput::RefreshDevices()
 	}
 }
 
+void RawInput::AddSelectedMouseHandle(unsigned handle)
+{
+	if (std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), (void*)handle) == rawInputState.selectedMouseHandles.end())
+		rawInputState.selectedMouseHandles.push_back((void*)handle);
+
+	for (int i = rawInputState.deselectedMouseHandles.size() - 1; i >= 0; --i)
+	{
+		if (rawInputState.deselectedMouseHandles[i] == (void*)handle)
+			rawInputState.deselectedMouseHandles.erase(rawInputState.deselectedMouseHandles.begin() + i);
+	}
+}
+
+void RawInput::AddSelectedKeyboardHandle(unsigned handle)
+{
+	if (std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), (void*)handle) == rawInputState.selectedKeyboardHandles.end())
+		rawInputState.selectedKeyboardHandles.push_back((void*)handle);
+
+	for (int i = rawInputState.deselectedKeyboardHandles.size() - 1; i >= 0; --i)
+	{
+		if (rawInputState.deselectedKeyboardHandles[i] == (void*)handle)
+			rawInputState.deselectedKeyboardHandles.erase(rawInputState.deselectedKeyboardHandles.begin() + i);
+	}
+}
+
 void RawInput::AddWindowToForward(HWND hwnd)
 {
 	if (auto find = std::find(forwardingWindows.begin(), forwardingWindows.end(), hwnd) == forwardingWindows.end())

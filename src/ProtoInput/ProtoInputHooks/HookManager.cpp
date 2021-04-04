@@ -18,10 +18,10 @@ HookManager HookManager::hookManagerInstance{};
 
 HookManager::HookManager()
 {
+	// Do these in exactly the same order as in ProtoHookIDs
 	AddHook<RegisterRawInputHook>(ProtoHookIDs::RegisterRawInputHookID);
 	AddHook<GetRawInputDataHook>(ProtoHookIDs::GetRawInputDataHookID);
 	AddHook<MessageFilterHook>(ProtoHookIDs::MessageFilterHookID);
-	AddHook<FocusHook>(ProtoHookIDs::FocusHooksHookID);
 	AddHook<GetCursorPosHook>(ProtoHookIDs::GetCursorPosHookID);
 	AddHook<SetCursorPosHook>(ProtoHookIDs::SetCursorPosHookID);
 	AddHook<GetKeyStateHook>(ProtoHookIDs::GetKeyStateHookID);
@@ -29,6 +29,7 @@ HookManager::HookManager()
 	AddHook<GetKeyboardStateHook>(ProtoHookIDs::GetKeyboardStateHookID);
 	AddHook<CursorVisibilityHook>(ProtoHookIDs::CursorVisibilityStateHookID);
 	AddHook<ClipCursorHook>(ProtoHookIDs::ClipCursorHookID);
+	AddHook<FocusHook>(ProtoHookIDs::FocusHooksHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

@@ -4,12 +4,14 @@
 #include "InstallHooks.h"
 #include "Gui.h"
 #include <vector>
+#include <mutex>
 
 namespace Proto
 {
 
 std::vector<unsigned long> ACLThreads{};
 std::vector<HOOK_TRACE_INFO> trackedHooks{};
+std::mutex mutex;
 
 void RefreshACL()
 {
@@ -28,9 +30,11 @@ void RefreshACL()
 
 void AddThreadToACL(unsigned long threadID)
 {
+	mutex.lock();
 	printf("Adding thread ID %d to ACL\n", threadID);
 	ACLThreads.push_back(threadID);
 	RefreshACL();
+	mutex.unlock();
 }
 
 void AddTrackedHook(HOOK_TRACE_INFO hook)

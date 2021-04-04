@@ -53,7 +53,10 @@ public:
 	static bool lockInputToggleEnabled;
 	
 	static void RefreshDevices();
-		
+
+	static void AddSelectedMouseHandle(unsigned int handle);
+	static void AddSelectedKeyboardHandle(unsigned int handle);
+	
 	static void AddWindowToForward(HWND hwnd);
 	static void SetUsageBitField(std::bitset<9> _usages);
 	static std::bitset<9> GetUsageBitField();

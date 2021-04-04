@@ -43,27 +43,28 @@ int main()
 		folderpath = folderpath.substr(0, pos + 1);
 	
 	std::wcout << L"Folder name = '" << folderpath << "'" <<  std::endl;
-
+	
 	if (CheckBuildTimings(folderpath))
 		return 0;
 	
-	constexpr bool runtime = true;
+	constexpr bool runtime = false;
 	constexpr bool hookSelf = false;
 
 	if (runtime)
 	{
 		if (hookSelf)
-			const auto instanceHandle = BlackBoneInjectRuntime(GetCurrentProcessId(), folderpath.c_str());
+			const auto instanceHandle = RemoteLoadLibraryInjectRuntime(GetCurrentProcessId(), folderpath.c_str());
 		else 
 		{
-			auto pids = blackbone::Process::EnumByName(L"payday2_win32_release.exe");
+			auto pids = blackbone::Process::EnumByName(L"notepad.exe");
 			// auto pids = blackbone::Process::EnumByName(L"hl2.exe");
 			for (const auto& pid : pids)
 			{
 				std::cout << "Selected pid " << pid << std::endl;
 
-				const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
-				// const auto instanceHandle = EasyHookStealthInjectRuntime(pid, folderpath.c_str());
+				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
+				// const auto instanceHandle = NtLoadInjectRuntime(pid, folderpath.c_str());
+				// const auto instanceHandle = EasyHookInjectRuntime(pid, folderpath.c_str());
 
 				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
 				// InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
@@ -77,25 +78,19 @@ int main()
 	else
 	{
 		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-		auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
-		// auto path = LR"(I:\Software\osu\osu!.exe)";
+		// auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
+		auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 
 		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
 				path, L"", 0, folderpath.c_str(), &pid);
 
-		SetupState(instanceHandle, 3);
-		SetupMessagesToSend(instanceHandle, false, true, true, false);
+		SetupState(instanceHandle, 1);
 		
-		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
-		InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
-		InstallHook(instanceHandle, ProtoHookIDs::MessageFilterHookID);
-
-		// EnableMessageBlock(instanceHandle, 0x00FF); // WM_INPUT
-
-		// StartFocusMessageLoop(instanceHandle);
-
-		SetDrawFakeCursor(instanceHandle, true);
+		AddSelectedMouseHandle(instanceHandle, 65598);
+		AddSelectedKeyboardHandle(instanceHandle, 65600);
+		AddSelectedKeyboardHandle(instanceHandle, 65602);
+		AddSelectedKeyboardHandle(instanceHandle, 65604);
 		
 		WakeUpProcess(instanceHandle);
 	}

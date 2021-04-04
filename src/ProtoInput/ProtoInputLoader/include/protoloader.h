@@ -9,14 +9,14 @@ enum ProtoHookIDs : unsigned int
 	RegisterRawInputHookID = 0,
 	GetRawInputDataHookID,
 	MessageFilterHookID,
-	FocusHooksHookID,
 	GetCursorPosHookID,
 	SetCursorPosHookID,
 	GetKeyStateHookID,
 	GetAsyncKeyStateHookID,
 	GetKeyboardStateHookID,
 	CursorVisibilityStateHookID,
-	ClipCursorHookID
+	ClipCursorHookID,
+	FocusHooksHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -32,7 +32,7 @@ enum ProtoMessageFilterIDs : unsigned int
 
 //TODO: add some documentation to the header file
 
-extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
+extern "C" __declspec(dllexport) ProtoInstanceHandle RemoteLoadLibraryInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookStealthInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
@@ -68,3 +68,6 @@ extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle 
 extern "C" __declspec(dllexport) void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable);
 
 extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze);
+
+extern "C" __declspec(dllexport) void AddSelectedMouseHandle(ProtoInstanceHandle instanceHandle, unsigned int mouseHandle);
+extern "C" __declspec(dllexport) void AddSelectedKeyboardHandle(ProtoInstanceHandle instanceHandle, unsigned int keyboardHandle);

@@ -14,6 +14,8 @@
 #include "easyhook.h"
 #include <filesystem>
 
+#include "Loader.h"
+
 extern "C" NTSTATUS __declspec(dllexport) __stdcall HookCompleteInjection(void* InInfo)
 {
 	return HookCompleteInjectionImpl(InInfo);
@@ -169,16 +171,16 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookStealthInjectRuntim
 	return EasyHookInjectImpl(pid, dllFolderPath, true);
 }
 
-extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath)
+extern "C" __declspec(dllexport) ProtoInstanceHandle RemoteLoadLibraryInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath)
 {
-	const bool is64 = Isx64(pid);
+	bool is64 = Isx64(pid);
 	std::cout << "Target is " << (is64 ? "64-bit" : "32-bit") << std::endl;
-	
+		
 	blackbone::Process proc;
 	proc.Attach(pid);
 	
 	auto dllpath = std::wstring(dllFolderPath);
-	dllpath += Isx64(pid) ? L"ProtoInputHooks64.dll" : L"ProtoInputHooks32.dll";
+	dllpath += is64 ? L"ProtoInputHooks64.dll" : L"ProtoInputHooks32.dll";
 	std::wcout << L"Using dll \"" << dllpath << L"\"" << std::endl;
 
 	// Blackbone LoadLibrary injection method
@@ -202,7 +204,11 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle BlackBoneInjectRuntime(unsi
 			return CreateInstanceHandle(pid);
 		}
 	}
+	else
+		printf("MakeRemoteFunction failed to get LoadLibraryW\n");
 
+	proc.Detach();
+	
 	return 0;
 }
 
@@ -436,6 +442,34 @@ extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHa
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetExternalFreezeFakeInput, &message);
 	}
+}
+
+void AddSelectedInputHandleImpl(ProtoInstanceHandle instanceHandle, unsigned int handle, bool mouse)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMesasgeAddSelectedMouseOrKeyboard message
+		{
+			mouse ? handle : -1,
+			mouse ? -1 : handle
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::AddSelectedMouseOrKeyboard, &message);
+	}
+}
+
+extern "C" __declspec(dllexport) void AddSelectedMouseHandle(ProtoInstanceHandle instanceHandle, unsigned int mouseHandle)
+{
+	AddSelectedInputHandleImpl(instanceHandle, mouseHandle, true);
+}
+
+extern "C" __declspec(dllexport) void AddSelectedKeyboardHandle(ProtoInstanceHandle instanceHandle, unsigned int keyboardHandle)
+{
+	AddSelectedInputHandleImpl(instanceHandle, keyboardHandle, false);
 }
 
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex)

@@ -226,7 +226,8 @@ void ControlsMenu()
 
     ImGui::Checkbox("Lock input shortcut", &RawInput::lockInputToggleEnabled);
     ShowTooltip("If this is enabled, pressing the Home key will lock the keyboard and mouse input. "
-					"Input lock should only be enabled from inside the hooks for debugging/scripting purposes. ");
+					"Input lock should only be enabled from inside the hooks for debugging/scripting purposes. "
+					"WARNING: Make sure to disable the lock before you close the game or explorer.exe will remain frozen. ");
 }
 
 void InputStatusMenu()

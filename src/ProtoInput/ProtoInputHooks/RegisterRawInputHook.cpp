@@ -40,7 +40,6 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 				fprintf(stderr, "Raw input usUsage out of range\n");
 			else
 			{
-				printf("Hook_RegisterRawInputDevices detected usage 0x%x\n", usage);
 				usagesToForward[usage] = true;
 			}
 		}

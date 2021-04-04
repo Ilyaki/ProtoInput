@@ -1013,7 +1013,7 @@ std::vector<MessageListItem> MessageList::messages
 
 void MessageList::GenerateIndexTable()
 {
-	indexTable.reserve(messages.end()->messageID);
+	indexTable.reserve(messages[messages.size() - 1].messageID);
 
 	unsigned int i = 0;
 	for (const auto& m : messages)

@@ -258,6 +258,20 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				
 				break;
 			}
+			case ProtoPipe::PipeMessageType::AddSelectedMouseOrKeyboard:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMesasgeAddSelectedMouseOrKeyboard*>(messageBuffer);
+
+				printf("Received message select mouse %d, keyboard %d\n", body->mouse, body->keyboard);
+
+				if (body->mouse != -1)
+					RawInput::AddSelectedMouseHandle(body->mouse);
+
+				if (body->keyboard != -1)
+					RawInput::AddSelectedKeyboardHandle(body->keyboard);
+
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");
