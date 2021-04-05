@@ -190,7 +190,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="EasyHookRuntime.cpp" />
+    <ClCompile Include="EasyHookStartup.cpp" />
     <ClCompile Include="Inject.cpp" />
+    <ClCompile Include="InstallHooks.cpp" />
+    <ClCompile Include="InstallMessageFilter.cpp" />
+    <ClCompile Include="InstanceHandling.cpp" />
+    <ClCompile Include="RemoteLoadLibrary.cpp" />
     <ClCompile Include="TrackedInstances.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
