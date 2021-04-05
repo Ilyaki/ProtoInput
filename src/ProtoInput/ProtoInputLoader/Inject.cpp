@@ -497,6 +497,41 @@ extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHan
 	}
 }
 
+void AddHandleToRenameImpl(ProtoInstanceHandle instanceHandle, const wchar_t* name, bool namedPipe)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		
+		ProtoPipe::PipeMessageAddHandleToRename message{};
+		message.isNamedPipe = namedPipe;
+
+		if (wcslen(name) > sizeof(message.buff) / sizeof(wchar_t) - 2)
+		{
+			fprintf(stderr, "Handle name \"%ws\" is too long and will not be captured\n", name);
+			return;
+		}
+
+
+		wcscpy_s(message.buff, name);
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::AddHandleToRename, &message);
+	}
+}
+
+extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name)
+{
+	AddHandleToRenameImpl(instanceHandle, name, false);
+}
+
+extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name)
+{
+	AddHandleToRenameImpl(instanceHandle, name, true);
+}
+
 extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, bool sendMouseWheelMessages, bool sendMouseButtonMessages, bool sendMouseMoveMessages, bool sendKeyboardPressMessages)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())

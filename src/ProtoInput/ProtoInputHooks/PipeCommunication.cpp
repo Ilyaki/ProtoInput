@@ -15,6 +15,7 @@
 #include "StateInfo.h"
 #include "RawInput.h"
 #include "FakeCursor.h"
+#include "RenameHandlesHook.h"
 
 namespace Proto
 {
@@ -269,6 +270,19 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				if (body->keyboard != -1)
 					RawInput::AddSelectedKeyboardHandle(body->keyboard);
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::AddHandleToRename:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageAddHandleToRename*>(messageBuffer);
+
+				printf("Received handle to rename. Name \"%ws\", named pipe = %d\n", &body->buff[0], body->isNamedPipe);
+
+				if (body->isNamedPipe)
+					RenameHandlesHook::AddHandleToNamedPipeRenameList(&body->buff[0]);
+				else
+					RenameHandlesHook::AddHandleToRenameList(&body->buff[0]);
 
 				break;
 			}

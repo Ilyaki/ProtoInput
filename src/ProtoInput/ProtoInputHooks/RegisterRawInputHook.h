@@ -29,7 +29,8 @@ public:
 		"Disconnects the game from raw input and subscribes our window instead. "
 		"We subscribe to raw input in the foreground and background so we always receive input. "
 		"Forwards raw input back to the original window. "
-		"Disabling this hook after it's installed may not fully uninstall it. ";
+		"Disabling this hook after it's installed may not fully uninstall it. "
+		"Note that you need this hook for the GUI shortcut to work, so you should almost always have this enabled. ";
 	}
 
 	bool HasGuiStatus() const override { return true; }

@@ -102,7 +102,7 @@ int main()
 	
 	constexpr bool runtime = false;
 	constexpr bool hookSelf = false;
-	constexpr bool doTestGame = true;
+	constexpr bool doTestGame = false;
 
 	if (doTestGame)
 		testgame();
@@ -134,19 +134,26 @@ int main()
 	else
 	{
 		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-		auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
-		// auto path = LR"(I:\Software\osu\osu!.exe)";
+		// auto path = LR"(C:\Program Files\Notepad++\notepad++.exe)";
+		// auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
+		auto path = LR"(I:\Software\osu\osu!.exe)";
 		unsigned long pid;
 
 		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
 				path, L"", 0, folderpath.c_str(), &pid);
 
 		SetupState(instanceHandle, 1);
+
+		AddHandleToRename(instanceHandle, L"20f7b388-7444-42cc-9388-c23275781ff8");
+		AddNamedPipeToRename(instanceHandle, L"osu!");
 		
-		AddSelectedMouseHandle(instanceHandle, 65598);
-		AddSelectedKeyboardHandle(instanceHandle, 65600);
-		AddSelectedKeyboardHandle(instanceHandle, 65602);
-		AddSelectedKeyboardHandle(instanceHandle, 65604);
+		InstallHook(instanceHandle, ProtoHookIDs::RenameHandlesHookHookID);
+		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
+		
+		// AddSelectedMouseHandle(instanceHandle, 65598);
+		// AddSelectedKeyboardHandle(instanceHandle, 65600);
+		// AddSelectedKeyboardHandle(instanceHandle, 65602);
+		// AddSelectedKeyboardHandle(instanceHandle, 65604);
 		
 		WakeUpProcess(instanceHandle);
 	}

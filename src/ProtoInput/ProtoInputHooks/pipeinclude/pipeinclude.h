@@ -17,7 +17,8 @@ enum class PipeMessageType
 	SetupMessagesToSend,
 	SetDrawFakeCursor,
 	SetExternalFreezeFakeInput,
-	AddSelectedMouseOrKeyboard
+	AddSelectedMouseOrKeyboard,
+	AddHandleToRename
 };
 
 struct PipeMessageHeader
@@ -90,6 +91,12 @@ struct PipeMesasgeAddSelectedMouseOrKeyboard
 {
 	unsigned int mouse = -1;
 	unsigned int keyboard = -1;
+};
+
+struct PipeMessageAddHandleToRename
+{
+	wchar_t buff[320];
+	bool isNamedPipe = false;
 };
 
 }

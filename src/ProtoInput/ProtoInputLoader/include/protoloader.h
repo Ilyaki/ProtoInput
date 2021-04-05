@@ -16,7 +16,8 @@ enum ProtoHookIDs : unsigned int
 	GetKeyboardStateHookID,
 	CursorVisibilityStateHookID,
 	ClipCursorHookID,
-	FocusHooksHookID
+	FocusHooksHookID,
+	RenameHandlesHookHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -71,3 +72,7 @@ extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHa
 
 extern "C" __declspec(dllexport) void AddSelectedMouseHandle(ProtoInstanceHandle instanceHandle, unsigned int mouseHandle);
 extern "C" __declspec(dllexport) void AddSelectedKeyboardHandle(ProtoInstanceHandle instanceHandle, unsigned int keyboardHandle);
+
+// Both of these functions require RenameHandlesHookHookID hook
+extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);
+extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);

@@ -188,8 +188,8 @@ int Proto::ShowGuiImpl()
 
 
 	//TODO: default to hidden
-    SetWindowVisible(false);
-    SetConsoleVisible(false);
+    SetWindowVisible(true);
+    SetConsoleVisible(true);
 	
     // Main loop
     MSG msg;

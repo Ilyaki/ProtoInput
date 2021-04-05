@@ -222,6 +222,7 @@
     <ClInclude Include="RawInput.h" />
     <ClInclude Include="RawInputFilter.h" />
     <ClInclude Include="RegisterRawInputHook.h" />
+    <ClInclude Include="RenameHandlesHook.h" />
     <ClInclude Include="SetCursorPosHook.h" />
     <ClInclude Include="StateInfo.h" />
     <ClInclude Include="WindowActivateAppFilter.h" />
@@ -261,6 +262,7 @@
     <ClCompile Include="PipeCommunication.cpp" />
     <ClCompile Include="RawInput.cpp" />
     <ClCompile Include="RegisterRawInputHook.cpp" />
+    <ClCompile Include="RenameHandlesHook.cpp" />
     <ClCompile Include="SetCursorPosHook.cpp" />
     <ClCompile Include="StateInfo.cpp" />
   </ItemGroup>
