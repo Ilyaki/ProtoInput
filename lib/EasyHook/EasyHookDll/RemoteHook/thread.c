@@ -667,8 +667,7 @@ Parameters:
 
     // all other parameters are validate by called APIs...
 	FORCE(RtlCreateSuspendedProcess(InEXEPath, InCommandLine, InProcessCreationFlags, &ProcessId, &ThreadId));
-
-
+    	
     // inject library
     FORCE(RhInjectLibrary(
 		    ProcessId,
@@ -1238,6 +1237,9 @@ Returns:
 
 	// Ensure that if we have injected into a suspended process that we can retrieve the remote function addresses
 	FORCE(NtForceLdrInitializeThunk(hProc));
+
+	// https://github.com/EasyHook/EasyHook/issues/295#issuecomment-705084216
+    Sleep(1000);
 
 	// Determine function addresses within remote process
     Info->LoadLibraryW   = (PVOID)GetRemoteFuncAddress(InTargetPID, hProc, "kernel32.dll", "LoadLibraryW");

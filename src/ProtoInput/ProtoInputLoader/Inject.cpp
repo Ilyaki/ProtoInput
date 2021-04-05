@@ -223,6 +223,8 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const auto dllpath32 = dllpath + L"ProtoInputHooks32.dll";
 	const auto dllpath64 = dllpath + L"ProtoInputHooks64.dll";
 
+	printf("Dll path 32 = \"%ws\", 64 = \"%ws\"\n", dllpath32.c_str(), dllpath64.c_str());
+	
 	unsigned long pid;
 
 	auto res = RhCreateAndInject(const_cast<WCHAR*>(exePath), const_cast<WCHAR*>(commandLine),
