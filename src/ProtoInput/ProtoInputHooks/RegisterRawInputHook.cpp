@@ -143,8 +143,8 @@ void RegisterRawInputHook::InstallImpl()
 	{
 		installedAtLeastOnce = true;
 		std::bitset<9> usages{};
-		usages[HID_USAGE_GENERIC_MOUSE] = true;
-		usages[HID_USAGE_GENERIC_KEYBOARD] = true;
+		// usages[HID_USAGE_GENERIC_MOUSE] = true;
+		// usages[HID_USAGE_GENERIC_KEYBOARD] = true;
 		RawInput::SetUsageBitField(usages);
 	}
 

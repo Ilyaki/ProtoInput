@@ -179,7 +179,18 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 			lparam |= 1; // Repeat bit
 			lparam |= (data.MakeCode << 16); // Scan code
 			if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey)) lparam |= (1 << 30);
+
 			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, data.VKey, lparam);
+			
+			// if (data.VKey == VK_SHIFT || data.VKey == VK_LSHIFT)
+			// {
+			// 	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, VK_SHIFT, lparam);
+			// 	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, VK_LSHIFT, lparam);
+			// }
+			// else
+			// {
+			// 	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, data.VKey, lparam);
+			// }
 		}
 		else if (released)
 		{
@@ -188,7 +199,19 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 			lparam |= (data.MakeCode << 16); // Scan code
 			lparam |= (1 << 30); // Previous key state (always 1 for key up)
 			lparam |= (1 << 31); // Transition state (always 1 for key up)
+
 			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, data.VKey, lparam);
+			
+			// if (data.VKey == VK_SHIFT || data.VKey == VK_LSHIFT)
+			// {
+			// 	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, VK_SHIFT, lparam);
+			// 	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, VK_LSHIFT, lparam);
+			// }
+			// else
+			// {
+			// 	PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, data.VKey, lparam);
+			// }
+			
 		}
 	}
 	

@@ -73,8 +73,8 @@ struct Profile
 	
 	bool focusMessageLoop = true;
 	bool focusLoopSendWM_ACTIVATE = true;
-	bool focusLoopSendWM_NCACTIVATE = true;
-	bool focusLoopSendWM_ACTIVATEAPP = true;
+	bool focusLoopSendWM_NCACTIVATE = false;
+	bool focusLoopSendWM_ACTIVATEAPP = false;
 	bool focusLoopSendWM_SETFOCUS = true;
 	bool focusLoopSendWM_MOUSEACTIVATE = true;
 

@@ -26,7 +26,8 @@ public:
 		return
 			"Modifies the WM_MOUSEMOVE messages to return our fake mouse state. "
 			"The WM_MOUSEMOVE messages also contains information about the modifier (shift and ctrl) keys and the mouse buttons. "
-			"This filter is important for mouse movement to work correctly. ";
+			"This filter can be important for mouse movement to work correctly, "
+			"however it can be processor intensive, so disable if not necessary. ";
 	}
 };
 

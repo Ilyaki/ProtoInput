@@ -169,6 +169,8 @@ bool Launch()
                                   currentProfile.focusLoopSendWM_SETFOCUS,
                                   currentProfile.focusLoopSendWM_MOUSEACTIVATE);
 
+        SetDrawFakeCursor(instanceHandle, currentProfile.drawFakeMouseCursor);
+		
         for (const auto& renameHandle : currentProfile.renameHandles)
             AddHandleToRename(instanceHandle, utf8_decode(renameHandle).c_str());
 
