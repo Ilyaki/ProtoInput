@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <string>
 #include <random>
+#include <imgui.h>
 
 namespace Proto
 {
@@ -193,12 +194,6 @@ NTSTATUS NTAPI Hook_NtCreateNamedPipeFile(
 		OutBufferSize,
 		DefaultTimeOut
 	);
-}
-
-
-void RenameHandlesHook::ShowGuiStatus()
-{
-	// TODO: show targets to rename, and what is currently renamed
 }
 
 void RenameHandlesHook::InstallImpl()

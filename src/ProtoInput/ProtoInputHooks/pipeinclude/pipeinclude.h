@@ -95,7 +95,7 @@ struct PipeMesasgeAddSelectedMouseOrKeyboard
 
 struct PipeMessageAddHandleToRename
 {
-	wchar_t buff[320];
+	wchar_t buff[1000]{};
 	bool isNamedPipe = false;
 };
 

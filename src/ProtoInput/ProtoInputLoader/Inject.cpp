@@ -162,7 +162,7 @@ void AddHandleToRenameImpl(ProtoInstanceHandle instanceHandle, const wchar_t* na
 			return;
 		}
 
-
+		memset(message.buff, 0, sizeof(message.buff));
 		wcscpy_s(message.buff, name);
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::AddHandleToRename, &message);

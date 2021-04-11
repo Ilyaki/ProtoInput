@@ -27,8 +27,7 @@ public:
 			"Hooks NT functions that open Mutants, Events, Semaphores and Named Pipes to change what name is used. "
 			"Renaming the objects prevents another instance from detecting them, which can prevent multiple instances opening. ";
 	}
-	bool HasGuiStatus() const override { return true; }
-	void ShowGuiStatus() override;
+	bool HasGuiStatus() const override { return false; }
 	void InstallImpl() override;
 	void UninstallImpl() override;
 

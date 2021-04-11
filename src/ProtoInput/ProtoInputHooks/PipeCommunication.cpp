@@ -71,8 +71,8 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 		printf("Successfully connected pipe \"%ws\"\n", pipeName.c_str());
 		
 		ProtoPipe::PipeMessageHeader msgHeader;
-		unsigned char messageBuffer[256];
-
+		static unsigned char messageBuffer[2048];
+		
 		DWORD numBytesRead = 0;
 		while (true)
 		{
@@ -87,6 +87,12 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			if (success == 0)
 			{
 				fprintf(stderr, "Failed to read message header from pipe, last error = 0x%X\n", GetLastError());
+				break;
+			}
+
+			if (msgHeader.messageSize > sizeof(messageBuffer))
+			{
+				fprintf(stderr, "Named pipe message is too large, exiting named pipe (Message size %d, buffer size %d)\n", msgHeader.messageSize, sizeof(messageBuffer));
 				break;
 			}
 
@@ -205,6 +211,19 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageStartFocusMessageLoop*>(messageBuffer);
 
+				printf("Received StartFocusMessageLoop, Milliseconds = %d, "
+					   "wm_activate = %d, "
+					   "wm_activateapp = %d, "
+					   "wm_mouseactivate = %d, "
+					   "wm_ncactivate = %d, "
+					   "wm_setfocus = %d\n",
+					   body->milliseconds,
+					   body->wm_activate,
+					   body->wm_activateapp,
+					   body->wm_mouseactivate,
+					   body->wm_ncactivate,
+					   body->wm_setfocus);
+					
 				FocusMessageLoop::sleepMilliseconds = body->milliseconds;
 				FocusMessageLoop::messagesToSend.wm_activate = body->wm_activate;
 				FocusMessageLoop::messagesToSend.wm_activateapp = body->wm_activateapp;

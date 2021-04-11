@@ -12,6 +12,10 @@
 #include "FontData.h"
 #include "Cleanup.h"
 
+//TODO: default to hidden
+constexpr bool defaultGuiToHidden = true;
+constexpr bool defaultConsoleToHidden = false;
+
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;
 HWND Proto::ProtoGuiHwnd = nullptr;
@@ -187,9 +191,8 @@ int Proto::ShowGuiImpl()
     io.Fonts->Build();
 
 
-	//TODO: default to hidden
-    SetWindowVisible(true);
-    SetConsoleVisible(true);
+    SetWindowVisible(!defaultGuiToHidden);
+    SetConsoleVisible(!defaultConsoleToHidden);
 	
     // Main loop
     MSG msg;

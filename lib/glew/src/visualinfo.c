@@ -98,132 +98,132 @@ int visual = -1;
 
 FILE* file = 0;
 
-int 
-main (int argc, char** argv)
-{
-  GLenum err;
-  GLContext ctx;
-
-  /* ---------------------------------------------------------------------- */
-  /* parse arguments */
-  if (GL_TRUE == ParseArgs(argc-1, argv+1))
-  {
-#if defined(_WIN32)
-    fprintf(stderr, "Usage: visualinfo [-a] [-s] [-h] [-pf <id>]\n");
-    fprintf(stderr, "        -a: show all visuals\n");
-    fprintf(stderr, "        -s: display to stdout instead of visualinfo.txt\n");
-    fprintf(stderr, "        -pf <id>: use given pixelformat\n");
-    fprintf(stderr, "        -h: this screen\n");
-#else
-    fprintf(stderr, "Usage: visualinfo [-h] [-display <display>] [-visual <id>]\n");
-    fprintf(stderr, "        -h: this screen\n");
-    fprintf(stderr, "        -display <display>: use given display\n");
-    fprintf(stderr, "        -visual <id>: use given visual\n");
-#endif
-    return 1;
-  }
-
-  /* ---------------------------------------------------------------------- */
-  /* create OpenGL rendering context */
-  InitContext(&ctx);
-  if (GL_TRUE == CreateContext(&ctx))
-  {
-    fprintf(stderr, "Error: CreateContext failed\n");
-    DestroyContext(&ctx);
-    return 1;
-  }
-
-  /* ---------------------------------------------------------------------- */
-  /* initialize GLEW */
-  glewExperimental = GL_TRUE;
-#ifdef GLEW_MX
-  err = glewContextInit(glewGetContext());
-#  ifdef _WIN32
-  err = err || wglewContextInit(wglewGetContext());
-#  elif !defined(__APPLE__) && !defined(__HAIKU__) || defined(GLEW_APPLE_GLX)
-  err = err || glxewContextInit(glxewGetContext());
-#  endif
-#else
-  err = glewInit();
-#endif
-  if (GLEW_OK != err)
-  {
-    fprintf(stderr, "Error [main]: glewInit failed: %s\n", glewGetErrorString(err));
-    DestroyContext(&ctx);
-    return 1;
-  }
-
-  /* ---------------------------------------------------------------------- */
-  /* open file */
-#if defined(_WIN32)
-  if (!displaystdout)
-  {
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-    if (fopen_s(&file, "visualinfo.txt", "w") != 0)
-      file = stdout;
-#else
-    file = fopen("visualinfo.txt", "w");
-#endif
-  }
-  if (file == NULL)
-    file = stdout;
-#else
-  file = stdout;
-#endif
-
-  /* ---------------------------------------------------------------------- */
-  /* output header information */
-  /* OpenGL extensions */
-  fprintf(file, "OpenGL vendor string: %s\n", glGetString(GL_VENDOR));
-  fprintf(file, "OpenGL renderer string: %s\n", glGetString(GL_RENDERER));
-  fprintf(file, "OpenGL version string: %s\n", glGetString(GL_VERSION));
-  fprintf(file, "OpenGL extensions (GL_): \n");
-  PrintExtensions((const char*)glGetString(GL_EXTENSIONS));
-
-#ifndef GLEW_NO_GLU
-  /* GLU extensions */
-  fprintf(file, "GLU version string: %s\n", gluGetString(GLU_VERSION));
-  fprintf(file, "GLU extensions (GLU_): \n");
-  PrintExtensions((const char*)gluGetString(GLU_EXTENSIONS));
-#endif
-
-  /* ---------------------------------------------------------------------- */
-  /* extensions string */
-#if defined(GLEW_OSMESA)
-#elif defined(GLEW_EGL)
-#elif defined(_WIN32)
-  /* WGL extensions */
-  if (WGLEW_ARB_extensions_string || WGLEW_EXT_extensions_string)
-  {
-    fprintf(file, "WGL extensions (WGL_): \n");
-    PrintExtensions(wglGetExtensionsStringARB ? 
-                    (const char*)wglGetExtensionsStringARB(ctx.dc) :
-		    (const char*)wglGetExtensionsStringEXT());
-  }
-#elif defined(__APPLE__) && !defined(GLEW_APPLE_GLX)
-  
-#elif defined(__HAIKU__)
-
-  /* TODO */
-
-#else
-  /* GLX extensions */
-  fprintf(file, "GLX extensions (GLX_): \n");
-  PrintExtensions(glXQueryExtensionsString(glXGetCurrentDisplay(), 
-                                           DefaultScreen(glXGetCurrentDisplay())));
-#endif
-
-  /* ---------------------------------------------------------------------- */
-  /* enumerate all the formats */
-  VisualInfo(&ctx);
-
-  /* ---------------------------------------------------------------------- */
-  /* release resources */
-  DestroyContext(&ctx);
-  if (file != stdout)
-    fclose(file);
-  return 0;
-}
+// int 
+// main (int argc, char** argv)
+// {
+//   GLenum err;
+//   GLContext ctx;
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* parse arguments */
+//   if (GL_TRUE == ParseArgs(argc-1, argv+1))
+//   {
+// #if defined(_WIN32)
+//     fprintf(stderr, "Usage: visualinfo [-a] [-s] [-h] [-pf <id>]\n");
+//     fprintf(stderr, "        -a: show all visuals\n");
+//     fprintf(stderr, "        -s: display to stdout instead of visualinfo.txt\n");
+//     fprintf(stderr, "        -pf <id>: use given pixelformat\n");
+//     fprintf(stderr, "        -h: this screen\n");
+// #else
+//     fprintf(stderr, "Usage: visualinfo [-h] [-display <display>] [-visual <id>]\n");
+//     fprintf(stderr, "        -h: this screen\n");
+//     fprintf(stderr, "        -display <display>: use given display\n");
+//     fprintf(stderr, "        -visual <id>: use given visual\n");
+// #endif
+//     return 1;
+//   }
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* create OpenGL rendering context */
+//   InitContext(&ctx);
+//   if (GL_TRUE == CreateContext(&ctx))
+//   {
+//     fprintf(stderr, "Error: CreateContext failed\n");
+//     DestroyContext(&ctx);
+//     return 1;
+//   }
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* initialize GLEW */
+//   glewExperimental = GL_TRUE;
+// #ifdef GLEW_MX
+//   err = glewContextInit(glewGetContext());
+// #  ifdef _WIN32
+//   err = err || wglewContextInit(wglewGetContext());
+// #  elif !defined(__APPLE__) && !defined(__HAIKU__) || defined(GLEW_APPLE_GLX)
+//   err = err || glxewContextInit(glxewGetContext());
+// #  endif
+// #else
+//   err = glewInit();
+// #endif
+//   if (GLEW_OK != err)
+//   {
+//     fprintf(stderr, "Error [main]: glewInit failed: %s\n", glewGetErrorString(err));
+//     DestroyContext(&ctx);
+//     return 1;
+//   }
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* open file */
+// #if defined(_WIN32)
+//   if (!displaystdout)
+//   {
+// #if defined(_MSC_VER) && (_MSC_VER >= 1400)
+//     if (fopen_s(&file, "visualinfo.txt", "w") != 0)
+//       file = stdout;
+// #else
+//     file = fopen("visualinfo.txt", "w");
+// #endif
+//   }
+//   if (file == NULL)
+//     file = stdout;
+// #else
+//   file = stdout;
+// #endif
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* output header information */
+//   /* OpenGL extensions */
+//   fprintf(file, "OpenGL vendor string: %s\n", glGetString(GL_VENDOR));
+//   fprintf(file, "OpenGL renderer string: %s\n", glGetString(GL_RENDERER));
+//   fprintf(file, "OpenGL version string: %s\n", glGetString(GL_VERSION));
+//   fprintf(file, "OpenGL extensions (GL_): \n");
+//   PrintExtensions((const char*)glGetString(GL_EXTENSIONS));
+//
+// #ifndef GLEW_NO_GLU
+//   /* GLU extensions */
+//   fprintf(file, "GLU version string: %s\n", gluGetString(GLU_VERSION));
+//   fprintf(file, "GLU extensions (GLU_): \n");
+//   PrintExtensions((const char*)gluGetString(GLU_EXTENSIONS));
+// #endif
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* extensions string */
+// #if defined(GLEW_OSMESA)
+// #elif defined(GLEW_EGL)
+// #elif defined(_WIN32)
+//   /* WGL extensions */
+//   if (WGLEW_ARB_extensions_string || WGLEW_EXT_extensions_string)
+//   {
+//     fprintf(file, "WGL extensions (WGL_): \n");
+//     PrintExtensions(wglGetExtensionsStringARB ? 
+//                     (const char*)wglGetExtensionsStringARB(ctx.dc) :
+// 		    (const char*)wglGetExtensionsStringEXT());
+//   }
+// #elif defined(__APPLE__) && !defined(GLEW_APPLE_GLX)
+//   
+// #elif defined(__HAIKU__)
+//
+//   /* TODO */
+//
+// #else
+//   /* GLX extensions */
+//   fprintf(file, "GLX extensions (GLX_): \n");
+//   PrintExtensions(glXQueryExtensionsString(glXGetCurrentDisplay(), 
+//                                            DefaultScreen(glXGetCurrentDisplay())));
+// #endif
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* enumerate all the formats */
+//   VisualInfo(&ctx);
+//
+//   /* ---------------------------------------------------------------------- */
+//   /* release resources */
+//   DestroyContext(&ctx);
+//   if (file != stdout)
+//     fclose(file);
+//   return 0;
+// }
 
 /* do the magic to separate all extensions with comma's, except
    for the last one that _may_ terminate in a space. */

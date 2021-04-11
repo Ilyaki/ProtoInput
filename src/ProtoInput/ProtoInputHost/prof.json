@@ -1,0 +1,14 @@
+{
+    "data": {
+        "hooks": [
+            {
+                "name": "Focus hooks",
+                "enabled": true
+            },
+            {
+                "name": "RawInput",
+                "enabled": true
+            }
+        ]
+    }
+}

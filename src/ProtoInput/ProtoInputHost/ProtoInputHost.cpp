@@ -12,6 +12,8 @@
 #include "protoloader.h"
 #include "protoinpututil.h"
 #include <filesystem>
+#include "Gui.h"
+
 
 bool CheckBuildTimings(const std::wstring& folderpath)
 {
@@ -20,7 +22,8 @@ bool CheckBuildTimings(const std::wstring& folderpath)
 
 	const auto hookPath32 = std::filesystem::path{ folderpath }.append("ProtoInputHooks32.dll");
 	const auto hookPath64 = std::filesystem::path{ folderpath }.append("ProtoInputHooks64.dll");
-	
+
+	//TODO: try catch if the file doesn't exist
 	auto secLoader = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(loaderPath32) - last_write_time(loaderPath64))).count();
 	auto secHooks = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(hookPath32) - last_write_time(hookPath64))).count();
 	
@@ -86,8 +89,31 @@ void testgame()
 	// LockInput(true);
 }
 
+void ShowGui()
+{
+	ProtoHost::ShowGuiImpl();
+}
+
+
+
+#include "Profiles.h"
+void testfn()
+{
+	ProtoHost::Profile prof;
+	prof.hooks[0].name = "EDITED";
+	ProtoHost::Profile::SaveToFile(prof, "hello");
+
+	ProtoHost::Profile test;
+	ProtoHost::Profile::LoadFromFile(test, "hello");
+	std::cout << test.hooks[0].name;
+
+}
+
 int main()
 {
+	// testfn();
+	// return 0;
+	
 	wchar_t pathchars[MAX_PATH];
 	GetModuleFileNameW(NULL, pathchars, MAX_PATH);
 	std::wstring folderpath = pathchars;
@@ -99,12 +125,15 @@ int main()
 	
 	if (CheckBuildTimings(folderpath))
 		return 0;
-	
+
+	constexpr bool gui = true;
 	constexpr bool runtime = false;
 	constexpr bool hookSelf = false;
 	constexpr bool doTestGame = false;
 
-	if (doTestGame)
+	if (gui)
+		ShowGui();
+	else if (doTestGame)
 		testgame();
 	else if (runtime)
 	{
@@ -133,29 +162,54 @@ int main()
 	}
 	else
 	{
-		// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-		// auto path = LR"(C:\Program Files\Notepad++\notepad++.exe)";
-		// auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
-		auto path = LR"(I:\Software\osu\osu!.exe)";
-		unsigned long pid;
+		for (int i = 1; i <= 2; i++)
+		{
+			// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
+			// auto path = LR"(C:\Program Files\Notepad++\notepad++.exe)";
+			// auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
+			auto path = LR"(I:\Software\osu\osu!.exe)";
+			unsigned long pid;
 
-		ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
+			ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
 				path, L"", 0, folderpath.c_str(), &pid);
 
-		SetupState(instanceHandle, 1);
+			SetupState(instanceHandle, i);
 
-		AddHandleToRename(instanceHandle, L"20f7b388-7444-42cc-9388-c23275781ff8");
-		AddNamedPipeToRename(instanceHandle, L"osu!");
-		
-		InstallHook(instanceHandle, ProtoHookIDs::RenameHandlesHookHookID);
-		InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
-		
-		// AddSelectedMouseHandle(instanceHandle, 65598);
-		// AddSelectedKeyboardHandle(instanceHandle, 65600);
-		// AddSelectedKeyboardHandle(instanceHandle, 65602);
-		// AddSelectedKeyboardHandle(instanceHandle, 65604);
-		
-		WakeUpProcess(instanceHandle);
+			AddHandleToRename(instanceHandle, L"20f7b388-7444-42cc-9388-c23275781ff8");
+			AddNamedPipeToRename(instanceHandle, L"osu!");
+
+			InstallHook(instanceHandle, RegisterRawInputHookID);
+			InstallHook(instanceHandle, GetRawInputDataHookID);
+			InstallHook(instanceHandle, MessageFilterHookID);
+			InstallHook(instanceHandle, GetCursorPosHookID);
+			InstallHook(instanceHandle, SetCursorPosHookID);
+			InstallHook(instanceHandle, GetKeyStateHookID);
+			InstallHook(instanceHandle, GetAsyncKeyStateHookID);
+			InstallHook(instanceHandle, GetKeyboardStateHookID);
+			InstallHook(instanceHandle, CursorVisibilityStateHookID);
+			InstallHook(instanceHandle, ClipCursorHookID);
+			InstallHook(instanceHandle, FocusHooksHookID);
+			InstallHook(instanceHandle, RenameHandlesHookHookID);
+
+			EnableMessageFilter(instanceHandle, RawInputFilterID);
+			EnableMessageFilter(instanceHandle, MouseMoveFilterID);
+			EnableMessageFilter(instanceHandle, MouseActivateFilterID);
+			EnableMessageFilter(instanceHandle, WindowActivateFilterID);
+			EnableMessageFilter(instanceHandle, WindowActivateAppFilterID);
+			EnableMessageFilter(instanceHandle, MouseWheelFilterID);
+			EnableMessageFilter(instanceHandle, MouseButtonFilterID);
+
+			SetupMessagesToSend(instanceHandle);
+
+			StartFocusMessageLoop(instanceHandle);
+
+			// AddSelectedMouseHandle(instanceHandle, 65598);
+			// AddSelectedKeyboardHandle(instanceHandle, 65600);
+			// AddSelectedKeyboardHandle(instanceHandle, 65602);
+			// AddSelectedKeyboardHandle(instanceHandle, 65604);
+
+			WakeUpProcess(instanceHandle);
+		}
 	}
 
 	// Don't want to end the pipe immediately

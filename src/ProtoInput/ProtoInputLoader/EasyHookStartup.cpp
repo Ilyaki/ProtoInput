@@ -24,11 +24,15 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	if (FAILED(res))
 	{
 		std::cerr << "Failed CreateAndInject, NTSTATUS = 0x" << std::hex << res << std::dec << std::endl;
-		*outPid = 0;
+		
+		if (outPid)
+			*outPid = 0;
 	}
 	else
 	{
-		*outPid = pid;
+		if (outPid)
+			*outPid = pid;
+		
 		return CreateInstanceHandle(pid);
 	}
 }
