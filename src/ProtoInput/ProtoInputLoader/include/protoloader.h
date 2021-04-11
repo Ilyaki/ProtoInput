@@ -31,8 +31,6 @@ enum ProtoMessageFilterIDs : unsigned int
 	MouseButtonFilterID
 };
 
-//TODO: add some documentation to the header file
-
 extern "C" __declspec(dllexport) ProtoInstanceHandle RemoteLoadLibraryInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);

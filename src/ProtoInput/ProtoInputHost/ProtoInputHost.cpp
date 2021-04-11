@@ -23,10 +23,20 @@ bool CheckBuildTimings(const std::wstring& folderpath)
 	const auto hookPath32 = std::filesystem::path{ folderpath }.append("ProtoInputHooks32.dll");
 	const auto hookPath64 = std::filesystem::path{ folderpath }.append("ProtoInputHooks64.dll");
 
-	//TODO: try catch if the file doesn't exist
-	auto secLoader = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(loaderPath32) - last_write_time(loaderPath64))).count();
-	auto secHooks = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(hookPath32) - last_write_time(hookPath64))).count();
-	
+	long long secLoader;
+	long long secHooks;
+
+	try
+	{
+		secLoader = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(loaderPath32) - last_write_time(loaderPath64))).count();
+		secHooks = abs(std::chrono::duration_cast<std::chrono::seconds>(last_write_time(hookPath32) - last_write_time(hookPath64))).count();
+	}
+	catch(...)
+	{
+		MessageBoxW(NULL, L"Hooks32/64 and/or Loader32/64 are missing", L"Error", MB_OKCANCEL);
+		return false;
+	}
+		
 	constexpr int maximumDurationSec = 40;
 
 	if (secLoader > maximumDurationSec || secHooks > maximumDurationSec)

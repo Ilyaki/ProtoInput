@@ -1,5 +1,13 @@
 #include "Loader.h"
 #include <easyhook.h>
+#include <ntstatus.h>
+
+EASYHOOK_NT_EXPORT RtlCreateSuspendedProcess(
+	WCHAR* InEXEPath,
+	WCHAR* InCommandLine,
+	ULONG InCustomFlags,
+	ULONG* OutProcessId,
+	ULONG* OutThreadId);
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const wchar_t* exePath,
@@ -8,22 +16,47 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const wchar_t* dllFolderPath,
 	unsigned long* outPid)
 {
-	const auto dllpath = std::wstring(dllFolderPath);
-	const auto dllpath32 = dllpath + L"ProtoInputHooks32.dll";
-	const auto dllpath64 = dllpath + L"ProtoInputHooks64.dll";
+	// const auto dllpath = std::wstring(dllFolderPath);
+	// const auto dllpath32 = dllpath + L"ProtoInputHooks32.dll";
+	// const auto dllpath64 = dllpath + L"ProtoInputHooks64.dll";
 
-	printf("Dll path 32 = \"%ws\", 64 = \"%ws\"\n", dllpath32.c_str(), dllpath64.c_str());
+	// printf("Dll path 32 = \"%ws\", 64 = \"%ws\"\n", dllpath32.c_str(), dllpath64.c_str());
+	//
+	// unsigned long pid;
+	//
+	// auto res = RhCreateAndInject(const_cast<WCHAR*>(exePath), const_cast<WCHAR*>(commandLine),
+	// 							 processCreationFlags, 0,
+	// 							 const_cast<WCHAR*>(dllpath32.c_str()), 
+	// 							 const_cast<WCHAR*>(dllpath64.c_str()),
+	// 							 nullptr, 0, &pid);		
+	// if (FAILED(res))
+	// {
+	// 	std::cerr << "Failed CreateAndInject, NTSTATUS = 0x" << std::hex << res << std::dec << std::endl;
+	// 	
+	// 	if (outPid)
+	// 		*outPid = 0;
+	// }
+	// else
+	// {
+	// 	if (outPid)
+	// 		*outPid = pid;
+	// 	
+	// 	return CreateInstanceHandle(pid);
+	// }
 
-	unsigned long pid;
+	ULONG pid;
+	ULONG tid;
 
-	auto res = RhCreateAndInject(const_cast<WCHAR*>(exePath), const_cast<WCHAR*>(commandLine),
-								 processCreationFlags, 0,
-								 const_cast<WCHAR*>(dllpath32.c_str()), const_cast<WCHAR*>(dllpath64.c_str()),
-								 nullptr, 0, &pid);
+	const auto createProcRes = RtlCreateSuspendedProcess(
+		const_cast<WCHAR*>(exePath), 
+		const_cast<WCHAR*>(commandLine), 
+		processCreationFlags, 
+		&pid, 
+		&tid);
 
-	if (FAILED(res))
+	if(FAILED(createProcRes))
 	{
-		std::cerr << "Failed CreateAndInject, NTSTATUS = 0x" << std::hex << res << std::dec << std::endl;
+		std::cerr << "Failed RtlCreateSuspendedProcess, NTSTATUS = 0x" << std::hex << createProcRes << std::dec << std::endl;
 		
 		if (outPid)
 			*outPid = 0;
@@ -32,7 +65,9 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	{
 		if (outPid)
 			*outPid = pid;
-		
-		return CreateInstanceHandle(pid);
+
+		return EasyHookInjectRuntime(pid, dllFolderPath);
 	}
+
+	return 0;
 }
