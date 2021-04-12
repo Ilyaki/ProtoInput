@@ -11,6 +11,7 @@
 #include "CursorVisibilityHook.h"
 #include "ClipCursorHook.h"
 #include "RenameHandlesHook.h"
+#include "XinputHook.h"
 
 namespace Proto
 {
@@ -31,7 +32,8 @@ HookManager::HookManager()
 	AddHook<CursorVisibilityHook>(ProtoHookIDs::CursorVisibilityStateHookID);
 	AddHook<ClipCursorHook>(ProtoHookIDs::ClipCursorHookID);
 	AddHook<FocusHook>(ProtoHookIDs::FocusHooksHookID);
-	AddHook<RenameHandlesHook>(ProtoHookIDs::RenameHandlesHookHookID);
+	AddHook<RenameHandlesHook>(ProtoHookIDs::RenameHandlesHookID);
+	AddHook<XinputHook>(ProtoHookIDs::XinputHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

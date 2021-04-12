@@ -51,7 +51,8 @@ struct Profile
 		{ "Cursor Visibility", true, "Cursor Visibility", ProtoHookIDs::CursorVisibilityStateHookID },
 		{ "Clip Cursor", true, "Clip Cursor", ProtoHookIDs::ClipCursorHookID },
 		{ "Focus", true, "Focus", ProtoHookIDs::FocusHooksHookID },
-		{ "Rename Handles", true, "Rename Handles", ProtoHookIDs::RenameHandlesHookHookID },
+		{ "Rename Handles", true, "Rename Handles", ProtoHookIDs::RenameHandlesHookID },
+		{ "Xinput", false, "Xinput", ProtoHookIDs::XinputHookID }
 	};
 
 	std::vector<ProfileOption> messageFilters
@@ -65,6 +66,8 @@ struct Profile
 		{ "Mouse Button", true, "Mouse Button", ProtoMessageFilterIDs::MouseButtonFilterID },
 	};
 
+	bool dinputToXinputRedirection = false;
+	
 	bool drawFakeMouseCursor = true;
 	bool sendMouseMovementMessages = true;
 	bool sendMouseButtonMessages = true;
@@ -90,6 +93,8 @@ struct Profile
 
 			cereal::make_nvp("renameHandles", renameHandles),
 			cereal::make_nvp("renameNamedPipeHandles", renameNamedPipeHandles),
+
+			cereal::make_nvp("dinputToXinputRedirection", dinputToXinputRedirection),
 
 			cereal::make_nvp("drawFakeMouseCursor", drawFakeMouseCursor),
 			cereal::make_nvp("sendMouseMovementMessages", sendMouseMovementMessages),

@@ -222,12 +222,22 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 }
 
 void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, const MSG& msg)
-{	
-	//TODO: error checking
+{
 	RAWINPUT rawinput;
 	UINT cbSize;
-	GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER));
-	GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER));
+	
+	if (0 != GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER)))
+		return;
+
+	// This seems to happen with a PS4 controller plugged in, giving a stack corruption (yay)
+	// If we ever need HID input, create a large memory buffer, then reinterpret the pointer to the buffer as a RAWINPUT*
+	// (HID input has variable size)
+	if (cbSize > sizeof(RAWINPUT)) 
+		return;
+	
+	if (cbSize != GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER)))
+		return;
+		
 	rawinput.header.wParam = RIM_INPUT; // Sent in the foreground
 
 	const int index = StateInfo::info.instanceIndex;
@@ -239,38 +249,38 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 		if (rawinput.data.keyboard.Flags == RI_KEY_MAKE && !keyDown)
 		{
 			keyDown = true;
-
+	
 			// Key just pressed
 			if ((GetAsyncKeyState(VK_RCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_RMENU) & ~1) != 0)
 			{
 				Proto::ToggleWindow();
 			}			
 		}
-
+	
 		if (rawinput.data.keyboard.Flags == RI_KEY_BREAK && keyDown)
 		{
 			keyDown = false;
 		}
 	}
-
+	
 	// Need to occasionally update the window is case the main window changes (e.g. because of a launcher) or the main window is resized
 	if (rawinput.header.dwType == RIM_TYPEMOUSE && (rawinput.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
 	{
 		//TODO: This may waste CPU? (But need a way to update window otherwise)
 		//if (HwndSelector::GetSelectedHwnd() == 0)
 			HwndSelector::UpdateMainHwnd(false);
-
+	
 		HwndSelector::UpdateWindowBounds();
 	}
-
-
+	
+	
 	// Lock input toggle
 	if (lockInputToggleEnabled && rawinput.header.dwType == RIM_TYPEKEYBOARD && rawinput.data.keyboard.VKey == VK_HOME && rawinput.data.keyboard.Message == WM_KEYUP)
 	{
 		static bool locked = false;
 		locked = !locked;
 		printf(locked ? "Locking input\n" : "Unlocking input\n");
-
+	
 		// Add the looping thread to the ACL so it can still use ClipCursor, etc
 		static unsigned int loopThreadId = 0;
 		static bool alreadyAddToACL = false;
@@ -287,7 +297,7 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 		else
 			RestartExplorer();
 	}
-
+	
 	
 	//TODO: handle forwarding HID input
 	
@@ -302,19 +312,19 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 				ProcessMouseInput(rawinput.data.mouse, rawinput.header.hDevice);
 			else if (allowKeyboard)
 				ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
-
+	
 			if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
 			// if ((allowMouse) || (allowKeyboard))
 			{
 				for (const auto& hwnd : forwardingWindows)
 				{
 					static size_t inputBufferCounter = 0;
-
+	
 					// The game is going to lag behind the data we get by a few times, so store in an array and pass the index as a message parameter
-
+	
 					inputBufferCounter = (inputBufferCounter + 1) % RawInputBufferSize;
 					inputBuffer[inputBufferCounter] = rawinput;
-
+	
 					const LPARAM x = (inputBufferCounter) | 0xAB000000;
 					PostMessageW(hwnd, WM_INPUT, RIM_INPUT, x);
 				}

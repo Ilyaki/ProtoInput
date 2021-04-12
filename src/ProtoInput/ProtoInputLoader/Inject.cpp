@@ -121,6 +121,40 @@ extern "C" __declspec(dllexport) void AddSelectedKeyboardHandle(ProtoInstanceHan
 	AddSelectedInputHandleImpl(instanceHandle, keyboardHandle, false);
 }
 
+extern "C" __declspec(dllexport) void SetControllerIndex(ProtoInstanceHandle instanceHandle, unsigned int controllerIndex)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetControllerIndex message
+		{
+			controllerIndex
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetControllerIndex, &message);
+	}
+}
+
+extern "C" __declspec(dllexport) void SetUseDinputRedirection(ProtoInstanceHandle instanceHandle, bool useRedirection)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageUseDinput message
+		{
+			useRedirection
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetUseDinput, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex)
 {
 	if (instanceIndex < 1)

@@ -111,7 +111,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;Dinput8.lib;dxguid.lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)build\Win32\Debug;$(SolutionDir)..\..\lib\EasyHook\Build\x86\netfx4-Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -134,7 +134,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)build\x64\Debug;$(SolutionDir)..\..\lib\EasyHook\Build\x64\netfx4-Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;Dinput8.lib;dxguid.lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -158,7 +158,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;Dinput8.lib;dxguid.lib;EasyHook32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)..\..\lib\EasyHook\Build\x86\netfx4-Release;$(SolutionDir)build\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -183,7 +183,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BlackBone.lib;opengl32.lib;ProtoInputUtilStatic$(PlatformArchitecture).lib;Dinput8.lib;dxguid.lib;EasyHook64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)..\..\lib\EasyHook\Build\x64\netfx4-Release;$(SolutionDir)build\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -227,6 +227,7 @@
     <ClInclude Include="StateInfo.h" />
     <ClInclude Include="WindowActivateAppFilter.h" />
     <ClInclude Include="WindowActivateFilter.h" />
+    <ClInclude Include="XinputHook.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\lib\glew\src\glew.c" />
@@ -265,6 +266,7 @@
     <ClCompile Include="RenameHandlesHook.cpp" />
     <ClCompile Include="SetCursorPosHook.cpp" />
     <ClCompile Include="StateInfo.cpp" />
+    <ClCompile Include="XinputHook.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

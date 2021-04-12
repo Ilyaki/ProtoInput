@@ -44,18 +44,25 @@ void WaitClientConnect(Proto::ProtoInstance& instance)
 {
 	if (!instance.clientConnected)
 	{
-		//FIXME: This NEEDs a timeout
 		std::cout << "Starting named pipe wait" << std::endl;
 
-		if (ConnectNamedPipe(instance.pipeHandle, NULL))
+		int count = 0;
+
+		while (count < 10)
 		{
-			std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
-			instance.clientConnected = true;
-		}
-		else
-		{
-			std::cerr << "Couldn't connect named pipe to pid " << instance.pid << std::endl;
-			return;
+			//FIXME: This needs a timeout
+			if (ConnectNamedPipe(instance.pipeHandle, NULL))
+			{
+				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
+				instance.clientConnected = true;
+				return;
+			}
+			else
+			{
+				std::cerr << "Couldn't connect named pipe to pid " << instance.pid << ", waiting 5s" << std::endl;
+				count++;
+				Sleep(5000);
+			}
 		}
 	}
 }

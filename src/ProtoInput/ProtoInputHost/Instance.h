@@ -21,9 +21,10 @@ public:
 	intptr_t keyboardHandle = -1;
 	intptr_t mouseHandle = -1;
 
-	std::string instanceName;
-
+	unsigned int controllerIndex = 0;
 	
+	std::string instanceName;
+		
 	Instance(unsigned long _pid, std::wstring _exename) : runtime(true), pid(_pid), exename(std::move(_exename)), filepath(L""), instanceName(GetInstanceName()) {}
 	Instance(std::wstring _filepath, std::wstring _exename) : runtime(false), pid(-1), exename(std::move(_exename)), filepath(std::move(_filepath)), instanceName(GetInstanceName()) {}
  	

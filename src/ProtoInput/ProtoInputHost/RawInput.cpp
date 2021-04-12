@@ -26,8 +26,15 @@ void ProcessRawInput(HRAWINPUT rawInputHandle)
 {
 	RAWINPUT rawinput;
 	UINT cbSize;
-	GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER));
-	GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER));
+
+	if (0 != GetRawInputData(rawInputHandle, RID_INPUT, nullptr, &cbSize, sizeof(RAWINPUTHEADER)))
+		return;
+
+	if (cbSize > sizeof(RAWINPUT))
+		return;
+	
+	if (cbSize != GetRawInputData(rawInputHandle, RID_INPUT, &rawinput, &cbSize, sizeof(RAWINPUTHEADER)))
+		return;
 		
 	if (rawinput.header.dwType == RIM_TYPEKEYBOARD &&
 		rawinput.data.keyboard.Flags == RI_KEY_MAKE)

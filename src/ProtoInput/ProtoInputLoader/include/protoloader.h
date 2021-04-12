@@ -17,7 +17,8 @@ enum ProtoHookIDs : unsigned int
 	CursorVisibilityStateHookID,
 	ClipCursorHookID,
 	FocusHooksHookID,
-	RenameHandlesHookHookID
+	RenameHandlesHookID,
+	XinputHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -70,6 +71,11 @@ extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHa
 
 extern "C" __declspec(dllexport) void AddSelectedMouseHandle(ProtoInstanceHandle instanceHandle, unsigned int mouseHandle);
 extern "C" __declspec(dllexport) void AddSelectedKeyboardHandle(ProtoInstanceHandle instanceHandle, unsigned int keyboardHandle);
+
+extern "C" __declspec(dllexport) void SetControllerIndex(ProtoInstanceHandle instanceHandle, unsigned int controllerIndex);
+
+// This MUST be called before calling InstallHook on the Xinput hook
+extern "C" __declspec(dllexport) void SetUseDinputRedirection(ProtoInstanceHandle instanceHandle, bool useRedirection);
 
 // Both of these functions require RenameHandlesHookHookID hook
 extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);

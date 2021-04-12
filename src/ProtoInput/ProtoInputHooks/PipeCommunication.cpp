@@ -16,6 +16,7 @@
 #include "RawInput.h"
 #include "FakeCursor.h"
 #include "RenameHandlesHook.h"
+#include "XinputHook.h"
 
 namespace Proto
 {
@@ -302,6 +303,26 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 					RenameHandlesHook::AddHandleToNamedPipeRenameList(&body->buff[0]);
 				else
 					RenameHandlesHook::AddHandleToRenameList(&body->buff[0]);
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetControllerIndex:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetControllerIndex*>(messageBuffer);
+
+				printf("Received set controller index to %d\n", body->controllerIndex);
+
+				XinputHook::controllerIndex = body->controllerIndex;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetUseDinput:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageUseDinput*>(messageBuffer);
+
+				printf("Received set use dinput -> xinput redirection to index to %d\n", body->useDinput);
+
+				XinputHook::SetUseDinput(body->useDinput);
 
 				break;
 			}

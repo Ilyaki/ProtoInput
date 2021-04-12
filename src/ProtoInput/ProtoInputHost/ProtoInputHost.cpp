@@ -34,7 +34,7 @@ bool CheckBuildTimings(const std::wstring& folderpath)
 	catch(...)
 	{
 		MessageBoxW(NULL, L"Hooks32/64 and/or Loader32/64 are missing", L"Error", MB_OKCANCEL);
-		return false;
+		return true;
 	}
 		
 	constexpr int maximumDurationSec = 40;
@@ -199,7 +199,7 @@ int main()
 			InstallHook(instanceHandle, CursorVisibilityStateHookID);
 			InstallHook(instanceHandle, ClipCursorHookID);
 			InstallHook(instanceHandle, FocusHooksHookID);
-			InstallHook(instanceHandle, RenameHandlesHookHookID);
+			InstallHook(instanceHandle, RenameHandlesHookID);
 
 			EnableMessageFilter(instanceHandle, RawInputFilterID);
 			EnableMessageFilter(instanceHandle, MouseMoveFilterID);

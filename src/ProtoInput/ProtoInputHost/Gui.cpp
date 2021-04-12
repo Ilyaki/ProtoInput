@@ -144,8 +144,11 @@ bool Launch()
 		if (hookEnabled(CursorVisibilityStateHookID))   InstallHook(instanceHandle, CursorVisibilityStateHookID);
 		if (hookEnabled(ClipCursorHookID))              InstallHook(instanceHandle, ClipCursorHookID);
 		if (hookEnabled(FocusHooksHookID))              InstallHook(instanceHandle, FocusHooksHookID);
-		if (hookEnabled(RenameHandlesHookHookID))       InstallHook(instanceHandle, RenameHandlesHookHookID);
+		if (hookEnabled(RenameHandlesHookID))           InstallHook(instanceHandle, RenameHandlesHookID);
 
+        SetUseDinputRedirection(instanceHandle, currentProfile.dinputToXinputRedirection);
+        if (hookEnabled(XinputHookID))                  InstallHook(instanceHandle, XinputHookID);
+		
         if (filterEnabled(RawInputFilterID))            EnableMessageFilter(instanceHandle, RawInputFilterID);
         if (filterEnabled(MouseMoveFilterID))           EnableMessageFilter(instanceHandle, MouseMoveFilterID);
         if (filterEnabled(MouseActivateFilterID))       EnableMessageFilter(instanceHandle, MouseActivateFilterID);
@@ -153,7 +156,7 @@ bool Launch()
         if (filterEnabled(WindowActivateAppFilterID))   EnableMessageFilter(instanceHandle, WindowActivateAppFilterID);
         if (filterEnabled(MouseWheelFilterID))          EnableMessageFilter(instanceHandle, MouseWheelFilterID);
         if (filterEnabled(MouseButtonFilterID))         EnableMessageFilter(instanceHandle, MouseButtonFilterID);
-
+        		
         SetupMessagesToSend(instanceHandle, 
                             currentProfile.sendMouseWheelMessages, 
                             currentProfile.sendMouseButtonMessages,
@@ -183,6 +186,8 @@ bool Launch()
         if (instance.keyboardHandle != -1)
 			AddSelectedKeyboardHandle(instanceHandle, instance.keyboardHandle);
 
+        SetControllerIndex(instanceHandle, instance.controllerIndex);
+		
         SetExternalFreezeFakeInput(instanceHandle, !isInputCurrentlyLocked && freezeGameInputWhileInputNotLocked);
 		
 		if (!instance.runtime)
@@ -216,16 +221,20 @@ void RefreshPids()
     {
         const auto ph = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 
-        wchar_t processNameBuffer[260];
-        DWORD buffSize = sizeof(processNameBuffer) / sizeof(wchar_t);
+        constexpr size_t len = 260;
+        wchar_t processNameBuffer[len]{};
+        DWORD buffSize = len;
         QueryFullProcessImageNameW(ph, 0, processNameBuffer, &buffSize);
 
         CloseHandle(ph);
 
-        auto processName = std::filesystem::path(processNameBuffer).filename().wstring();
+        if (buffSize != len)
+        {
+            auto processName = std::filesystem::path(processNameBuffer).filename().wstring();
 
-    	if (!processName.empty())
-			processList.push_back({ pid, std::move(processName) });
+            if (!processName.empty())
+                processList.push_back({ pid, std::move(processName) });
+        }
     }
 }
 
@@ -590,6 +599,8 @@ void SelectedInstanceWindow()
             instance.mouseHandle = -1;
     }
 
+    ImGui::Separator();
+	
 	// Keyboard
     {
         const auto keyboardString = std::to_string(instance.keyboardHandle);
@@ -622,6 +633,16 @@ void SelectedInstanceWindow()
             waitingKeyPress = false;
         }
     }
+
+    ImGui::Separator();
+
+    ImGui::TextWrapped("Controllers require the Xinput hook, and additionally Dinput redirection for more than 4 controllers. Index 0 implies no controller");
+
+    ImGui::PushID(128794);
+    ImGui::Spacing();
+    ImGui::TextWrapped("Controller index");
+    ImGui::SliderInt("", (int*)&instance.controllerIndex, 0, 16, "%d", ImGuiSliderFlags_AlwaysClamp);
+    ImGui::PopID();
 }
 
 void OptionsMenu()
@@ -813,6 +834,8 @@ void OptionsMenu()
         }
     }
 
+    ImGui::Checkbox("Dinput to Xinput redirection", &currentProfile.dinputToXinputRedirection);
+
     if (ImGui::CollapsingHeader("Message Filters", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         for (auto& filter : currentProfile.messageFilters)
@@ -841,6 +864,8 @@ void OptionsMenu()
 
         ImGui::Separator();
 
+        ImGui::TextWrapped("Some games only work with specific messages, some games break with specific messages. Make sure to test different combinations");
+    	
         ImGui::Checkbox("Send WM_ACTIVATE", &currentProfile.focusLoopSendWM_ACTIVATE);
         ImGui::Checkbox("Send WM_NCACTIVATE", &currentProfile.focusLoopSendWM_NCACTIVATE);
         ImGui::Checkbox("Send WM_ACTIVATEAPP", &currentProfile.focusLoopSendWM_ACTIVATEAPP);
@@ -1058,8 +1083,6 @@ void RenderImgui()
         ImGui::End();
     }
     ImGui::End();
-
-	ImGui::End();
 }
 
 }
