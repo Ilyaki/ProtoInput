@@ -187,6 +187,7 @@
     <ClCompile Include="..\..\..\lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="GuiImpl.cpp" />
+    <ClCompile Include="MessageList.cpp" />
     <ClCompile Include="Profiles.cpp" />
     <ClCompile Include="ProtoInputHost.cpp" />
     <ClCompile Include="RawInput.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="FontData.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="Instance.h" />
+    <ClInclude Include="MessageList.h" />
     <ClInclude Include="Profiles.h" />
     <ClInclude Include="RawInput.h" />
   </ItemGroup>

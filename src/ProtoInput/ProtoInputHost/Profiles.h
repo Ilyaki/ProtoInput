@@ -6,6 +6,7 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/complex.hpp>
 #include "protoloader.h"
+#include "MessageList.h"
 
 namespace ProtoHost
 {
@@ -83,6 +84,8 @@ struct Profile
 
 	std::vector<std::string> renameHandles{};
 	std::vector<std::string> renameNamedPipeHandles{};
+
+	std::vector<unsigned int> blockedMessages;
 	
 	template<class Archive>
 	void serialize(Archive& archive)
@@ -107,7 +110,10 @@ struct Profile
 			cereal::make_nvp("focusLoopSendWM_NCACTIVATE", focusLoopSendWM_NCACTIVATE),
 			cereal::make_nvp("focusLoopSendWM_ACTIVATEAPP", focusLoopSendWM_ACTIVATEAPP),
 			cereal::make_nvp("focusLoopSendWM_SETFOCUS", focusLoopSendWM_SETFOCUS),
-			cereal::make_nvp("focusLoopSendWM_MOUSEACTIVATE", focusLoopSendWM_MOUSEACTIVATE)
+			cereal::make_nvp("focusLoopSendWM_MOUSEACTIVATE", focusLoopSendWM_MOUSEACTIVATE),
+
+
+			cereal::make_nvp("blockedMessages", blockedMessages)
 		);
 	}
 

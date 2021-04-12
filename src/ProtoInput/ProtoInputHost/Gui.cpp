@@ -12,6 +12,7 @@
 #include "protoloader.h"
 #include "Profiles.h"
 #include "RawInput.h"
+#include "MessageList.h"
 
 namespace ProtoHost
 {
@@ -156,7 +157,12 @@ bool Launch()
         if (filterEnabled(WindowActivateAppFilterID))   EnableMessageFilter(instanceHandle, WindowActivateAppFilterID);
         if (filterEnabled(MouseWheelFilterID))          EnableMessageFilter(instanceHandle, MouseWheelFilterID);
         if (filterEnabled(MouseButtonFilterID))         EnableMessageFilter(instanceHandle, MouseButtonFilterID);
-        		
+
+        for (const auto msg : currentProfile.blockedMessages)
+        {
+            EnableMessageBlock(instanceHandle, msg);
+        }
+		
         SetupMessagesToSend(instanceHandle, 
                             currentProfile.sendMouseWheelMessages, 
                             currentProfile.sendMouseButtonMessages,
@@ -877,7 +883,7 @@ void OptionsMenu()
     if (ImGui::CollapsingHeader("Handles to rename", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         ImGui::TextWrapped("These options require the Rename Handles hook");
-    	
+
         {
             constexpr size_t nameBufLength = 260;
             static char nameBuf[nameBufLength] = "";
@@ -924,7 +930,7 @@ void OptionsMenu()
         }
 
         ImGui::Separator();
-        
+
         {
             constexpr size_t nameBufLength = 260;
             static char nameBuf[nameBufLength] = "";
@@ -969,6 +975,43 @@ void OptionsMenu()
                 }
             }
         }
+    }
+	
+    if (ImGui::CollapsingHeader("Messages to block", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
+    {
+        static bool onlyShowBlocked = false;
+		ImGui::Checkbox("Only show blocked", &onlyShowBlocked);
+
+		constexpr size_t searchBuffLength = 128;
+		static char searchBuf[searchBuffLength] = "";
+		ImGui::InputText("Search", searchBuf, searchBuffLength, ImGuiInputTextFlags_CharsUppercase);
+		const std::string search{ searchBuf };
+
+		ImGui::BeginChild("blocked", ImVec2(0, 300), true);
+
+		for (auto& msg : MessageList::messages)
+		{
+			const bool isBlocked = MessageList::IsBlocked(msg.messageID, currentProfile.blockedMessages);
+
+            static char buff[256];
+            snprintf(buff, 256, "(0x%X) %s", msg.messageID, msg.name.c_str());
+			
+			if ((!onlyShowBlocked || isBlocked)
+				&& msg.name.find(search) != std::string::npos
+				&& ImGui::Selectable(buff, isBlocked))
+			{
+				if (isBlocked)
+                    currentProfile.blockedMessages.erase(
+                        find(currentProfile.blockedMessages.begin(), currentProfile.blockedMessages.end(), msg.messageID));
+				else
+                    currentProfile.blockedMessages.push_back(msg.messageID);
+			}
+			
+		}
+
+		ImGui::EndChild();
+
+        ImGui::Spacing();
     }
 }
 
