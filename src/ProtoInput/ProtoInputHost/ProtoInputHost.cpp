@@ -37,7 +37,7 @@ bool CheckBuildTimings(const std::wstring& folderpath)
 		return true;
 	}
 		
-	constexpr int maximumDurationSec = 40;
+	constexpr int maximumDurationSec = 60;
 
 	if (secLoader > maximumDurationSec || secHooks > maximumDurationSec)
 	{
@@ -47,82 +47,24 @@ bool CheckBuildTimings(const std::wstring& folderpath)
 	return false;
 }
 
-void testgame()
-{
-	wchar_t pathchars[MAX_PATH];
-	GetModuleFileNameW(NULL, pathchars, MAX_PATH);
-	std::wstring folderpath = pathchars;
-	size_t pos = folderpath.find_last_of(L"\\");
-	if (pos != std::string::npos)
-		folderpath = folderpath.substr(0, pos + 1);
-	
-	auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
-	// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-	unsigned long pid;
-
-	ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
-		path, L"", 0, folderpath.c_str(), &pid);
-
-	SetupState(instanceHandle, 1);
-
-	InstallHook(instanceHandle, RegisterRawInputHookID);
-	InstallHook(instanceHandle, GetRawInputDataHookID);
-	InstallHook(instanceHandle, MessageFilterHookID);
-	InstallHook(instanceHandle, GetCursorPosHookID);
-	InstallHook(instanceHandle, SetCursorPosHookID);
-	InstallHook(instanceHandle, GetKeyStateHookID);
-	InstallHook(instanceHandle, GetAsyncKeyStateHookID);
-	InstallHook(instanceHandle, GetKeyboardStateHookID);
-	InstallHook(instanceHandle, CursorVisibilityStateHookID);
-	InstallHook(instanceHandle, ClipCursorHookID);
-	InstallHook(instanceHandle, FocusHooksHookID);
-
-	EnableMessageFilter(instanceHandle, RawInputFilterID);
-	EnableMessageFilter(instanceHandle, MouseMoveFilterID);
-	EnableMessageFilter(instanceHandle, MouseActivateFilterID);
-	EnableMessageFilter(instanceHandle, WindowActivateFilterID);
-	EnableMessageFilter(instanceHandle, WindowActivateAppFilterID);
-	EnableMessageFilter(instanceHandle, MouseWheelFilterID);
-	EnableMessageFilter(instanceHandle, MouseButtonFilterID);
-
-	SetupMessagesToSend(instanceHandle);
-
-	StartFocusMessageLoop(instanceHandle);
-	
-	AddSelectedMouseHandle(instanceHandle, 65597);
-	AddSelectedKeyboardHandle(instanceHandle, 65603);
-	AddSelectedKeyboardHandle(instanceHandle, 65605);
-	AddSelectedKeyboardHandle(instanceHandle, 65607);
-
-	WakeUpProcess(instanceHandle);
-
-	// LockInput(true);
-}
-
 void ShowGui()
 {
 	ProtoHost::ShowGuiImpl();
 }
 
-
-
-#include "Profiles.h"
-void testfn()
+int main();
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-	ProtoHost::Profile prof;
-	prof.hooks[0].name = "EDITED";
-	ProtoHost::Profile::SaveToFile(prof, "hello");
-
-	ProtoHost::Profile test;
-	ProtoHost::Profile::LoadFromFile(test, "hello");
-	std::cout << test.hooks[0].name;
-
+	return main();
 }
 
 int main()
 {
-	// testfn();
-	// return 0;
+	// (Uncomment if you need a quick and dirty console output)
+	// AllocConsole();
+	// FILE* f = new FILE();
+	// freopen_s(&f, "CONOUT$", "w", stdout);
+	// freopen_s(&f, "CONOUT$", "w", stderr);
 	
 	wchar_t pathchars[MAX_PATH];
 	GetModuleFileNameW(NULL, pathchars, MAX_PATH);
@@ -130,21 +72,21 @@ int main()
 	size_t pos = folderpath.find_last_of(L"\\");
 	if (pos != std::string::npos)
 		folderpath = folderpath.substr(0, pos + 1);
-	
-	std::wcout << L"Folder name = '" << folderpath << "'" <<  std::endl;
-	
+		
 	if (CheckBuildTimings(folderpath))
 		return 0;
 
 	constexpr bool gui = true;
 	constexpr bool runtime = false;
 	constexpr bool hookSelf = false;
-	constexpr bool doTestGame = false;
 
 	if (gui)
+	{
 		ShowGui();
-	else if (doTestGame)
-		testgame();
+		return 0;
+	}
+
+	// These can be useful if you're debugging and want to quickly launch instances
 	else if (runtime)
 	{
 		if (hookSelf)
@@ -152,21 +94,9 @@ int main()
 		else 
 		{
 			auto pids = blackbone::Process::EnumByName(L"notepad.exe");
-			// auto pids = blackbone::Process::EnumByName(L"hl2.exe");
 			for (const auto& pid : pids)
 			{
-				std::cout << "Selected pid " << pid << std::endl;
-
-				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
-				// const auto instanceHandle = NtLoadInjectRuntime(pid, folderpath.c_str());
 				// const auto instanceHandle = EasyHookInjectRuntime(pid, folderpath.c_str());
-
-				// const auto instanceHandle = BlackBoneInjectRuntime(pid, folderpath.c_str());
-				// InstallHook(instanceHandle, ProtoHookIDs::MessageBoxHookID);
-				// InstallHook(instanceHandle, ProtoHookIDs::RegisterRawInputHookID);
-				// InstallHook(instanceHandle, ProtoHookIDs::GetRawInputDataHookID);
-				
-
 			}
 		}
 	}
@@ -174,19 +104,13 @@ int main()
 	{
 		for (int i = 1; i <= 2; i++)
 		{
-			// auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
-			// auto path = LR"(C:\Program Files\Notepad++\notepad++.exe)";
-			// auto path = LR"(F:\Steam\steamapps\common\PAYDAY 2\payday2_win32_release.exe)";
-			auto path = LR"(I:\Software\osu\osu!.exe)";
+			auto path = LR"(C:\WINDOWS\system32\notepad.exe)";
 			unsigned long pid;
 
 			ProtoInstanceHandle instanceHandle = EasyHookInjectStartup(
 				path, L"", 0, folderpath.c_str(), &pid);
 
 			SetupState(instanceHandle, i);
-
-			AddHandleToRename(instanceHandle, L"20f7b388-7444-42cc-9388-c23275781ff8");
-			AddNamedPipeToRename(instanceHandle, L"osu!");
 
 			InstallHook(instanceHandle, RegisterRawInputHookID);
 			InstallHook(instanceHandle, GetRawInputDataHookID);
@@ -212,11 +136,6 @@ int main()
 			SetupMessagesToSend(instanceHandle);
 
 			StartFocusMessageLoop(instanceHandle);
-
-			// AddSelectedMouseHandle(instanceHandle, 65598);
-			// AddSelectedKeyboardHandle(instanceHandle, 65600);
-			// AddSelectedKeyboardHandle(instanceHandle, 65602);
-			// AddSelectedKeyboardHandle(instanceHandle, 65604);
 
 			WakeUpProcess(instanceHandle);
 		}
