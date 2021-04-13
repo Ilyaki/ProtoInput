@@ -14,7 +14,7 @@
 
 //TODO: default to hidden
 constexpr bool defaultGuiToHidden = true;
-constexpr bool defaultConsoleToHidden = false;
+constexpr bool defaultConsoleToHidden = true;
 
 HGLRC   g_GLRenderContext;
 HDC     g_HDCDeviceContext;
