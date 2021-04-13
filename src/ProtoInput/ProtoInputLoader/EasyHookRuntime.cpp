@@ -14,7 +14,7 @@ ProtoInstanceHandle EasyHookInjectImpl(unsigned long pid, const wchar_t* dllFold
 	const bool is64 = Isx64(pid);
 	std::cout << "Target is " << (is64 ? "64-bit" : "32-bit") << std::endl;
 
-	auto processPath = std::wstring(dllFolderPath) + (is64 ? L"ProtoInputInjector64.exe" : L"ProtoInputInjector32.exe");
+	auto processPath = std::wstring(dllFolderPath) + (is64 ? L"ProtoInputIJ64.exe" : L"ProtoInputIJ32.exe");
 
 	STARTUPINFOW startupInfo = { 0 };
 	startupInfo.cb = sizeof(startupInfo);
