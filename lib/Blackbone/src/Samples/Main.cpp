@@ -55,7 +55,7 @@ int main( int /*argc*/, char* /*argv[]*/ )
     // Process modules manipulation
     {
         auto& modules = notepad.modules();
-    	
+
         // List all modules (both x86 and x64 for WOW64 processes)
         auto mods = modules.GetAllModules();
 
