@@ -4,3 +4,5 @@ bin
 out
 Release
 /src/ProtoInput/ProtoInputHost/imgui.ini
+/src/ProtoInput/build
+/src/ProtoInput/obj
