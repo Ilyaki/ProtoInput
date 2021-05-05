@@ -34,8 +34,7 @@ public:
 	{
 		return
 			"Filters the mouse button press/release messages to only pass synthesized messages by Proto Input. "
-			"This prevents the 'real' mouse cursor from interfering with the 'fake' synthesized input. "
-			"This filter is REQUIRED for keyboard input to work, otherwise the game detects the wrong key. ";
+			"This prevents the 'real' mouse cursor from interfering with the 'fake' synthesized input. ";
 	}
 };
 

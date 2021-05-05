@@ -31,6 +31,8 @@ public:
 	
 	void InstallImpl() override;
 	void UninstallImpl() override;
+
+	static bool IsKeyboardButtonFilterEnabled();
 };
 
 }
