@@ -29,7 +29,8 @@ enum ProtoMessageFilterIDs : unsigned int
 	WindowActivateFilterID,
 	WindowActivateAppFilterID,
 	MouseWheelFilterID,
-	MouseButtonFilterID
+	MouseButtonFilterID,
+	KeyboardButtonFilterID
 };
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle RemoteLoadLibraryInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);

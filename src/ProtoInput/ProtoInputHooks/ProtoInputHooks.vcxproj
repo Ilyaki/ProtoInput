@@ -209,6 +209,7 @@
     <ClInclude Include="HookManager.h" />
     <ClInclude Include="HwndSelector.h" />
     <ClInclude Include="InstallHooks.h" />
+    <ClInclude Include="KeyboardButtonFilter.h" />
     <ClInclude Include="MessageFilterBase.h" />
     <ClInclude Include="MessageFilters.h" />
     <ClInclude Include="MessageFilterHook.h" />

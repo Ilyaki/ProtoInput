@@ -144,6 +144,9 @@
     <ClInclude Include="XinputHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
+    <ClInclude Include="KeyboardButtonFilter.h">
+      <Filter>Source Files\MessageFilters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

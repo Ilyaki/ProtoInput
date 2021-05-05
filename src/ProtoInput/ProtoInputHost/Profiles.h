@@ -65,6 +65,7 @@ struct Profile
 		{ "Window Activate App", true, "Window Activate App", ProtoMessageFilterIDs::WindowActivateAppFilterID },
 		{ "Mouse Wheel Filter", true, "Mouse Wheel Filter", ProtoMessageFilterIDs::MouseWheelFilterID },
 		{ "Mouse Button", true, "Mouse Button", ProtoMessageFilterIDs::MouseButtonFilterID },
+		{ "Keyboard Button", true, "Keyboard Button", ProtoMessageFilterIDs::KeyboardButtonFilterID },
 	};
 
 	bool dinputToXinputRedirection = false;

@@ -157,6 +157,7 @@ bool Launch()
         if (filterEnabled(WindowActivateAppFilterID))   EnableMessageFilter(instanceHandle, WindowActivateAppFilterID);
         if (filterEnabled(MouseWheelFilterID))          EnableMessageFilter(instanceHandle, MouseWheelFilterID);
         if (filterEnabled(MouseButtonFilterID))         EnableMessageFilter(instanceHandle, MouseButtonFilterID);
+        if (filterEnabled(KeyboardButtonFilterID))      EnableMessageFilter(instanceHandle, KeyboardButtonFilterID);
 
         for (const auto msg : currentProfile.blockedMessages)
         {
