@@ -257,8 +257,8 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 			keyDown = true;
 	
 			// Key just pressed
-			if ((GetAsyncKeyState(VK_RCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_RMENU) & ~1) != 0)
-			//if ((GetAsyncKeyState(VK_LCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_LMENU) & ~1) != 0)
+			//if ((GetAsyncKeyState(VK_RCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_RMENU) & ~1) != 0)
+			if ((GetAsyncKeyState(VK_LCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_LMENU) & ~1) != 0)
 			{
 				Proto::ToggleWindow();
 			}			

@@ -59,6 +59,23 @@ extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle 
 	}
 }
 
+void StopFocusMessageLoop(ProtoInstanceHandle instanceHandle)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageStopFocusMessageLoop message
+		{
+
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::StopFocusMessageLoop, &message);
+	}
+}
+
 void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
