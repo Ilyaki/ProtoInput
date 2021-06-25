@@ -3,6 +3,7 @@
 #include "InstallHooks.h"
 #include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
+#include <string>
 
 namespace Proto
 {
