@@ -39,7 +39,8 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 {
 	if (XinputHook::controllerIndex == 0) // user wants no controller on this game
 		return ERROR_DEVICE_NOT_CONNECTED;
-	if (dwUserIndex != 0) // only give input for the first controller
+
+	if (dwUserIndex != 0 && dwUserIndex != XUSER_INDEX_ANY) // only give input for the first controller
 		return ERROR_DEVICE_NOT_CONNECTED;
 
 	if (XinputHook::useOpenXinput)
@@ -123,7 +124,8 @@ DWORD WINAPI Hook_XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration
 {
 	if (XinputHook::controllerIndex == 0)
 		return ERROR_DEVICE_NOT_CONNECTED;
-	if (dwUserIndex != 0) // only give input for the first controller
+	
+	if (dwUserIndex != 0 && dwUserIndex != XUSER_INDEX_ANY) // only give input for the first controller
 		return ERROR_DEVICE_NOT_CONNECTED;
 
 	if (XinputHook::useOpenXinput)
@@ -139,7 +141,8 @@ DWORD WINAPI Hook_XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT
 {
 	if (XinputHook::controllerIndex == 0)
 		return ERROR_DEVICE_NOT_CONNECTED;
-	if (dwUserIndex != 0) // only give input for the first controller
+	
+	if (dwUserIndex != 0 && dwUserIndex != XUSER_INDEX_ANY) // only give input for the first controller
 		return ERROR_DEVICE_NOT_CONNECTED;
 
 	if (XinputHook::useOpenXinput)
