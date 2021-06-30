@@ -59,7 +59,7 @@ extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle 
 	}
 }
 
-void StopFocusMessageLoop(ProtoInstanceHandle instanceHandle)
+extern "C" __declspec(dllexport) void StopFocusMessageLoop(ProtoInstanceHandle instanceHandle)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
