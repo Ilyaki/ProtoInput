@@ -37,7 +37,7 @@ inline std::filesystem::path GetFilePath(const std::string& filename)
 }
 
 void Profile::SaveToFile(const Profile& data, const std::string& name)
-{	
+{
 	std::ofstream file;
 	file.open(GetFilePath(name), std::ios::out | std::ios::trunc);
 
@@ -50,12 +50,12 @@ void Profile::SaveToFile(const Profile& data, const std::string& name)
 		cereal::JSONOutputArchive oarchive(file);
 		oarchive(cereal::make_nvp("data", data));
 	}
-		
+
 	file.close();
 }
 
 void Profile::LoadFromFile(Profile& data, const std::string& name)
-{	
+{
 	std::ifstream file;
 	file.open(GetFilePath(name), std::ios::in);
 
@@ -70,7 +70,7 @@ void Profile::LoadFromFile(Profile& data, const std::string& name)
 			cereal::JSONInputArchive iarchive(file);
 			iarchive(cereal::make_nvp("data", data));
 		}
-		catch(...)
+		catch (...)
 		{
 			// Happens when you have a config from an older version that doesn't have all the options. Still works though.
 		}
@@ -87,7 +87,7 @@ bool Profile::DoesProfileFileAlreadyExist(const std::string& name)
 std::vector<std::string> Profile::GetAllProfiles()
 {
 	std::vector<std::string> profiles{};
-	
+
 	for (const auto& entry : std::filesystem::directory_iterator(GetProfilesFolderPath()))
 	{
 		profiles.push_back(entry.path().filename().string());

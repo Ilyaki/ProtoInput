@@ -78,6 +78,8 @@ DWORD WINAPI FakeCursorDrawLoopThread(LPVOID lpParameter)
 
 void FakeCursor::StartDrawLoopInternal()
 {
+    int tick = 0;
+
 	while (true)
 	{
         std::unique_lock<std::mutex> lock(mutex);
@@ -87,6 +89,12 @@ void FakeCursor::StartDrawLoopInternal()
 
         //TODO: is this ok? (might eat cpu)
         Sleep(drawingEnabled ? 12 : 500);
+
+        tick = (tick + 1) % 200;
+
+        if (tick == 0)
+            // Nucleus can put the game window above the pointer without this
+            SetWindowPos(pointerWindow, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE);
 	}
 }
 
@@ -125,6 +133,9 @@ void FakeCursor::StartInternal()
 
         SetWindowLongW(pointerWindow, GWL_STYLE, WS_VISIBLE | WS_DISABLED);
         SetLayeredWindowAttributes(pointerWindow, transparencyKey, 0, LWA_COLORKEY);
+
+        // Nucleus can put the game window above the pointer without this
+        SetWindowPos(pointerWindow, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSIZE);
 
         // ShowWindow(pointerWindow, SW_SHOWDEFAULT);
         // UpdateWindow(pointerWindow);

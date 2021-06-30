@@ -4,7 +4,7 @@
 #include "dinput.h"
 #include "Gui.h"
 #include <string>
-#include "OpenXinputWrapper.h"
+
 
 namespace Proto
 {
@@ -13,7 +13,6 @@ constexpr LONG DINPUT_RANGE_MAX = 32767;
 constexpr LONG DINPUT_RANGE_MIN = -32768;
 
 bool XinputHook::useDinput = false;
-bool XinputHook::useOpenXinput = false;
 IDirectInputDevice8W* dinputDevice = nullptr;
 GUID dinputDeviceGuid{};
 std::wstring dinputDeviceName{};
@@ -21,6 +20,8 @@ std::wstring dinputDeviceName{};
 IDirectInput8W* dinputPtr = nullptr;
 std::vector<GUID> dinputGuids{};
 std::vector<std::wstring> dinputDeviceNames{};
+
+
 
 unsigned int XinputHook::controllerIndex = 0;
 
@@ -44,14 +45,6 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 	if (XinputHook::controllerIndex == 0) // user wants no controller on this game
 		return ERROR_DEVICE_NOT_CONNECTED;
 
-	if (dwUserIndex != 0) // only give input for the first controller
-		return ERROR_DEVICE_NOT_CONNECTED;
-	
-	if (XinputHook::useOpenXinput)
-	{
-		return OpenXinput::ProtoOpenXinputGetState(XinputHook::controllerIndex - 1, pState, extended);
-	}
-		
 	if (!XinputHook::GetUseDinput())
 	{
 		if (extended && XInputGetStateExPtr != nullptr)
@@ -136,14 +129,6 @@ DWORD WINAPI Hook_XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration
 	if (XinputHook::controllerIndex == 0)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
-	if (dwUserIndex != 0) // only give input for the first controller
-		return ERROR_DEVICE_NOT_CONNECTED;
-	
-	if (XinputHook::useOpenXinput)
-	{
-		return OpenXinput::ProtoOpenXinputSetState(XinputHook::controllerIndex - 1, pVibration);
-	}
-	
 	if (XinputHook::controllerIndex <= 4)
 		return XInputSetState(XinputHook::controllerIndex - 1, pVibration);
 
@@ -155,14 +140,6 @@ DWORD WINAPI Hook_XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT
 	if (XinputHook::controllerIndex == 0)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
-	if (dwUserIndex != 0) // only give input for the first controller
-		return ERROR_DEVICE_NOT_CONNECTED;
-	
-	if (XinputHook::useOpenXinput)
-	{
-		return OpenXinput::ProtoOpenXinputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
-	}
-		
 	// Can have a higher index than 4 if using Dinput -> Xinput translation
 	if (XinputHook::controllerIndex <= 4)
 		return XInputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
@@ -284,29 +261,16 @@ void PollDinputDevices()
 
 void XinputHook::ShowGuiStatus()
 {
-	ImGui::TextWrapped("Using OpenXinput will allow more than 4 xinput controllers, however it won't work with non-xinput controllers. "
-					   "Dinput to Xinput redirection allows more than 4 of any controllers, although the emulation isn't perfect (e.g. both triggers can't be used simultaneously). ");
-
-	ImGui::Separator();
-	
 	{
 		bool _useDinput = GetUseDinput();
 		ImGui::PushID(123894);
 		ImGui::Checkbox("", &_useDinput);
 		ImGui::SameLine();
-		ImGui::TextWrapped("Enable Dinput to Xinput redirection");
+		ImGui::TextWrapped("Enable Dinput to Xinput redirection (required for more than 4 controllers)");
 		SetUseDinput(_useDinput);
 		ImGui::PopID();
 	}
-
-	{
-		ImGui::PushID(123895);
-		ImGui::Checkbox("", &useOpenXinput);
-		ImGui::SameLine();
-		ImGui::TextWrapped("Enable OpenXinput (allows more than 4 xinput controllers)");
-		ImGui::PopID();
-	}
-
+	
 	ImGui::TextWrapped("Controller index 0 implies no controller");
 
 	if (ImGui::Button("Refresh devices"))

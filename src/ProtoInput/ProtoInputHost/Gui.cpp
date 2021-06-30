@@ -57,8 +57,8 @@ void OnInputLockChange(bool locked)
     isInputCurrentlyLocked = locked;
 
     bool freeze = !isInputCurrentlyLocked && freezeGameInputWhileInputNotLocked;
-	
-	for (const auto& instanceHandle : trackedInstanceHandles)
+
+    for (const auto& instanceHandle : trackedInstanceHandles)
         SetExternalFreezeFakeInput(instanceHandle, freeze);
 }
 
@@ -71,25 +71,25 @@ bool Launch()
             noReinjection = false;
     }
 
-	if (!noReinjection)
-	{
+    if (!noReinjection)
+    {
         return false;
-	}
-	
+    }
+
     int index = 0;
-	for (auto& instance : instances)
-	{
+    for (auto& instance : instances)
+    {
         index++; // Yes, this starts at 1
 
         if (instance.runtime) instance.hasBeenInjected = true;
-		
+
         ProtoInstanceHandle instanceHandle = 0;
         unsigned long pid = -1;
-		
-		if (instance.runtime)
-		{
+
+        if (instance.runtime)
+        {
             pid = instance.pid;
-			
+
             if (selectedRuntimeInjectionType == RuntimeInjectionType::EASYHOOK_INJECTION)
                 instanceHandle = EasyHookInjectRuntime(instance.pid, dllFolderPath.c_str());
             else if (selectedRuntimeInjectionType == RuntimeInjectionType::EASYHOOK_STEALTH_INJECTION)
@@ -98,7 +98,7 @@ bool Launch()
                 instanceHandle = RemoteLoadLibraryInjectRuntime(instance.pid, dllFolderPath.c_str());
             else
                 printf("Unknown runtime injection type");
-		}
+        }
         else
         {
             if (selectedStartupInjectionType == StartupInjectionType::EASYHOOK_CREATE_AND_INJECT)
@@ -108,17 +108,17 @@ bool Launch()
         }
 
         trackedInstanceHandles.push_back(instanceHandle);
-		
+
         SetupState(instanceHandle, index);
 
-		// Bit lazy but it works 
+        // Bit lazy but it works 
         auto hookEnabled = [](unsigned int id)
         {
-			for (const auto& hook : currentProfile.hooks)
-			{
+            for (const auto& hook : currentProfile.hooks)
+            {
                 if (hook.enabled && hook.id == id)
                     return true;
-			}
+            }
 
             return false;
         };
@@ -133,24 +133,24 @@ bool Launch()
 
             return false;
         };
-		
-		if (hookEnabled(RegisterRawInputHookID))        InstallHook(instanceHandle, RegisterRawInputHookID);
-		if (hookEnabled(GetRawInputDataHookID))         InstallHook(instanceHandle, GetRawInputDataHookID);
-		if (hookEnabled(MessageFilterHookID))           InstallHook(instanceHandle, MessageFilterHookID);
-		if (hookEnabled(GetCursorPosHookID))            InstallHook(instanceHandle, GetCursorPosHookID);
-		if (hookEnabled(SetCursorPosHookID))            InstallHook(instanceHandle, SetCursorPosHookID);
-		if (hookEnabled(GetKeyStateHookID))             InstallHook(instanceHandle, GetKeyStateHookID);
-		if (hookEnabled(GetAsyncKeyStateHookID))        InstallHook(instanceHandle, GetAsyncKeyStateHookID);
-		if (hookEnabled(GetKeyboardStateHookID))        InstallHook(instanceHandle, GetKeyboardStateHookID);
-		if (hookEnabled(CursorVisibilityStateHookID))   InstallHook(instanceHandle, CursorVisibilityStateHookID);
-		if (hookEnabled(ClipCursorHookID))              InstallHook(instanceHandle, ClipCursorHookID);
-		if (hookEnabled(FocusHooksHookID))              InstallHook(instanceHandle, FocusHooksHookID);
-		if (hookEnabled(RenameHandlesHookID))           InstallHook(instanceHandle, RenameHandlesHookID);
+
+        if (hookEnabled(RegisterRawInputHookID))        InstallHook(instanceHandle, RegisterRawInputHookID);
+        if (hookEnabled(GetRawInputDataHookID))         InstallHook(instanceHandle, GetRawInputDataHookID);
+        if (hookEnabled(MessageFilterHookID))           InstallHook(instanceHandle, MessageFilterHookID);
+        if (hookEnabled(GetCursorPosHookID))            InstallHook(instanceHandle, GetCursorPosHookID);
+        if (hookEnabled(SetCursorPosHookID))            InstallHook(instanceHandle, SetCursorPosHookID);
+        if (hookEnabled(GetKeyStateHookID))             InstallHook(instanceHandle, GetKeyStateHookID);
+        if (hookEnabled(GetAsyncKeyStateHookID))        InstallHook(instanceHandle, GetAsyncKeyStateHookID);
+        if (hookEnabled(GetKeyboardStateHookID))        InstallHook(instanceHandle, GetKeyboardStateHookID);
+        if (hookEnabled(CursorVisibilityStateHookID))   InstallHook(instanceHandle, CursorVisibilityStateHookID);
+        if (hookEnabled(ClipCursorHookID))              InstallHook(instanceHandle, ClipCursorHookID);
+        if (hookEnabled(FocusHooksHookID))              InstallHook(instanceHandle, FocusHooksHookID);
+        if (hookEnabled(RenameHandlesHookID))           InstallHook(instanceHandle, RenameHandlesHookID);
 
         SetUseOpenXinput(instanceHandle, currentProfile.useOpenXinput);
         SetUseDinputRedirection(instanceHandle, currentProfile.dinputToXinputRedirection);
         if (hookEnabled(XinputHookID))                  InstallHook(instanceHandle, XinputHookID);
-		
+
         if (filterEnabled(RawInputFilterID))            EnableMessageFilter(instanceHandle, RawInputFilterID);
         if (filterEnabled(MouseMoveFilterID))           EnableMessageFilter(instanceHandle, MouseMoveFilterID);
         if (filterEnabled(MouseActivateFilterID))       EnableMessageFilter(instanceHandle, MouseActivateFilterID);
@@ -159,20 +159,21 @@ bool Launch()
         if (filterEnabled(MouseWheelFilterID))          EnableMessageFilter(instanceHandle, MouseWheelFilterID);
         if (filterEnabled(MouseButtonFilterID))         EnableMessageFilter(instanceHandle, MouseButtonFilterID);
 
+
         for (const auto msg : currentProfile.blockedMessages)
         {
             EnableMessageBlock(instanceHandle, msg);
         }
-		
-        SetupMessagesToSend(instanceHandle, 
-                            currentProfile.sendMouseWheelMessages, 
+
+        SetupMessagesToSend(instanceHandle,
+                            currentProfile.sendMouseWheelMessages,
                             currentProfile.sendMouseButtonMessages,
                             currentProfile.sendMouseMovementMessages,
                             currentProfile.sendKeyboardButtonMessages);
 
-        if (currentProfile.focusMessageLoop) 
+        if (currentProfile.focusMessageLoop)
             StartFocusMessageLoop(instanceHandle,
-                                  5, 
+                                  5,
                                   currentProfile.focusLoopSendWM_ACTIVATE,
                                   currentProfile.focusLoopSendWM_ACTIVATEAPP,
                                   currentProfile.focusLoopSendWM_NCACTIVATE,
@@ -180,27 +181,27 @@ bool Launch()
                                   currentProfile.focusLoopSendWM_MOUSEACTIVATE);
 
         SetDrawFakeCursor(instanceHandle, currentProfile.drawFakeMouseCursor);
-		
+
         for (const auto& renameHandle : currentProfile.renameHandles)
             AddHandleToRename(instanceHandle, utf8_decode(renameHandle).c_str());
 
         for (const auto& renameNamedPipeHandle : currentProfile.renameNamedPipeHandles)
             AddNamedPipeToRename(instanceHandle, utf8_decode(renameNamedPipeHandle).c_str());
-		
-		if (instance.mouseHandle != -1)
-			AddSelectedMouseHandle(instanceHandle, instance.mouseHandle);
+
+        if (instance.mouseHandle != -1)
+            AddSelectedMouseHandle(instanceHandle, instance.mouseHandle);
 
         if (instance.keyboardHandle != -1)
-			AddSelectedKeyboardHandle(instanceHandle, instance.keyboardHandle);
+            AddSelectedKeyboardHandle(instanceHandle, instance.keyboardHandle);
 
         SetControllerIndex(instanceHandle, instance.controllerIndex);
-		
-        SetExternalFreezeFakeInput(instanceHandle, !isInputCurrentlyLocked && freezeGameInputWhileInputNotLocked);
-		
-		if (!instance.runtime)
-			WakeUpProcess(instanceHandle);
 
-	}
+        SetExternalFreezeFakeInput(instanceHandle, !isInputCurrentlyLocked && freezeGameInputWhileInputNotLocked);
+
+        if (!instance.runtime)
+            WakeUpProcess(instanceHandle);
+
+    }
 
     return true;
 }
@@ -220,10 +221,10 @@ inline void PopDisabled()
 void RefreshPids()
 {
     processList.clear();
-	
+
     auto pids = blackbone::Process::EnumByName(L"");
     std::sort(pids.begin(), pids.end());
-	
+
     for (const auto& pid : pids)
     {
         const auto ph = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
@@ -268,11 +269,11 @@ void SelectFirstIndex()
 
 void InstancesWindow()
 {
-	// Current instances
+    // Current instances
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("ChildR", ImVec2(0, 260), true, ImGuiWindowFlags_None);
-    	
+
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Current instances"))
@@ -284,7 +285,7 @@ void InstancesWindow()
         }
 
         int i = 0;
-    	for (const auto& instance : instances)
+        for (const auto& instance : instances)
         {
             auto text = std::to_string(i + 1) + std::string(". ") + instance.instanceName;
             if (ImGui::Selectable(text.c_str(), i == selectedIndex))
@@ -292,13 +293,13 @@ void InstancesWindow()
 
             i++;
         }
-    	
+
         ImGui::EndChild();
         ImGui::PopStyleVar();
     }
 
     {
-	    const bool disabled = selectedIndex == -1;
+        const bool disabled = selectedIndex == -1;
         if (disabled) PushDisabled();
         if (ImGui::Button("Removed selected"))
         {
@@ -308,13 +309,13 @@ void InstancesWindow()
         if (disabled) PopDisabled();
     }
 
-	// Clear instances button
+    // Clear instances button
     {
         if (instances.empty()) PushDisabled();
-    	
+
         if (ImGui::Button("Clear all instances"))
             ImGui::OpenPopup("Clear all instances?");
-    	
+
         if (instances.empty()) PopDisabled();
 
         // Always center this window when appearing
@@ -347,7 +348,7 @@ void InstancesWindow()
         static bool selectedAnything = false;
 
         static std::filesystem::path filepath{};
-    	
+
         if (!selectedAnything) PushDisabled();
         ImGui::TextWrapped("Selected executable: %ws", (selectedAnything ? filepath.c_str() : L"None"));
         if (!selectedAnything) PopDisabled();
@@ -355,9 +356,9 @@ void InstancesWindow()
         if (ImGui::Button("Browse..."))
         {
             selectedAnything = !selectedAnything;
-                        
+
             wchar_t szFile[260];
-        	
+
             OPENFILENAMEW ofn{};
             ofn.lStructSize = sizeof(ofn);
             ofn.hwndOwner = protoHostHwnd;
@@ -375,56 +376,56 @@ void InstancesWindow()
 
             if (GetOpenFileNameW(&ofn) == TRUE)
             {
-                filepath = std::filesystem::path (ofn.lpstrFile);
+                filepath = std::filesystem::path(ofn.lpstrFile);
                 selectedAnything = true;
 
                 instances.push_back({ filepath.c_str(), filepath.filename().c_str() });
             }
-        	
+
         }
-    	
+
         ImGui::SameLine();
         if (!selectedAnything) PushDisabled();
-    	
+
         if (ImGui::Button("Add executable"))
         {
-            instances.push_back({filepath.c_str(), filepath.filename().c_str()});
+            instances.push_back({ filepath.c_str(), filepath.filename().c_str() });
         }
-    	
+
         if (!selectedAnything) PopDisabled();
     }
 
     ImGui::Separator();
-	
+
     // Add focused process
     {
         static HWND foregroundWindow = nullptr;
         static wchar_t windowNameBuffer[260];
         static std::wstring processName;
-    	
+
         if (const auto h = GetForegroundWindow(); h != nullptr && h != protoHostHwnd && h != rawInputHwnd)
         {
             wchar_t tempBuff[260];
             GetWindowTextW(h, tempBuff, sizeof(tempBuff) / sizeof(wchar_t));
 
-        	
-        	if (wcsstr(tempBuff, L"Cortana") == nullptr && 
-                wcsstr(tempBuff, L"Task Switching") == nullptr && 
+
+            if (wcsstr(tempBuff, L"Cortana") == nullptr &&
+                wcsstr(tempBuff, L"Task Switching") == nullptr &&
                 wcsstr(tempBuff, L"Program Manager") == nullptr)
-        	{
+            {
 
                 DWORD tmpPid;
-        		GetWindowThreadProcessId(h, &tmpPid);
+                GetWindowThreadProcessId(h, &tmpPid);
 
                 const auto ph = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, tmpPid);
-        		
+
                 wchar_t processNameBuffer[260];
                 DWORD buffSize = sizeof(processNameBuffer) / sizeof(wchar_t);
                 QueryFullProcessImageNameW(ph, 0, processNameBuffer, &buffSize);
 
                 auto tmpProcessName = std::filesystem::path(processNameBuffer).filename().wstring();
 
-        		if (tmpProcessName.find(L"explorer.exe") == std::string::npos &&
+                if (tmpProcessName.find(L"explorer.exe") == std::string::npos &&
                     tmpProcessName.find(L"SearchApp.exe") == std::string::npos)
                 {
                     processName = std::move(tmpProcessName);
@@ -434,24 +435,24 @@ void InstancesWindow()
                     focusedPid = tmpPid;
 
                     hasAlreadyAddedFocusedPid = false;
-        			for (const auto& instance : instances)
-        			{
+                    for (const auto& instance : instances)
+                    {
                         if (instance.runtime && instance.pid == focusedPid)
                         {
                             hasAlreadyAddedFocusedPid = true;
                             break;
                         }
-        			}
+                    }
                 }
-                        		
+
                 CloseHandle(ph);
-        	}
+            }
         }
-    	
+
         if (focusedPid != -1)
         {
-        	if (wcslen(windowNameBuffer) != 0)
-				ImGui::TextWrapped(R"(Focused process: "%ws" (PID %d, Window "%ws"))", processName.c_str(), focusedPid, &windowNameBuffer[0]);
+            if (wcslen(windowNameBuffer) != 0)
+                ImGui::TextWrapped(R"(Focused process: "%ws" (PID %d, Window "%ws"))", processName.c_str(), focusedPid, &windowNameBuffer[0]);
             else
                 ImGui::TextWrapped(R"(Focused process: "%ws" (PID %d))", processName.c_str(), focusedPid);
 
@@ -468,10 +469,10 @@ void InstancesWindow()
                         break;
                     }
                 }
-            	
-            	if (clear)
-					instances.push_back({ focusedPid, processName });
-            	
+
+                if (clear)
+                    instances.push_back({ focusedPid, processName });
+
                 hasAlreadyAddedFocusedPid = true;
             }
             if (copyhasAlreadyAddedPid) PopDisabled();
@@ -490,12 +491,12 @@ void InstancesWindow()
     // Running process list
     {
         ImGui::TextWrapped("Running processes");
-    	
+
         constexpr size_t searchBuffLength = 128;
         static char searchBuf[searchBuffLength] = "";
 
         static std::wstring search{};
-    	
+
         if (ImGui::InputText("Search", searchBuf, searchBuffLength, 0))
         {
             search = utf8_decode(std::string{ searchBuf });
@@ -511,18 +512,18 @@ void InstancesWindow()
         static int selectedIndex = -1;
 #undef min
         selectedIndex = std::min(selectedIndex, (int)processList.size() - 1);
-    	
+
         static bool selectedProcessVisible = false;
-    	
+
         if (!selectedProcessVisible) PushDisabled();
         if (ImGui::Button("Add process"))
-        {        	
+        {
             if (selectedIndex < 0 || selectedIndex >= processList.size())
                 std::cerr << "Selected index out of range\n" << std::flush;
             else
             {
                 const auto& proc = processList[selectedIndex];
-                            	
+
                 bool alreadyHavePid = false;
                 for (const auto& instance : instances)
                 {
@@ -533,16 +534,16 @@ void InstancesWindow()
                     }
                 }
 
-				if (!alreadyHavePid)
-				{
+                if (!alreadyHavePid)
+                {
                     instances.push_back({ proc.pid, proc.name });
-				}
+                }
             }
         }
         if (!selectedProcessVisible) PopDisabled();
-    	
+
         ImGui::BeginChild("Running process list", ImVec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize);
-            	
+
         const bool noSearchTerm = search.empty();
         selectedProcessVisible = false;
         int i = 0;
@@ -551,9 +552,9 @@ void InstancesWindow()
             if (noSearchTerm || proc.name.find(search) != std::string::npos)
             {
                 const bool currentIsSelected = selectedIndex == i;
-            	
+
                 std::string message = utf8_encode(L"PID " + std::to_wstring(proc.pid) + L": " + proc.name);
-            	
+
                 if (ImGui::Selectable(message.c_str(), currentIsSelected))
                 {
                     selectedProcessVisible = true;
@@ -562,11 +563,11 @@ void InstancesWindow()
                 else if (currentIsSelected)
                     selectedProcessVisible = true;
             }
-        	i++;
+            i++;
         }
-    	
+
         ImGui::EndChild();
-        ImGui::PopStyleVar();    	
+        ImGui::PopStyleVar();
     }
 }
 
@@ -575,16 +576,16 @@ void SelectedInstanceWindow()
     // static int lastSelectedIndex = -1;
     // const bool hasChangedInstance = lastSelectedIndex != selectedIndex;
     // lastSelectedIndex = selectedIndex;
-	
+
     bool selectedAnything = selectedIndex != -1;
 
-	if (!selectedAnything)
-	{
+    if (!selectedAnything)
+    {
         PushDisabled();
         ImGui::TextWrapped("Selected: None");
         PopDisabled();
         return;
-	}
+    }
 
     auto& instance = instances[selectedIndex];
     ImGui::TextWrapped("Selected %s", instance.instanceName.c_str());
@@ -592,7 +593,7 @@ void SelectedInstanceWindow()
 
     ImGui::Separator();
 
-	// Mouse
+    // Mouse
     {
         const auto mouseString = std::to_string(instance.mouseHandle);
         ImGui::TextWrapped("Selected mouse: %s", (instance.mouseHandle != -1 ? mouseString.c_str() : "None"));
@@ -607,8 +608,8 @@ void SelectedInstanceWindow()
     }
 
     ImGui::Separator();
-	
-	// Keyboard
+
+    // Keyboard
     {
         const auto keyboardString = std::to_string(instance.keyboardHandle);
         ImGui::TextWrapped("Selected keyboard: %s", (instance.keyboardHandle != -1 ? keyboardString.c_str() : "None"));
@@ -627,12 +628,12 @@ void SelectedInstanceWindow()
                 instance.keyboardHandle = (intptr_t)lastKeypressKeyboardHandle;
             }
         }
-		else if (ImGui::Button("Click to set keyboard"))
-		{
-			waitingKeyPress = true;
+        else if (ImGui::Button("Click to set keyboard"))
+        {
+            waitingKeyPress = true;
             instance.keyboardHandle = -1;
             lastKeypressKeyboardHandle = -1;
-		}
+        }
 
         if (ImGui::Button("Unset keyboard"))
         {
@@ -662,10 +663,10 @@ void OptionsMenu()
     {
         static bool success = true;
 
-	    if (ImGui::Button("Inject instances"))
-	    {
+        if (ImGui::Button("Inject instances"))
+        {
             success = Launch();
-	    }
+        }
 
         if (!success)
             ImGui::TextWrapped("One or more of the selected instances has already been injected");
@@ -785,7 +786,7 @@ void OptionsMenu()
             ImGui::EndPopup();
         }
     }
-    	
+
     if (ImGui::CollapsingHeader("Injection method", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         {
@@ -834,11 +835,11 @@ void OptionsMenu()
             ImGui::PopID();
         }
     }
-    	    
+
     if (ImGui::CollapsingHeader("Hooks", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         ImGui::TextWrapped("See the descriptions in the in-game hooks GUI for more details");
-        
+
         for (auto& hook : currentProfile.hooks)
         {
             ImGui::Checkbox(hook.uiLabel.c_str(), &hook.enabled);
@@ -846,7 +847,7 @@ void OptionsMenu()
     }
 
     ImGui::Checkbox("Dinput to Xinput redirection", &currentProfile.dinputToXinputRedirection);
-	
+
     ImGui::Checkbox("Use OpenXinput", &currentProfile.useOpenXinput);
 
     if (ImGui::CollapsingHeader("Message Filters", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
@@ -878,7 +879,7 @@ void OptionsMenu()
         ImGui::Separator();
 
         ImGui::TextWrapped("Some games only work with specific messages, some games break with specific messages. Make sure to test different combinations");
-    	
+
         ImGui::Checkbox("Send WM_ACTIVATE", &currentProfile.focusLoopSendWM_ACTIVATE);
         ImGui::Checkbox("Send WM_NCACTIVATE", &currentProfile.focusLoopSendWM_NCACTIVATE);
         ImGui::Checkbox("Send WM_ACTIVATEAPP", &currentProfile.focusLoopSendWM_ACTIVATEAPP);
@@ -983,40 +984,40 @@ void OptionsMenu()
             }
         }
     }
-	
+
     if (ImGui::CollapsingHeader("Messages to block", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         static bool onlyShowBlocked = false;
-		ImGui::Checkbox("Only show blocked", &onlyShowBlocked);
+        ImGui::Checkbox("Only show blocked", &onlyShowBlocked);
 
-		constexpr size_t searchBuffLength = 128;
-		static char searchBuf[searchBuffLength] = "";
-		ImGui::InputText("Search", searchBuf, searchBuffLength, ImGuiInputTextFlags_CharsUppercase);
-		const std::string search{ searchBuf };
+        constexpr size_t searchBuffLength = 128;
+        static char searchBuf[searchBuffLength] = "";
+        ImGui::InputText("Search", searchBuf, searchBuffLength, ImGuiInputTextFlags_CharsUppercase);
+        const std::string search{ searchBuf };
 
-		ImGui::BeginChild("blocked", ImVec2(0, 300), true);
+        ImGui::BeginChild("blocked", ImVec2(0, 300), true);
 
-		for (auto& msg : MessageList::messages)
-		{
-			const bool isBlocked = MessageList::IsBlocked(msg.messageID, currentProfile.blockedMessages);
+        for (auto& msg : MessageList::messages)
+        {
+            const bool isBlocked = MessageList::IsBlocked(msg.messageID, currentProfile.blockedMessages);
 
             static char buff[256];
             snprintf(buff, 256, "(0x%X) %s", msg.messageID, msg.name.c_str());
-			
-			if ((!onlyShowBlocked || isBlocked)
-				&& msg.name.find(search) != std::string::npos
-				&& ImGui::Selectable(buff, isBlocked))
-			{
-				if (isBlocked)
+
+            if ((!onlyShowBlocked || isBlocked)
+                && msg.name.find(search) != std::string::npos
+                && ImGui::Selectable(buff, isBlocked))
+            {
+                if (isBlocked)
                     currentProfile.blockedMessages.erase(
                         find(currentProfile.blockedMessages.begin(), currentProfile.blockedMessages.end(), msg.messageID));
-				else
+                else
                     currentProfile.blockedMessages.push_back(msg.messageID);
-			}
-			
-		}
+            }
 
-		ImGui::EndChild();
+        }
+
+        ImGui::EndChild();
 
         ImGui::Spacing();
     }
@@ -1045,7 +1046,7 @@ void RenderImgui()
         firstTimeSetup = false;
         FirstTimeSetup();
     }
-	
+
     const auto displaySize = ImGui::GetIO().DisplaySize;
 
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -1065,7 +1066,7 @@ void RenderImgui()
         const ImVec2 mainWindowSize = ImGui::GetWindowSize();
 
 
-    	// Setting these other than display size doesn't work at the moment
+        // Setting these other than display size doesn't work at the moment
         float originX = 0;
         float originY = 0;
         float sizeX = displaySize.x;
@@ -1073,10 +1074,10 @@ void RenderImgui()
 
         const auto maxX = originX + sizeX;
         const auto maxY = originY + sizeY;
-    	
+
         constexpr float minSize = 300.0f;
-    	
-        
+
+
 
         constexpr float sizeA = 1.0f;
         constexpr float sizeB = 1.0f;
@@ -1084,12 +1085,12 @@ void RenderImgui()
         constexpr float totalSize = sizeA + sizeB + sizeC;
 
         static ImVec2 windowPosB(originX + minSize, 0);
-    	
+
         ImGui::SetNextWindowSizeConstraints(ImVec2(minSize, sizeY), ImVec2(sizeX - 2 * minSize, sizeY));
         ImGui::SetNextWindowPos(ImVec2(originX, 0), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(windowPosB.x - originX, 0.0f), ImGuiCond_Always);
-    	
-    	
+
+
         ImGui::Begin("Instances", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
         const auto windowSizeA = ImVec2(ImGui::GetWindowSize().x, mainWindowSize.y);
         ImGui::SetWindowSize(windowSizeA);
@@ -1097,23 +1098,23 @@ void RenderImgui()
         InstancesWindow();
 
         ImGui::End();
-    	
+
         ImGui::SetNextWindowSizeConstraints(ImVec2(minSize, sizeY), ImVec2(sizeX - 2 * minSize, sizeY));
         ImGui::SetNextWindowSize(ImVec2(sizeX * sizeB / totalSize, 0.0f), ImGuiCond_Once);
         ImGui::SetNextWindowPos(ImVec2(originX + windowSizeA.x, 0), ImGuiCond_Once);
-    	
-        ImGui::Begin("Selected Instance", nullptr, ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoCollapse);
+
+        ImGui::Begin("Selected Instance", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
         auto windowSizeB = ImVec2(ImGui::GetWindowSize().x, mainWindowSize.y);
         windowPosB = ImGui::GetWindowPos();
 
         if ((windowPosB.x + windowSizeB.x - originX + minSize > sizeX))
             windowSizeB.x = minSize;
-    	
-    	if (windowPosB.x - minSize < originX)
-    	{
+
+        if (windowPosB.x - minSize < originX)
+        {
             windowSizeB.x = minSize;
             windowPosB.x = originX + minSize;
-    	}
+        }
         ImGui::SetWindowSize(windowSizeB);
         ImGui::SetWindowPos(windowPosB);
 
@@ -1124,12 +1125,12 @@ void RenderImgui()
         ImGui::SetNextWindowSizeConstraints(ImVec2(minSize, sizeY), ImVec2(sizeX - 2 * minSize, sizeY));
         ImGui::SetNextWindowPos(ImVec2(windowPosB.x + windowSizeB.x, 0), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(maxX - (windowPosB.x + windowSizeB.x), 0.0f), ImGuiCond_Always);
-    	
+
         ImGui::Begin("Options", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
         ImGui::SetWindowSize(windowSizeB);
-    	
+
         OptionsMenu();
-    	
+
         ImGui::End();
     }
     ImGui::End();

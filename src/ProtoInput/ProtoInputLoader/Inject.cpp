@@ -30,14 +30,14 @@ bool Isx64(unsigned long pid)
 
 	SYSTEM_INFO systemInfo;
 	GetNativeSystemInfo(&systemInfo);
-	
-	bool is32 = proc.barrier().targetWow64 || 
+
+	bool is32 = proc.barrier().targetWow64 ||
 		(systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL); // x86
 	return !is32;
 }
 
 extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds,
-	bool wm_activate, bool wm_activateapp, bool wm_ncactivate, bool wm_setfocus, bool wm_mouseactivate)
+															bool wm_activate, bool wm_activateapp, bool wm_ncactivate, bool wm_setfocus, bool wm_mouseactivate)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
@@ -56,6 +56,23 @@ extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle 
 		};
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::StartFocusMessageLoop, &message);
+	}
+}
+
+void StopFocusMessageLoop(ProtoInstanceHandle instanceHandle)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageStopFocusMessageLoop message
+		{
+
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::StopFocusMessageLoop, &message);
 	}
 }
 
@@ -179,7 +196,7 @@ extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHan
 		fprintf(stderr, "Instance index out of range (must start at 1)\n");
 		return;
 	}
-	
+
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
 		auto& instance = find->second;
@@ -203,7 +220,7 @@ void AddHandleToRenameImpl(ProtoInstanceHandle instanceHandle, const wchar_t* na
 
 		WaitClientConnect(instance);
 
-		
+
 		ProtoPipe::PipeMessageAddHandleToRename message{};
 		message.isNamedPipe = namedPipe;
 

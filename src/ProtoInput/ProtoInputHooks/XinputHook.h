@@ -14,8 +14,6 @@ private:
 
 public:
 	static unsigned int controllerIndex;
-
-	static bool useOpenXinput;
 		
 	const char* GetHookName() const override { return "Xinput"; }
 	const char* GetHookDescription() const override {

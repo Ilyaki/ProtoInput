@@ -13,6 +13,8 @@
 #include "StateInfo.h"
 #include "FakeCursor.h"
 #include "protoinpututil.h"
+#include "KeyboardButtonFilter.h"
+#include "MessageFilterHook.h"
 
 namespace Proto
 {
@@ -180,7 +182,9 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 			lparam |= (data.MakeCode << 16); // Scan code
 			if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey)) lparam |= (1 << 30);
 
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, data.VKey, lparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, 
+				MessageFilterHook::IsKeyboardButtonFilterEnabled() ? data.VKey | KeyboardButtonFilter::signature : data.VKey, 
+				lparam);
 			
 			// if (data.VKey == VK_SHIFT || data.VKey == VK_LSHIFT)
 			// {
@@ -200,7 +204,9 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 			lparam |= (1 << 30); // Previous key state (always 1 for key up)
 			lparam |= (1 << 31); // Transition state (always 1 for key up)
 
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, data.VKey, lparam);
+			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYUP, 
+				MessageFilterHook::IsKeyboardButtonFilterEnabled() ? data.VKey | KeyboardButtonFilter::signature : data.VKey,
+				lparam);
 			
 			// if (data.VKey == VK_SHIFT || data.VKey == VK_LSHIFT)
 			// {
@@ -251,7 +257,8 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 			keyDown = true;
 	
 			// Key just pressed
-			if ((GetAsyncKeyState(VK_RCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_RMENU) & ~1) != 0)
+			//if ((GetAsyncKeyState(VK_RCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_RMENU) & ~1) != 0)
+			if ((GetAsyncKeyState(VK_LCONTROL) & ~1) != 0 && (GetAsyncKeyState(VK_LMENU) & ~1) != 0)
 			{
 				Proto::ToggleWindow();
 			}			

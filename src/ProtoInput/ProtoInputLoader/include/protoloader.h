@@ -2,7 +2,7 @@
 #include <cstdint>
 
 // 0 means invalid handle
-using ProtoInstanceHandle  = unsigned int;
+using ProtoInstanceHandle = unsigned int;
 
 enum ProtoHookIDs : unsigned int
 {
@@ -29,7 +29,8 @@ enum ProtoMessageFilterIDs : unsigned int
 	WindowActivateFilterID,
 	WindowActivateAppFilterID,
 	MouseWheelFilterID,
-	MouseButtonFilterID
+	MouseButtonFilterID,
+	KeyboardButtonFilterID
 };
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle RemoteLoadLibraryInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
@@ -38,7 +39,7 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectRuntime(unsig
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookStealthInjectRuntime(unsigned long pid, const wchar_t* dllFolderPath);
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
-	const wchar_t* exePath, 
+	const wchar_t* exePath,
 	const wchar_t* commandLine,
 	unsigned long processCreationFlags,
 	const wchar_t* dllFolderPath,
@@ -59,11 +60,13 @@ extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle
 
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex);
 
-extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, 
-									bool sendMouseWheelMessages = true, bool sendMouseButtonMessages = true, bool sendMouseMoveMessages = true, bool sendKeyboardPressMessages = true);
+extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle,
+														  bool sendMouseWheelMessages = true, bool sendMouseButtonMessages = true, bool sendMouseMoveMessages = true, bool sendKeyboardPressMessages = true);
 
 extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds = 5,
-		bool wm_activate = true, bool wm_activateapp = true, bool wm_ncactivate = true, bool wm_setfocus = true, bool wm_mouseactivate = true);
+															bool wm_activate = true, bool wm_activateapp = true, bool wm_ncactivate = true, bool wm_setfocus = true, bool wm_mouseactivate = true);
+
+
 
 extern "C" __declspec(dllexport) void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable);
 
@@ -81,4 +84,3 @@ extern "C" __declspec(dllexport) void SetUseOpenXinput(ProtoInstanceHandle insta
 
 // Both of these functions require RenameHandlesHookHookID hook
 extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);
-extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);

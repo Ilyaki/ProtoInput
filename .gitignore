@@ -7,3 +7,5 @@ out
 Release
 /src/ProtoInput/ProtoInputHost/imgui.ini
 /src/ProtoInput/tmp
+/src/ProtoInput/build
+/src/ProtoInput/obj
