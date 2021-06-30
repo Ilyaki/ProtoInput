@@ -21,6 +21,7 @@ enum class PipeMessageType
 	AddHandleToRename,
 	SetControllerIndex,
 	SetUseDinput,
+	StopFocusMessageLoop,
 	SetUseOpenXinput
 };
 
@@ -110,6 +111,11 @@ struct PipeMessageSetControllerIndex
 struct PipeMessageUseDinput
 {
 	bool useDinput;
+};
+
+struct PipeMessageStopFocusMessageLoop
+{
+
 };
 
 struct PipeMessageSetUseOpenXinput

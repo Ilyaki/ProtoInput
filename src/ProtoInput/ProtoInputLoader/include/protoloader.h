@@ -84,3 +84,5 @@ extern "C" __declspec(dllexport) void SetUseOpenXinput(ProtoInstanceHandle insta
 
 // Both of these functions require RenameHandlesHookHookID hook
 extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);
+
+extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);

@@ -4,6 +4,7 @@
 #include "dinput.h"
 #include "Gui.h"
 #include <string>
+#include "OpenXinputWrapper.h"
 
 
 namespace Proto
@@ -11,23 +12,17 @@ namespace Proto
 
 constexpr LONG DINPUT_RANGE_MAX = 32767;
 constexpr LONG DINPUT_RANGE_MIN = -32768;
-
 bool XinputHook::useDinput = false;
+bool XinputHook::useOpenXinput = false;
 IDirectInputDevice8W* dinputDevice = nullptr;
 GUID dinputDeviceGuid{};
 std::wstring dinputDeviceName{};
-
 IDirectInput8W* dinputPtr = nullptr;
 std::vector<GUID> dinputGuids{};
 std::vector<std::wstring> dinputDeviceNames{};
-
-
-
 unsigned int XinputHook::controllerIndex = 0;
-
 typedef DWORD(WINAPI* t_XInputGetStateEx)(DWORD dwUserIndex, void* pState);
 t_XInputGetStateEx XInputGetStateExPtr = nullptr;
-
 typedef struct _XINPUT_GAMEPAD_EX
 {
 	WORD  wButtons;
@@ -44,6 +39,13 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 {
 	if (XinputHook::controllerIndex == 0) // user wants no controller on this game
 		return ERROR_DEVICE_NOT_CONNECTED;
+	if (dwUserIndex != 0) // only give input for the first controller
+		return ERROR_DEVICE_NOT_CONNECTED;
+
+	if (XinputHook::useOpenXinput)
+	{
+		return OpenXinput::ProtoOpenXinputGetState(XinputHook::controllerIndex - 1, pState, extended);
+	}
 
 	if (!XinputHook::GetUseDinput())
 	{
@@ -53,14 +55,12 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 		}
 		return XInputGetState(XinputHook::controllerIndex - 1, pState);
 	}
-
 	if (dinputDevice == nullptr)
 		return ERROR_DEVICE_NOT_CONNECTED;
-	
+
 	static DWORD packetNumber = 0;
 	pState->dwPacketNumber = packetNumber++;
 	memset(&(pState->Gamepad), 0, extended ? sizeof(XINPUT_GAMEPAD_EX) : sizeof(XINPUT_GAMEPAD));
-
 	dinputDevice->Poll();
 	DIJOYSTATE2 diState;
 	dinputDevice->GetDeviceState(sizeof(DIJOYSTATE2), &diState);
@@ -77,7 +77,6 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 	BTN(8, XINPUT_GAMEPAD_LEFT_THUMB);
 	BTN(9, XINPUT_GAMEPAD_RIGHT_THUMB);
 #undef BTN
-
 	const auto pov = diState.rgdwPOV;
 	if (!(LOWORD(pov[0]) == 0xFFFF))//POV not centred
 	{
@@ -89,7 +88,6 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 		DPAD(5, 6, 7, XINPUT_GAMEPAD_DPAD_LEFT);
 #undef DPAD
 	}
-
 #define DEADZONE(x, d) (((x) >= (d) || (x) <= (-(d))) ? (x) : 0)
 	pState->Gamepad.sThumbLX = DEADZONE(diState.lX, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
 	pState->Gamepad.sThumbLY = -1 - DEADZONE(diState.lY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
@@ -110,15 +108,12 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 		pState->Gamepad.bRightTrigger = TRIGGERDEADZONE(x);
 	}
 #undef TRIGGERDEADZONE
-
 	return ERROR_SUCCESS;
 }
-
 DWORD WINAPI Hook_XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	return XInputGetState_Inline(dwUserIndex, pState, false);
 }
-
 DWORD WINAPI Hook_XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	return XInputGetState_Inline(dwUserIndex, pState, true);
@@ -128,31 +123,40 @@ DWORD WINAPI Hook_XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration
 {
 	if (XinputHook::controllerIndex == 0)
 		return ERROR_DEVICE_NOT_CONNECTED;
+	if (dwUserIndex != 0) // only give input for the first controller
+		return ERROR_DEVICE_NOT_CONNECTED;
+
+	if (XinputHook::useOpenXinput)
+	{
+		return OpenXinput::ProtoOpenXinputSetState(XinputHook::controllerIndex - 1, pVibration);
+	}
 
 	if (XinputHook::controllerIndex <= 4)
 		return XInputSetState(XinputHook::controllerIndex - 1, pVibration);
-
 	return ERROR_SUCCESS;
 }
-
 DWORD WINAPI Hook_XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	if (XinputHook::controllerIndex == 0)
 		return ERROR_DEVICE_NOT_CONNECTED;
+	if (dwUserIndex != 0) // only give input for the first controller
+		return ERROR_DEVICE_NOT_CONNECTED;
+
+	if (XinputHook::useOpenXinput)
+	{
+		return OpenXinput::ProtoOpenXinputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
+	}
 
 	// Can have a higher index than 4 if using Dinput -> Xinput translation
 	if (XinputHook::controllerIndex <= 4)
 		return XInputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
-
 	return XInputGetCapabilities(0, dwFlags, pCapabilities);
 }
-
 BOOL CALLBACK DIEnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 {
 	// https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf page 26:
 	//	4 : Joystick
 	//	5 : Game Pad
-
 	bool added = false;
 	if (lpddi->wUsage == 4 || lpddi->wUsage == 5)
 	{
@@ -160,10 +164,8 @@ BOOL CALLBACK DIEnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 		dinputDeviceNames.push_back(lpddi->tszInstanceName);
 		added = true;
 	}
-
-	printf("DirectInput device enumerate, instanceName=%ws, productName=%ws, usage=%d, usagePage=%d, added to dinputGuids list = %s\n", 
+	printf("DirectInput device enumerate, instanceName=%ws, productName=%ws, usage=%d, usagePage=%d, added to dinputGuids list = %s\n",
 		   lpddi->tszInstanceName, lpddi->tszProductName, lpddi->wUsage, lpddi->wUsagePage, (added ? "true" : "false"));
-
 	return DIENUM_CONTINUE;
 }
 
@@ -171,7 +173,6 @@ BOOL CALLBACK DIEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVO
 {
 	auto did = static_cast<LPDIRECTINPUTDEVICE8>(pvRef);
 	did->Unacquire();
-
 	DIPROPRANGE range;
 	range.lMax = DINPUT_RANGE_MAX;
 	range.lMin = DINPUT_RANGE_MIN;
@@ -179,56 +180,45 @@ BOOL CALLBACK DIEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVO
 	range.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 	range.diph.dwHow = DIPH_BYID;
 	range.diph.dwObj = lpddoi->dwType;
-
 	if (FAILED(did->SetProperty(DIPROP_RANGE, &range.diph)))
 		return DIENUM_STOP;
-
 	return DIENUM_CONTINUE;
 }
-
 void SelectDinputDevice()
 {
 	dinputDevice = nullptr;
 	dinputDeviceGuid = GUID{};
 	dinputDeviceName = L"None";
-
 	if (!XinputHook::GetUseDinput())
 		return;
-	
+
 	if (XinputHook::controllerIndex == 0)
 		return;
-	
+
 	if (XinputHook::controllerIndex > dinputGuids.size())
 	{
 		fprintf(stderr, "Not enough Dinput controllers (%d) for the selected controller index (%d)\n", dinputGuids.size(), XinputHook::controllerIndex);
 		MessageBoxA(NULL, "Not enough Dinput controllers for the selected controller index\n", "Error", MB_OK);
 	}
+
 	else
 	{
 		dinputDeviceGuid = dinputGuids[XinputHook::controllerIndex - 1];
 		dinputDeviceName = dinputDeviceNames[XinputHook::controllerIndex - 1];
 		printf("Selected Dinput controller GUID %lu-%u-%u...\n", dinputDeviceGuid.Data1, dinputDeviceGuid.Data2, dinputDeviceGuid.Data3);
-
 		const auto createDeviceResult = dinputPtr->CreateDevice(dinputDeviceGuid, &dinputDevice, nullptr);
-
 		if (createDeviceResult != DI_OK)
 			fprintf(stderr, "Dinput CreateDevice failed: 0x%lX\n", createDeviceResult);
 		else
 		{
 			dinputDevice->SetCooperativeLevel(Proto::ProtoGuiHwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
-
 			dinputDevice->SetDataFormat(&c_dfDIJoystick2);
-
 			DIDEVCAPS caps;
 			caps.dwSize = sizeof(DIDEVCAPS);
 			auto getCapabilitiesResult = dinputDevice->GetCapabilities(&caps);
-
 			printf("Dinput device number of buttons %d, number of axes %d\n", caps.dwButtons, caps.dwAxes);
-
 			dinputDevice->EnumObjects(&DIEnumDeviceObjectsCallback, dinputDevice, DIDFT_AXIS);
-
 			const HRESULT acquireResult = dinputDevice->Acquire();
-
 			if (acquireResult == DI_OK)
 				printf("Successfully acquired Dinput device\n");
 			else
@@ -236,15 +226,13 @@ void SelectDinputDevice()
 		}
 	}
 }
-
 void PollDinputDevices()
 {
 	if (!XinputHook::GetUseDinput())
 		return;
-	
-	const HRESULT dinputCreateResult = DirectInput8Create(GetModuleHandleW(0), DIRECTINPUT_VERSION, IID_IDirectInput8,
-													(void**)&(dinputPtr), nullptr);
 
+	const HRESULT dinputCreateResult = DirectInput8Create(GetModuleHandleW(0), DIRECTINPUT_VERSION, IID_IDirectInput8,
+														  (void**)&(dinputPtr), nullptr);
 	if (dinputCreateResult != DI_OK)
 	{
 		fprintf(stderr, "Failed DirectInput8Create: 0x%X\n", dinputCreateResult);
@@ -254,25 +242,33 @@ void PollDinputDevices()
 		dinputGuids.clear();
 		dinputDeviceNames.clear();
 		dinputPtr->EnumDevices(DI8DEVCLASS_ALL, DIEnumDevicesCallback, nullptr, DIEDFL_ALLDEVICES);
-
 		SelectDinputDevice();
 	}
 }
 
 void XinputHook::ShowGuiStatus()
 {
+	ImGui::TextWrapped("Using OpenXinput will allow more than 4 xinput controllers, however it won't work with non-xinput controllers. "
+					   "Dinput to Xinput redirection allows more than 4 of any controllers, although the emulation isn't perfect (e.g. both triggers can't be used simultaneously). ");
+	ImGui::Separator();
+
 	{
 		bool _useDinput = GetUseDinput();
 		ImGui::PushID(123894);
 		ImGui::Checkbox("", &_useDinput);
 		ImGui::SameLine();
-		ImGui::TextWrapped("Enable Dinput to Xinput redirection (required for more than 4 controllers)");
+		ImGui::TextWrapped("Enable Dinput to Xinput redirection");
 		SetUseDinput(_useDinput);
 		ImGui::PopID();
 	}
-	
+	{
+		ImGui::PushID(123895);
+		ImGui::Checkbox("", &useOpenXinput);
+		ImGui::SameLine();
+		ImGui::TextWrapped("Enable OpenXinput (allows more than 4 xinput controllers)");
+		ImGui::PopID();
+	}
 	ImGui::TextWrapped("Controller index 0 implies no controller");
-
 	if (ImGui::Button("Refresh devices"))
 	{
 		PollDinputDevices();
@@ -280,31 +276,28 @@ void XinputHook::ShowGuiStatus()
 
 	if (ImGui::SliderInt("Controller index", (int*)&controllerIndex, 0, 16, "%d", ImGuiSliderFlags_AlwaysClamp))
 		SelectDinputDevice();
-
 	if (dinputDevice != nullptr)
 	{
-		ImGui::TextWrapped("Selected Dinput device \"%ws\" (GUID %lu-%u-%u)", 
+		ImGui::TextWrapped("Selected Dinput device \"%ws\" (GUID %lu-%u-%u)",
 						   dinputDeviceName.c_str(), dinputDeviceGuid.Data1, dinputDeviceGuid.Data2, dinputDeviceGuid.Data3);
 	}
 	else
 	{
 		ImGui::TextWrapped("No Dinput device selected/found");
 	}
-
 	if (useDinput)
 	{
 		if (ImGui::ListBoxHeader("Dinput devices"))
 		{
 			for (int i = 0; i < dinputDeviceNames.size(); ++i)
 			{
-				ImGui::Text("(%d) %ws", i+1, dinputDeviceNames[i].c_str());
+				ImGui::Text("(%d) %ws", i + 1, dinputDeviceNames[i].c_str());
 			}
-			
+
 			ImGui::ListBoxFooter();
 		}
 	}
 }
-
 void XinputHook::InstallImpl()
 {
 	if (static bool pollDevices = true; pollDevices)
@@ -312,12 +305,11 @@ void XinputHook::InstallImpl()
 		pollDevices = false;
 		PollDinputDevices();
 	}
-	
+
 	// Some games (e.g. Terraria) haven't loaded the dlls when we inject hooks. So load all XInput dlls.
 	const wchar_t* xinputNames[] = {
 				L"xinput1_3.dll", L"xinput1_4.dll", L"xinput1_2.dll", L"xinput1_1.dll", L"xinput9_1_0.dll"
 	};
-
 	for (const auto xinputName : xinputNames)
 	{
 		if (LoadLibraryW(xinputName) == nullptr)
@@ -325,48 +317,41 @@ void XinputHook::InstallImpl()
 			fprintf(stderr, "Not hooking %ws as failed to load dll\n", xinputName);
 			continue;
 		}
-		
+
 		if (GetModuleHandleW(xinputName) == nullptr)
 		{
 			fprintf(stderr, "Not hooking %ws as failed get module\n", xinputName);
 			continue;
 		}
-		
+
 		hookInfos.push_back(std::get<1>(InstallNamedHook(xinputName, "XInputGetState", Hook_XInputGetState)));
 		hookInfos.push_back(std::get<1>(InstallNamedHook(xinputName, "XInputSetState", Hook_XInputSetState)));
 		hookInfos.push_back(std::get<1>(InstallNamedHook(xinputName, "XInputGetCapabilities", Hook_XInputGetCapabilities)));
 	}
-
 	//XinputGetStateEx (hidden call, ordinal 100). Only present in xinput1_4.dll and xinput1_3.dll. Used by EtG and DoS2
 	//DWORD as 1st param and similar structure pointer for 2nd param (with an extra DWORD at the end). Can be treated as a normal XINPUT_STATE.
 	if (nullptr != LoadLibraryW(L"xinput1_4.dll"))
 	{
 		hookInfos.push_back(std::get<1>(InstallNamedHook(L"xinput1_4.dll", (LPCSTR)(100), Hook_XInputGetStateEx, true)));
 	}
-
 	if (nullptr != LoadLibraryW(L"xinput1_3.dll"))
 	{
 		hookInfos.push_back(std::get<1>(InstallNamedHook(L"xinput1_3.dll", (LPCSTR)(100), Hook_XInputGetStateEx, true)));
 		XInputGetStateExPtr = t_XInputGetStateEx(GetProcAddress(GetModuleHandleW(L"xinput1_3.dll"), (LPCSTR)(100)));
 	}
 }
-
 void XinputHook::UninstallImpl()
 {
 	for (auto& handle : hookInfos)
 	{
 		UninstallHook(&handle);
 	}
-
 	hookInfos.clear();
 }
-
 void XinputHook::SetUseDinput(bool _useDinput)
 {
 	useDinput = _useDinput;
-
 	if (dinputPtr == nullptr)
 		PollDinputDevices();
 }
-
 }
