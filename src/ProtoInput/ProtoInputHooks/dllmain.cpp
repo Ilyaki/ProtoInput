@@ -78,6 +78,8 @@ extern "C" __declspec(dllexport) void __stdcall NativeInjectionEntryPoint(REMOTE
 
 EASYHOOK_BOOL_EXPORT EasyHookDllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
 
+extern "C" BOOL WINAPI OpenXinputDllMain(HINSTANCE hInstDll, DWORD fdwReason, LPVOID lpvReserved);
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -85,6 +87,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 {
 	// Needed for EasyHook to initialise some stuff
     EasyHookDllMain(hModule, ul_reason_for_call, lpReserved);
+
+    OpenXinputDllMain(hModule, ul_reason_for_call, lpReserved);
 	
     switch (ul_reason_for_call)
     {
@@ -104,6 +108,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_DETACH:
         break;
     }
+       
+	
     return TRUE;
 }
 

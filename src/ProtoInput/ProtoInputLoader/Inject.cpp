@@ -155,6 +155,23 @@ extern "C" __declspec(dllexport) void SetUseDinputRedirection(ProtoInstanceHandl
 	}
 }
 
+void SetUseOpenXinput(ProtoInstanceHandle instanceHandle, bool useOpenXinput)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetUseOpenXinput message
+		{
+			useOpenXinput
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetUseOpenXinput, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex)
 {
 	if (instanceIndex < 1)

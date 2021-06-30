@@ -147,6 +147,7 @@ bool Launch()
 		if (hookEnabled(FocusHooksHookID))              InstallHook(instanceHandle, FocusHooksHookID);
 		if (hookEnabled(RenameHandlesHookID))           InstallHook(instanceHandle, RenameHandlesHookID);
 
+        SetUseOpenXinput(instanceHandle, currentProfile.useOpenXinput);
         SetUseDinputRedirection(instanceHandle, currentProfile.dinputToXinputRedirection);
         if (hookEnabled(XinputHookID))                  InstallHook(instanceHandle, XinputHookID);
 		
@@ -642,7 +643,11 @@ void SelectedInstanceWindow()
 
     ImGui::Separator();
 
-    ImGui::TextWrapped("Controllers require the Xinput hook, and additionally Dinput redirection for more than 4 controllers. Index 0 implies no controller");
+    ImGui::TextWrapped("Controllers require the Xinput hook. "
+                       "Index 0 implies no controller. "
+                       "OpenXinput can be used for more than 4 xinput controllers. "
+                       "Dinput translation can be used for more than 4 controllers of any type, "
+                       "although the emulation isn't perfect (e.g. both triggers can't be used simultaneously)");
 
     ImGui::PushID(128794);
     ImGui::Spacing();
@@ -841,6 +846,8 @@ void OptionsMenu()
     }
 
     ImGui::Checkbox("Dinput to Xinput redirection", &currentProfile.dinputToXinputRedirection);
+	
+    ImGui::Checkbox("Use OpenXinput", &currentProfile.useOpenXinput);
 
     if (ImGui::CollapsingHeader("Message Filters", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {

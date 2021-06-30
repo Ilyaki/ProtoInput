@@ -77,6 +77,8 @@ extern "C" __declspec(dllexport) void SetControllerIndex(ProtoInstanceHandle ins
 // This MUST be called before calling InstallHook on the Xinput hook
 extern "C" __declspec(dllexport) void SetUseDinputRedirection(ProtoInstanceHandle instanceHandle, bool useRedirection);
 
+extern "C" __declspec(dllexport) void SetUseOpenXinput(ProtoInstanceHandle instanceHandle, bool useOpenXinput);
+
 // Both of these functions require RenameHandlesHookHookID hook
 extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);
 extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);

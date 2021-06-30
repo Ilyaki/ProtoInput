@@ -68,6 +68,7 @@ struct Profile
 	};
 
 	bool dinputToXinputRedirection = false;
+	bool useOpenXinput = false;
 	
 	bool drawFakeMouseCursor = true;
 	bool sendMouseMovementMessages = true;
@@ -98,6 +99,7 @@ struct Profile
 			cereal::make_nvp("renameNamedPipeHandles", renameNamedPipeHandles),
 
 			cereal::make_nvp("dinputToXinputRedirection", dinputToXinputRedirection),
+			cereal::make_nvp("useOpenXinput", useOpenXinput),
 
 			cereal::make_nvp("drawFakeMouseCursor", drawFakeMouseCursor),
 			cereal::make_nvp("sendMouseMovementMessages", sendMouseMovementMessages),

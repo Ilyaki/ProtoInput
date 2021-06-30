@@ -6,3 +6,4 @@ bin
 out
 Release
 /src/ProtoInput/ProtoInputHost/imgui.ini
+/src/ProtoInput/tmp

@@ -25,6 +25,9 @@
     <Filter Include="Source Files\MessageFilters">
       <UniqueIdentifier>{017a2168-ac43-4ded-a945-1ef32899ea5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\openxinput">
+      <UniqueIdentifier>{de6ddb23-bca2-4042-89c8-3b765c6b84bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -144,6 +147,9 @@
     <ClInclude Include="XinputHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
+    <ClInclude Include="OpenXinputWrapper.h">
+      <Filter>Source Files\openxinput</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -256,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="XinputHook.cpp">
       <Filter>Source Files\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenXinputWrapper.cpp">
+      <Filter>Source Files\openxinput</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

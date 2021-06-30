@@ -65,8 +65,15 @@ void Profile::LoadFromFile(Profile& data, const std::string& name)
 	}
 	else
 	{
-		cereal::JSONInputArchive iarchive(file);
-		iarchive(cereal::make_nvp("data", data));
+		try
+		{
+			cereal::JSONInputArchive iarchive(file);
+			iarchive(cereal::make_nvp("data", data));
+		}
+		catch(...)
+		{
+			// Happens when you have a config from an older version that doesn't have all the options. Still works though.
+		}
 	}
 
 	file.close();

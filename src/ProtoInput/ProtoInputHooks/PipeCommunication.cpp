@@ -326,6 +326,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetUseOpenXinput:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetUseOpenXinput*>(messageBuffer);
+
+				printf("Received set use open xinput %d\n", body->useOpenXinput);
+
+				XinputHook::useOpenXinput = body->useOpenXinput;
+
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");
