@@ -110,7 +110,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)build\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BlackBone.lib</AdditionalDependencies>
+      <AdditionalDependencies>BlackBone.lib;Shell32.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -138,7 +138,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)build\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BlackBone.lib</AdditionalDependencies>
+      <AdditionalDependencies>BlackBone.lib;Shell32.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -201,6 +201,7 @@
   <ItemGroup>
     <ClCompile Include="InputLocker.cpp" />
     <ClCompile Include="KillExplorer.cpp" />
+    <ClCompile Include="TaskbarVisibility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

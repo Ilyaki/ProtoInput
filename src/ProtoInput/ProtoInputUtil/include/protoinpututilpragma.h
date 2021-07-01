@@ -6,11 +6,17 @@
 
 #pragma comment(linker, "/export:SuspendExplorer")
 #pragma comment(linker, "/export:RestartExplorer")
+
+#pragma comment(linker, "/export:SetTaskbarVisibility")
+#pragma comment(linker, "/export:GetTaskbarVisibility")
 #else
 #pragma comment(linker, "/export:_LockInput")
 
 #pragma comment(linker, "/export:_SuspendExplorer")
 #pragma comment(linker, "/export:_RestartExplorer")
+
+#pragma comment(linker, "/export:_SetTaskbarVisibility")
+#pragma comment(linker, "/export:_GetTaskbarVisibility")
 #endif
 
 

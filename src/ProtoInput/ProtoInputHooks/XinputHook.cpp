@@ -20,9 +20,15 @@ std::wstring dinputDeviceName{};
 IDirectInput8W* dinputPtr = nullptr;
 std::vector<GUID> dinputGuids{};
 std::vector<std::wstring> dinputDeviceNames{};
+
 unsigned int XinputHook::controllerIndex = 0;
+
 typedef DWORD(WINAPI* t_XInputGetStateEx)(DWORD dwUserIndex, void* pState);
 t_XInputGetStateEx XInputGetStateExPtr = nullptr;
+
+unsigned int getStateCounter = 0;
+unsigned int getStateExCounter = 0;
+
 typedef struct _XINPUT_GAMEPAD_EX
 {
 	WORD  wButtons;
@@ -37,6 +43,11 @@ typedef struct _XINPUT_GAMEPAD_EX
 
 inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pState, bool extended)
 {
+	if (extended)
+		getStateExCounter++;
+	else
+		getStateCounter++;
+	
 	if (XinputHook::controllerIndex == 0) // user wants no controller on this game
 		return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -155,6 +166,7 @@ DWORD WINAPI Hook_XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT
 		return XInputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
 	return XInputGetCapabilities(0, dwFlags, pCapabilities);
 }
+
 BOOL CALLBACK DIEnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 {
 	// https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf page 26:
@@ -187,6 +199,7 @@ BOOL CALLBACK DIEnumDeviceObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVO
 		return DIENUM_STOP;
 	return DIENUM_CONTINUE;
 }
+
 void SelectDinputDevice()
 {
 	dinputDevice = nullptr;
@@ -229,6 +242,7 @@ void SelectDinputDevice()
 		}
 	}
 }
+
 void PollDinputDevices()
 {
 	if (!XinputHook::GetUseDinput())
@@ -255,6 +269,8 @@ void XinputHook::ShowGuiStatus()
 					   "Dinput to Xinput redirection allows more than 4 of any controllers, although the emulation isn't perfect (e.g. both triggers can't be used simultaneously). ");
 	ImGui::Separator();
 
+	ImGui::Text("Get state calls: %d, Get state extended calls: %d", getStateCounter, getStateExCounter);
+	
 	{
 		bool _useDinput = GetUseDinput();
 		ImGui::PushID(123894);
@@ -301,6 +317,7 @@ void XinputHook::ShowGuiStatus()
 		}
 	}
 }
+
 void XinputHook::InstallImpl()
 {
 	if (static bool pollDevices = true; pollDevices)
@@ -343,6 +360,7 @@ void XinputHook::InstallImpl()
 		XInputGetStateExPtr = t_XInputGetStateEx(GetProcAddress(GetModuleHandleW(L"xinput1_3.dll"), (LPCSTR)(100)));
 	}
 }
+
 void XinputHook::UninstallImpl()
 {
 	for (auto& handle : hookInfos)
@@ -351,10 +369,12 @@ void XinputHook::UninstallImpl()
 	}
 	hookInfos.clear();
 }
+
 void XinputHook::SetUseDinput(bool _useDinput)
 {
 	useDinput = _useDinput;
 	if (dinputPtr == nullptr)
 		PollDinputDevices();
 }
+
 }

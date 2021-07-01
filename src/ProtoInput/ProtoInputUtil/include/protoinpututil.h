@@ -19,3 +19,6 @@ extern "C" __declspec(dllexport) unsigned int LockInput(bool lock);
 // You MUST call RestartExplorer after you finish or the desktop will be broken and the only way out is to kill explorer.exe and restart it with task manager (if it opens)
 extern "C" __declspec(dllexport) void SuspendExplorer();
 extern "C" __declspec(dllexport) void RestartExplorer();
+
+extern "C" __declspec(dllexport) void SetTaskbarVisibility(bool autoHide, bool alwaysOnTop);
+extern "C" __declspec(dllexport) void GetTaskbarVisibility(bool* autoHide, bool* alwaysOnTop);
