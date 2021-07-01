@@ -235,6 +235,17 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				
 				break;
 			}
+			case ProtoPipe::PipeMessageType::StopFocusMessageLoop:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageStopFocusMessageLoop*>(messageBuffer);
+
+				// Workaround for a bug: sometimes input breaks without starting then stopping
+				FocusMessageLoop::StartMessageLoop();
+
+				FocusMessageLoop::PauseMessageLoop();
+
+				break;
+			}
 			case ProtoPipe::PipeMessageType::SetupState:
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupState*>(messageBuffer);
