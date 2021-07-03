@@ -192,6 +192,7 @@
     <ClInclude Include="Cleanup.h" />
     <ClInclude Include="ClipCursorHook.h" />
     <ClInclude Include="CursorVisibilityHook.h" />
+    <ClInclude Include="DinputOrderHook.h" />
     <ClInclude Include="FakeCursor.h" />
     <ClInclude Include="FakeMouse.h" />
     <ClInclude Include="FakeMouseKeyboard.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Cleanup.cpp" />
     <ClCompile Include="ClipCursorHook.cpp" />
     <ClCompile Include="CursorVisibilityHook.cpp" />
+    <ClCompile Include="DinputOrderHook.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FakeCursor.cpp" />
     <ClCompile Include="FakeMouseKeyboard.cpp" />

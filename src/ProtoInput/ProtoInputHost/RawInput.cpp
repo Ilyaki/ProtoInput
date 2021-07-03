@@ -67,6 +67,22 @@ void ProcessRawInput(HRAWINPUT rawInputHandle)
 
 		OnInputLockChange(locked);
 	}
+
+	// if (lockInputWithTheEndKey &&
+	// 	rawinput.header.dwType == RIM_TYPEKEYBOARD &&
+	// 	rawinput.data.keyboard.VKey == VK_PRIOR &&
+	// 	rawinput.data.keyboard.Message == WM_KEYUP)
+	// {
+	// 	SuspendExplorer();
+	// }
+	//
+	// if (lockInputWithTheEndKey &&
+	// 	rawinput.header.dwType == RIM_TYPEKEYBOARD &&
+	// 	rawinput.data.keyboard.VKey == VK_NEXT &&
+	// 	rawinput.data.keyboard.Message == WM_KEYUP)
+	// {
+	// 	RestartExplorer();
+	// }
 }
 	
 LRESULT WINAPI RawInputWindowWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -53,7 +53,8 @@ struct Profile
 		{ "Clip Cursor", true, "Clip Cursor", ProtoHookIDs::ClipCursorHookID },
 		{ "Focus", true, "Focus", ProtoHookIDs::FocusHooksHookID },
 		{ "Rename Handles", true, "Rename Handles", ProtoHookIDs::RenameHandlesHookID },
-		{ "Xinput", false, "Xinput", ProtoHookIDs::XinputHookID }
+		{ "Dinput Order", false, "Dinput Order", ProtoHookIDs::DinputOrderHookID },
+		{ "Xinput", false, "Xinput", ProtoHookIDs::XinputHookID }		
 	};
 
 	std::vector<ProfileOption> messageFilters

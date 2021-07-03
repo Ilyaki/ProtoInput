@@ -293,3 +293,37 @@ extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::UpdateMainWindowHandle, &message);
 	}
 }
+
+extern "C" __declspec(dllexport) void SetDinputDeviceGUID(ProtoInstanceHandle instanceHandle,
+														  unsigned long  Data1,
+														  unsigned short Data2,
+														  unsigned short Data3,
+														  unsigned char  Data4a,
+														  unsigned char  Data4b,
+														  unsigned char  Data4c,
+														  unsigned char  Data4d,
+														  unsigned char  Data4e,
+														  unsigned char  Data4f,
+														  unsigned char  Data4g,
+														  unsigned char  Data4h)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetDinputDeviceGuid message
+		{
+			GUID
+			{
+				Data1,
+				Data2,
+				Data3,
+				{ Data4a, Data4b, Data4c, Data4d, Data4e, Data4f, Data4g, Data4h}
+			}
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDinputDeviceGuid, &message);
+	}
+}

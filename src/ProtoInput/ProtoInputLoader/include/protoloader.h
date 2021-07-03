@@ -18,7 +18,8 @@ enum ProtoHookIDs : unsigned int
 	ClipCursorHookID,
 	FocusHooksHookID,
 	RenameHandlesHookID,
-	XinputHookID
+	XinputHookID,
+	DinputOrderHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -86,3 +87,16 @@ extern "C" __declspec(dllexport) void SetUseOpenXinput(ProtoInstanceHandle insta
 extern "C" __declspec(dllexport) void AddHandleToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);
 
 extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle instanceHandle, const wchar_t* name);
+
+extern "C" __declspec(dllexport) void SetDinputDeviceGUID(ProtoInstanceHandle instanceHandle, 
+	unsigned long  Data1,
+	unsigned short Data2,
+	unsigned short Data3,
+	unsigned char  Data4a,
+	unsigned char  Data4b,
+	unsigned char  Data4c,
+	unsigned char  Data4d,
+	unsigned char  Data4e,
+	unsigned char  Data4f,
+	unsigned char  Data4g,
+	unsigned char  Data4h);

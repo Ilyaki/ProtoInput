@@ -178,10 +178,15 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 		if (pressed)
 		{
 			unsigned int lparam = 0;
+			
 			lparam |= 1; // Repeat bit
 			lparam |= (data.MakeCode << 16); // Scan code
-			if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey)) lparam |= (1 << 30);
-
+			
+			if (FakeMouseKeyboard::IsKeyStatePressed(data.VKey))
+			{
+				lparam |= (1 << 30);
+			}
+			
 			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_KEYDOWN, 
 				MessageFilterHook::IsKeyboardButtonFilterEnabled() ? data.VKey | KeyboardButtonFilter::signature : data.VKey, 
 				lparam);
