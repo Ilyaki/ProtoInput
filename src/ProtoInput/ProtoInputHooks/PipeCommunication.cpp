@@ -17,6 +17,7 @@
 #include "FakeCursor.h"
 #include "RenameHandlesHook.h"
 #include "XinputHook.h"
+#include "DinputOrderHook.h"
 
 namespace Proto
 {
@@ -344,6 +345,20 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				printf("Received set use open xinput %d\n", body->useOpenXinput);
 
 				XinputHook::useOpenXinput = body->useOpenXinput;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetDinputDeviceGuid:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetDinputDeviceGuid*>(messageBuffer);
+
+				wchar_t* guidString;
+				if (StringFromCLSID(body->guid, &guidString) == S_OK)
+					printf("Received Dinput device GUID: %ws\n", guidString);
+				else
+					printf("Received Dinput device GUID (couldn't parse GUID)\n");
+
+				DinputOrderHook::SetControllerGuid(body->guid);
 
 				break;
 			}

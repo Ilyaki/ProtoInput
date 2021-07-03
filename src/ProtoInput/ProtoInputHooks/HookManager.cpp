@@ -12,6 +12,7 @@
 #include "ClipCursorHook.h"
 #include "RenameHandlesHook.h"
 #include "XinputHook.h"
+#include "DinputOrderHook.h"
 
 namespace Proto
 {
@@ -34,6 +35,7 @@ HookManager::HookManager()
 	AddHook<FocusHook>(ProtoHookIDs::FocusHooksHookID);
 	AddHook<RenameHandlesHook>(ProtoHookIDs::RenameHandlesHookID);
 	AddHook<XinputHook>(ProtoHookIDs::XinputHookID);
+	AddHook<DinputOrderHook>(ProtoHookIDs::DinputOrderHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

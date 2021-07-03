@@ -153,6 +153,9 @@
     <ClInclude Include="OpenXinputWrapper.h">
       <Filter>Source Files\openxinput</Filter>
     </ClInclude>
+    <ClInclude Include="DinputOrderHook.h">
+      <Filter>Source Files\Hooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -268,6 +271,9 @@
     </ClCompile>
     <ClCompile Include="OpenXinputWrapper.cpp">
       <Filter>Source Files\openxinput</Filter>
+    </ClCompile>
+    <ClCompile Include="DinputOrderHook.cpp">
+      <Filter>Source Files\Hooks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

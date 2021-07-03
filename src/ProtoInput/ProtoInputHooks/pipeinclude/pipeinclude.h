@@ -22,7 +22,8 @@ enum class PipeMessageType
 	SetControllerIndex,
 	SetUseDinput,
 	StopFocusMessageLoop,
-	SetUseOpenXinput
+	SetUseOpenXinput,
+	SetDinputDeviceGuid
 };
 
 struct PipeMessageHeader
@@ -121,6 +122,11 @@ struct PipeMessageStopFocusMessageLoop
 struct PipeMessageSetUseOpenXinput
 {
 	bool useOpenXinput;
+};
+
+struct PipeMessageSetDinputDeviceGuid
+{
+	GUID guid;
 };
 
 }
