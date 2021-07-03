@@ -150,7 +150,9 @@ bool Launch()
         SetUseOpenXinput(instanceHandle, currentProfile.useOpenXinput);
         SetUseDinputRedirection(instanceHandle, currentProfile.dinputToXinputRedirection);
         if (hookEnabled(XinputHookID))                  InstallHook(instanceHandle, XinputHookID);
-
+        
+        if (hookEnabled(DinputOrderHookID))             InstallHook(instanceHandle, DinputOrderHookID);
+    	
         if (filterEnabled(RawInputFilterID))            EnableMessageFilter(instanceHandle, RawInputFilterID);
         if (filterEnabled(MouseMoveFilterID))           EnableMessageFilter(instanceHandle, MouseMoveFilterID);
         if (filterEnabled(MouseActivateFilterID))       EnableMessageFilter(instanceHandle, MouseActivateFilterID);
