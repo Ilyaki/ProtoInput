@@ -8,7 +8,7 @@ namespace Proto
 class DinputOrderHook final : public Hook
 {
 private:
-	HookInfo hookInfo{};
+	std::vector<HookInfo> hookInfos{};
 	
 public:
 	const char* GetHookName() const override { return "Dinput Order"; }

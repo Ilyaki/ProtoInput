@@ -5,19 +5,25 @@
 namespace Proto
 {
 
-// LPDIRECTINPUT7 pDinput7;
-// LPDIRECTINPUTDEVICE pCtrlr7;
+int createDeviceHook8WCounter = 0;
+int createDeviceHook8ACounter = 0;
+int createDeviceHook7WCounter = 0;
+int createDeviceHook7ACounter = 0;
+
+IDirectInput7W* pDinput7W;
+// IDirectInputDevice7W* pCtrlr7W;
+
+IDirectInput7A* pDinput7A;
+// IDirectInputDevice7A* pCtrlr7A;
 
 IDirectInput8W* pDinput8W;
 // IDirectInputDevice8W* pCtrlr8W;
 
-// IDirectInput8A* pDinput8A;
+IDirectInput8A* pDinput8A;
 // IDirectInputDevice8A* pCtrlr8A;
 
 bool blockDinput = true;
 GUID selectedControllerGuid{};
-
-// I think (should probably check) that the code for A/W is the same, so don't need to actually hook it twice
 
 void DinputOrderHook::SetControllerGuid(const GUID& guid)
 {
@@ -25,15 +31,42 @@ void DinputOrderHook::SetControllerGuid(const GUID& guid)
 	blockDinput = false;
 }
 
-HRESULT __stdcall Hook_DinputCreateDeviceW(IDirectInput8W* pdin, const GUID & rguid, LPDIRECTINPUTDEVICE8W* lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
+HRESULT __stdcall Hook_DinputCreateDevice8W(IDirectInput8W* pdin, const GUID & rguid, 
+										   LPDIRECTINPUTDEVICE8W* lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
 {
-	std::cout << "Dinput CreateDeviceHook called\n";
-
-	// return DIERR_INVALIDPARAM;
-	
+	createDeviceHook8WCounter++;
+		
 	return blockDinput ? 
 	 	DIERR_INVALIDPARAM : //pretend it failed
 	 	pdin->CreateDevice(selectedControllerGuid, lplpDirectInputDevice, pUnkOuter);
+}
+
+HRESULT __stdcall Hook_DinputCreateDevice8A(IDirectInput8A* pdin, const GUID& rguid,
+										   LPDIRECTINPUTDEVICE8A* lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
+{
+	createDeviceHook8ACounter++;
+
+	return blockDinput ?
+		DIERR_INVALIDPARAM : //pretend it failed
+		pdin->CreateDevice(selectedControllerGuid, lplpDirectInputDevice, pUnkOuter);
+}
+
+HRESULT __stdcall Hook_DinputCreateDevice7W(IDirectInput7W* pdin, LPDIRECTINPUTDEVICEW* lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
+{
+	createDeviceHook7WCounter++;
+
+	return blockDinput ?
+		DIERR_INVALIDPARAM : //pretend it failed
+		pdin->CreateDevice(selectedControllerGuid, lplpDirectInputDevice, pUnkOuter);
+}
+
+HRESULT __stdcall Hook_DinputCreateDevice7A(IDirectInput7A* pdin, LPDIRECTINPUTDEVICEA* lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
+{
+	createDeviceHook7ACounter++;
+
+	return blockDinput ?
+		DIERR_INVALIDPARAM : //pretend it failed
+		pdin->CreateDevice(selectedControllerGuid, lplpDirectInputDevice, pUnkOuter);
 }
 
 void DinputOrderHook::ShowGuiStatus()
@@ -50,29 +83,36 @@ void DinputOrderHook::ShowGuiStatus()
 	{
 		ImGui::Text("No selected GUID");
 	}
+
+	ImGui::Separator();
+	
+	ImGui::Text("Counters:\nCreateDevice8W: %d\nCreateDevice8A: %d\nCreateDevice7W: %d\nCreateDevice7A: %d\n",
+				createDeviceHook8WCounter, createDeviceHook8ACounter, createDeviceHook7WCounter, createDeviceHook7ACounter);
 }
 
 void DinputOrderHook::InstallImpl()
-{
-	const auto dinputHmod = LoadLibraryW(L"dinput.dll");
-		
+{		
 	// typedef HRESULT(__stdcall* DirectInputCreate_t)(HINSTANCE hinst, DWORD dwVersion, LPDIRECTINPUTA* ppDI, LPUNKNOWN punkOuter);
 	// auto DirectInputCreateA = (DirectInputCreate_t)GetProcAddress(dinputHmod, "DirectInputCreateA");
-	//
-	typedef HRESULT(__stdcall* DirectInputCreateEx_t)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, LPUNKNOWN punkOuter);
-	auto DirectInputCreateEx = (DirectInputCreateEx_t)GetProcAddress(dinputHmod, "DirectInputCreateEx");
+	
+	const auto DirectInputCreateEx = reinterpret_cast
+		<HRESULT(__stdcall *)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID * ppvOut, LPUNKNOWN punkOuter)>
+		(GetProcAddress(LoadLibraryW(L"dinput.dll"), "DirectInputCreateEx"));
 
-
+	const auto currentMod = GetModuleHandleW(0);
+	
 	// Dinput 8
-	HRESULT dinput8WCreateReturn = DirectInput8Create(GetModuleHandleW(0), DIRECTINPUT_VERSION, IID_IDirectInput8W, (void**)&pDinput8W, nullptr);
+	DirectInput8Create(currentMod, 0x0800, IID_IDirectInput8W, (void**)&pDinput8W, nullptr);
+	DirectInput8Create(currentMod, 0x0800, IID_IDirectInput8A, (void**)&pDinput8A, nullptr);
+
+	// Dinput 7
+	DirectInputCreateEx(currentMod, 0x0700, IID_IDirectInput7W, (void**)&pDinput7W, nullptr);
+	DirectInputCreateEx(currentMod, 0x0700, IID_IDirectInput7A, (void**)&pDinput7A, nullptr);
 
 	
 	// HRESULT dinput8DeviceReturn = pDinput8->CreateDevice(controller_guid, &pCtrlr8, nullptr);
 
 	
-	// Dinput 7
-	// DirectInputCreateEx(GetModuleHandleW(0), 0x0700, IID_IDirectInput7, (void**)&pDinput7, nullptr);
-	//
 	// pDinput7->CreateDevice(controller_guid, &pCtrlr7, nullptr);
 	//
 	// = pCtrlr7->SetDataFormat(GetdfDIJoystick());
@@ -83,11 +123,12 @@ void DinputOrderHook::InstallImpl()
 	// pCtrlr7->Acquire();
 	
 	//https://kaisar-haque.blogspot.com/2008/07/c-accessing-virtual-table.html
-	// intptr_t* vptr_device = *(intptr_t**)pCtrlr8W;
-	intptr_t* vptr_dinputW = *(intptr_t**)pDinput8W;
 	
-	// intptr_t* vptr_device7 = *(intptr_t**)pCtrlr7;
-	// intptr_t* vptr_dinput7 = *(intptr_t**)pDinput7;
+	intptr_t* vptrDinput8W = *(intptr_t**)pDinput8W;
+	intptr_t* vptrDinput8A = *(intptr_t**)pDinput8A;
+
+	intptr_t* vptrDinput7W = *(intptr_t**)pDinput7W;
+	intptr_t* vptrDinput7A = *(intptr_t**)pDinput7A;
 
 	// using GetDeviceStateFunc = HRESULT(__stdcall*)(DWORD, LPVOID);
 	// GetDeviceStateFunc GetDeviceStatePointer = (GetDeviceStateFunc)vptr_device[9];
@@ -105,12 +146,24 @@ void DinputOrderHook::InstallImpl()
 	
 	// installDinputHook(CreateDevicePointer, Dinput_CreateDevice_Hook, "CreateDevice");
 
-	hookInfo = std::get<1>(InstallHook((void*)vptr_dinputW[3], Hook_DinputCreateDeviceW));
+	printf("Create device 8W: %lld\n", vptrDinput8W[3]);
+	printf("Create device 8A: %lld\n", vptrDinput8A[3]);
+	printf("Create device 7W: %lld\n", vptrDinput7W[3]);
+	printf("Create device 7A: %lld\n", vptrDinput7A[3]);
+	
+	hookInfos.push_back(std::get<1>(InstallHook((void*)vptrDinput8W[3], Hook_DinputCreateDevice8W)));
+	hookInfos.push_back(std::get<1>(InstallHook((void*)vptrDinput8A[3], Hook_DinputCreateDevice8A)));
+	hookInfos.push_back(std::get<1>(InstallHook((void*)vptrDinput7W[3], Hook_DinputCreateDevice7W)));
+	hookInfos.push_back(std::get<1>(InstallHook((void*)vptrDinput7A[3], Hook_DinputCreateDevice7A)));
 }
 
 void DinputOrderHook::UninstallImpl()
 {
-	UninstallHook(&hookInfo);
+	for (auto& handle : hookInfos)
+	{
+		UninstallHook(&handle);
+	}
+	hookInfos.clear();
 }
 
 }
