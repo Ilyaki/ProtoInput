@@ -73,6 +73,10 @@ bool FakeMouseKeyboard::IsKeyStatePressed(int vkey)
 			return keyboardState.keysState[VK_CONTROL] || keyboardState.keysState[VK_LCONTROL] || keyboardState.keysState[VK_RCONTROL];
 		if (vkey == VK_MENU)
 			return keyboardState.keysState[VK_MENU] || keyboardState.keysState[VK_LMENU] || keyboardState.keysState[VK_RMENU];
+		if (vkey == VK_LSHIFT)
+			return keyboardState.keysState[VK_SHIFT] || keyboardState.keysState[VK_LSHIFT];
+		if (vkey == VK_LCONTROL)
+			return keyboardState.keysState[VK_CONTROL] || keyboardState.keysState[VK_LCONTROL];
 		
 		return keyboardState.keysState[vkey];
 	}
@@ -90,6 +94,10 @@ bool FakeMouseKeyboard::IsAsyncKeyStatePressed(int vkey)
 			return keyboardState.asyncKeysState[VK_CONTROL] || keyboardState.asyncKeysState[VK_LCONTROL] || keyboardState.asyncKeysState[VK_RCONTROL];
 		if (vkey == VK_MENU)
 			return keyboardState.asyncKeysState[VK_MENU] || keyboardState.asyncKeysState[VK_LMENU] || keyboardState.asyncKeysState[VK_RMENU];
+		if (vkey == VK_LSHIFT)
+			return keyboardState.asyncKeysState[VK_SHIFT] || keyboardState.asyncKeysState[VK_LSHIFT];
+		if (vkey == VK_LCONTROL)
+			return keyboardState.asyncKeysState[VK_CONTROL] || keyboardState.asyncKeysState[VK_LCONTROL];
 		
 		return keyboardState.asyncKeysState[vkey];
 	}

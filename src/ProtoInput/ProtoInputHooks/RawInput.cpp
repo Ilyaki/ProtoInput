@@ -226,10 +226,7 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 		}
 	}
 	
-	if (pressed)
-		FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, true);
-	else if (released)
-		FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, false);
+	FakeMouseKeyboard::ReceivedKeyPressOrRelease(data.VKey, pressed);
 }
 
 void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, const MSG& msg)
