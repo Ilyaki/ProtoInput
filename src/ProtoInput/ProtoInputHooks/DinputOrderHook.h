@@ -7,10 +7,10 @@ namespace Proto
 
 class DinputOrderHook final : public Hook
 {
-private:
-	std::vector<HookInfo> hookInfos{};
-	
 public:
+	static std::vector<HookInfo> hookInfos;
+
+	
 	const char* GetHookName() const override { return "Dinput Order"; }
 	const char* GetHookDescription() const override
 	{
@@ -24,6 +24,7 @@ public:
 	void UninstallImpl() override;
 
 	static void SetControllerGuid(const GUID& guid);
+	static void SetEnableGetDeviceStateHook(bool enable);
 };
 
 }

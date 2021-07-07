@@ -327,3 +327,20 @@ extern "C" __declspec(dllexport) void SetDinputDeviceGUID(ProtoInstanceHandle in
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDinputDeviceGuid, &message);
 	}
 }
+
+void DinputHookAlsoHooksGetDeviceState(ProtoInstanceHandle instanceHandle, bool enable)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetDinputHookGetDeviceState message
+		{
+			enable
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDinputHookGetDeviceState, &message);
+	}
+}

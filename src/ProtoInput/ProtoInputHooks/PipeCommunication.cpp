@@ -362,6 +362,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetDinputHookGetDeviceState:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetDinputHookGetDeviceState*>(messageBuffer);
+
+				printf("Received SetDinputHookGetDeviceState = %d\n", body->enable);
+
+				DinputOrderHook::SetEnableGetDeviceStateHook(body->enable);
+
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");

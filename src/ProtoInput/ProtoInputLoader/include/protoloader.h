@@ -100,3 +100,6 @@ extern "C" __declspec(dllexport) void SetDinputDeviceGUID(ProtoInstanceHandle in
 	unsigned char  Data4f,
 	unsigned char  Data4g,
 	unsigned char  Data4h);
+
+// This MUST be called before calling InstallHook on the Dinput order hook
+extern "C" __declspec(dllexport) void DinputHookAlsoHooksGetDeviceState(ProtoInstanceHandle instanceHandle, bool enable);

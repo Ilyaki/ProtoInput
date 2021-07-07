@@ -57,9 +57,9 @@ DWORD WINAPI StartThread(LPVOID lpParameter)
                                   (LPTHREAD_START_ROUTINE)GuiThread, dll_hModule, CREATE_SUSPENDED, &Proto::GuiThreadID);
   
     Proto::RawInput::InitialiseRawInput();
-
+    	
     Proto::StartPipeCommunication();
-	    
+
     ResumeThread(hGuiThread);
 
     if (hGuiThread != nullptr)
