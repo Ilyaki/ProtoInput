@@ -468,7 +468,8 @@ EASYHOOK_NT_EXPORT RtlCreateSuspendedProcess(
         WCHAR* InCommandLine,
 		ULONG InCustomFlags,
         ULONG* OutProcessId,
-        ULONG* OutThreadId)
+        ULONG* OutThreadId,
+		PVOID lpEnvironment)
 {
 /*
 Description:
@@ -542,7 +543,7 @@ Parameters:
             NULL, NULL,  
             FALSE, 
 		    InCustomFlags | CREATE_SUSPENDED,
-		    NULL,
+			lpEnvironment,
 		    CurrentDir,
 		    &StartInfo,
 		    &ProcessInfo))

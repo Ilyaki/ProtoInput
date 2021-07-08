@@ -7,14 +7,16 @@ EASYHOOK_NT_EXPORT RtlCreateSuspendedProcess(
 	WCHAR* InCommandLine,
 	ULONG InCustomFlags,
 	ULONG* OutProcessId,
-	ULONG* OutThreadId);
+	ULONG* OutThreadId,
+	PVOID lpEnvironment);
 
 extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const wchar_t* exePath,
 	const wchar_t* commandLine,
 	unsigned long processCreationFlags,
 	const wchar_t* dllFolderPath,
-	unsigned long* outPid)
+	unsigned long* outPid,
+	void* environment)
 {
 	// const auto dllpath = std::wstring(dllFolderPath);
 	// const auto dllpath32 = dllpath + L"ProtoInputHooks32.dll";
@@ -52,7 +54,8 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 		const_cast<WCHAR*>(commandLine), 
 		processCreationFlags, 
 		&pid, 
-		&tid);
+		&tid,
+		environment);
 
 	if(FAILED(createProcRes))
 	{

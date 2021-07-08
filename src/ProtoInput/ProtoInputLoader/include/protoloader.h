@@ -44,7 +44,8 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	const wchar_t* commandLine,
 	unsigned long processCreationFlags,
 	const wchar_t* dllFolderPath,
-	unsigned long* outPid);
+	unsigned long* outPid,
+	void* environment = nullptr);
 
 extern "C" __declspec(dllexport) void InstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
 extern "C" __declspec(dllexport) void UninstallHook(ProtoInstanceHandle instanceHandle, ProtoHookIDs hookID);
