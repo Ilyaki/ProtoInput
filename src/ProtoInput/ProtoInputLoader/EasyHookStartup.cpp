@@ -46,6 +46,20 @@ extern "C" __declspec(dllexport) ProtoInstanceHandle EasyHookInjectStartup(
 	// 	return CreateInstanceHandle(pid);
 	// }
 
+	if (environment != nullptr)
+	{
+		auto env = (const wchar_t* )environment;
+		
+		printf("Environment:\n");
+
+		while (!(*env == L"\0"[0] && *(env+1) != L"\0"[1]))
+		{
+			wprintf(env);
+			printf("\n");
+			env += wcslen(env)+1;
+		}
+	}
+	
 	ULONG pid;
 	ULONG tid;
 

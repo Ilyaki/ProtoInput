@@ -469,7 +469,7 @@ EASYHOOK_NT_EXPORT RtlCreateSuspendedProcess(
 		ULONG InCustomFlags,
         ULONG* OutProcessId,
         ULONG* OutThreadId,
-		PVOID lpEnvironment)
+		PVOID lpEnvironment = nullptr)
 {
 /*
 Description:
@@ -542,7 +542,7 @@ Parameters:
 		    FullCommandLine, 
             NULL, NULL,  
             FALSE, 
-		    InCustomFlags | CREATE_SUSPENDED,
+		    InCustomFlags | CREATE_SUSPENDED | CREATE_UNICODE_ENVIRONMENT,
 			lpEnvironment,
 		    CurrentDir,
 		    &StartInfo,
@@ -667,7 +667,7 @@ Parameters:
         THROW(STATUS_INVALID_PARAMETER_8, L"The given process ID storage is invalid.");
 
     // all other parameters are validate by called APIs...
-	FORCE(RtlCreateSuspendedProcess(InEXEPath, InCommandLine, InProcessCreationFlags, &ProcessId, &ThreadId));
+	FORCE(RtlCreateSuspendedProcess(InEXEPath, InCommandLine, InProcessCreationFlags, &ProcessId, &ThreadId, nullptr));
     	
     // inject library
     FORCE(RhInjectLibrary(
