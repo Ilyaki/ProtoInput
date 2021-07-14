@@ -189,6 +189,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BlockRawInputHook.h" />
     <ClInclude Include="Cleanup.h" />
     <ClInclude Include="ClipCursorHook.h" />
     <ClInclude Include="CursorVisibilityHook.h" />
@@ -244,6 +245,7 @@
     <ClCompile Include="..\..\..\lib\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\lib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="BlockRawInputHook.cpp" />
     <ClCompile Include="Cleanup.cpp" />
     <ClCompile Include="ClipCursorHook.cpp" />
     <ClCompile Include="CursorVisibilityHook.cpp" />
