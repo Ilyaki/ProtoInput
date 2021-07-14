@@ -18,6 +18,7 @@
 #include "RenameHandlesHook.h"
 #include "XinputHook.h"
 #include "DinputOrderHook.h"
+#include "SetWindowPosHook.h"
 
 namespace Proto
 {
@@ -369,6 +370,19 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				printf("Received SetDinputHookGetDeviceState = %d\n", body->enable);
 
 				DinputOrderHook::SetEnableGetDeviceStateHook(body->enable);
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetSetWindowPosSettings:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetSetWindowPosSettings*>(messageBuffer);
+
+				printf("Received SetSetWindowPosSettings. Pos (%d, %d), Size (%d,%d)\n", body->posx, body->posy, body->width, body->height);
+
+				SetWindowPosHook::posx = body->posx;
+				SetWindowPosHook::posy = body->posy;
+				SetWindowPosHook::width = body->width;
+				SetWindowPosHook::height = body->height;
 
 				break;
 			}

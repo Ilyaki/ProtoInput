@@ -227,6 +227,7 @@
     <ClInclude Include="RegisterRawInputHook.h" />
     <ClInclude Include="RenameHandlesHook.h" />
     <ClInclude Include="SetCursorPosHook.h" />
+    <ClInclude Include="SetWindowPosHook.h" />
     <ClInclude Include="StateInfo.h" />
     <ClInclude Include="WindowActivateAppFilter.h" />
     <ClInclude Include="WindowActivateFilter.h" />
@@ -270,6 +271,7 @@
     <ClCompile Include="RegisterRawInputHook.cpp" />
     <ClCompile Include="RenameHandlesHook.cpp" />
     <ClCompile Include="SetCursorPosHook.cpp" />
+    <ClCompile Include="SetWindowPosHook.cpp" />
     <ClCompile Include="StateInfo.cpp" />
     <ClCompile Include="XinputHook.cpp" />
   </ItemGroup>

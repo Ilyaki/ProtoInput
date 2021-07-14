@@ -13,6 +13,7 @@
 #include "RenameHandlesHook.h"
 #include "XinputHook.h"
 #include "DinputOrderHook.h"
+#include "SetWindowPosHook.h"
 
 namespace Proto
 {
@@ -36,6 +37,7 @@ HookManager::HookManager()
 	AddHook<RenameHandlesHook>(ProtoHookIDs::RenameHandlesHookID);
 	AddHook<XinputHook>(ProtoHookIDs::XinputHookID);
 	AddHook<DinputOrderHook>(ProtoHookIDs::DinputOrderHookID);
+	AddHook<SetWindowPosHook>(ProtoHookIDs::SetWindowPosHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

@@ -19,7 +19,8 @@ enum ProtoHookIDs : unsigned int
 	FocusHooksHookID,
 	RenameHandlesHookID,
 	XinputHookID,
-	DinputOrderHookID
+	DinputOrderHookID,
+	SetWindowPosHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -104,3 +105,5 @@ extern "C" __declspec(dllexport) void SetDinputDeviceGUID(ProtoInstanceHandle in
 
 // This MUST be called before calling InstallHook on the Dinput order hook
 extern "C" __declspec(dllexport) void DinputHookAlsoHooksGetDeviceState(ProtoInstanceHandle instanceHandle, bool enable);
+
+extern "C" __declspec(dllexport) void SetSetWindowPosSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height);

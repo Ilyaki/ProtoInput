@@ -24,7 +24,8 @@ enum class PipeMessageType
 	StopFocusMessageLoop,
 	SetUseOpenXinput,
 	SetDinputDeviceGuid,
-	SetDinputHookGetDeviceState
+	SetDinputHookGetDeviceState,
+	SetSetWindowPosSettings
 };
 
 struct PipeMessageHeader
@@ -133,6 +134,14 @@ struct PipeMessageSetDinputDeviceGuid
 struct PipeMessageSetDinputHookGetDeviceState
 {
 	bool enable;
+};
+
+struct PipeMessageSetSetWindowPosSettings
+{
+	int posx;
+	int posy;
+	int width;
+	int height;
 };
 
 }
