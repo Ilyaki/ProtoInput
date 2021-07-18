@@ -19,6 +19,7 @@
 #include "XinputHook.h"
 #include "DinputOrderHook.h"
 #include "SetWindowPosHook.h"
+#include "CreateSingleHIDHook.h"
 
 namespace Proto
 {
@@ -383,6 +384,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				SetWindowPosHook::posy = body->posy;
 				SetWindowPosHook::width = body->width;
 				SetWindowPosHook::height = body->height;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetCreateSingleHIDName:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetCreateSingleHIDName*>(messageBuffer);
+
+				printf("Received SetCreateSingleHIDName, Name = %ws\n", body->buff);
+
+				CreateSingleHIDHook::SetRawHidW(body->buff);
 
 				break;
 			}

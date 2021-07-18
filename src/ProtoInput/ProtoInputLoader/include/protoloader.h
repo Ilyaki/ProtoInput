@@ -22,7 +22,8 @@ enum ProtoHookIDs : unsigned int
 	DinputOrderHookID,
 	SetWindowPosHookID,
 	BlockRawInputHookID,
-	FindWindowHookID
+	FindWindowHookID,
+	CreateSingleHIDHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -109,3 +110,5 @@ extern "C" __declspec(dllexport) void SetDinputDeviceGUID(ProtoInstanceHandle in
 extern "C" __declspec(dllexport) void DinputHookAlsoHooksGetDeviceState(ProtoInstanceHandle instanceHandle, bool enable);
 
 extern "C" __declspec(dllexport) void SetSetWindowPosSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height);
+
+extern "C" __declspec(dllexport) void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* name);

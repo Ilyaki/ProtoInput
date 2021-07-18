@@ -76,7 +76,10 @@ std::tuple<NTSTATUS, HookInfo> InstallHook(void* address, void* callback)
 
 std::tuple<NTSTATUS, HookInfo> InstallNamedHook(const LPCWSTR moduleHandle, const LPCSTR proc, void* callBack, const bool isOrdinal)
 {
-	printf("Installing hook %s in %ws\n", proc, moduleHandle);
+	if (((DWORD)proc >> 16) == 0) // is ordinal
+		printf("Installing hook (ordinal) %d in %ws\n", (DWORD)proc, moduleHandle);
+	else
+		printf("Installing hook %s in %ws\n", proc, moduleHandle);
 	
 	// Perform hooking
 	HOOK_TRACE_INFO hHook = { NULL }; // keep track of our hook

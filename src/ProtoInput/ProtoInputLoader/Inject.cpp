@@ -361,3 +361,27 @@ void SetSetWindowPosSettings(ProtoInstanceHandle instanceHandle, int posx, int p
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetSetWindowPosSettings, &message);
 	}
 }
+
+void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* name)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+
+		ProtoPipe::PipeMessageSetCreateSingleHIDName message{};
+
+		if (wcslen(name) > sizeof(message.buff) / sizeof(wchar_t) - 2)
+		{
+			fprintf(stderr, "HID name \"%ws\" is too long and will not be sent\n", name);
+			return;
+		}
+
+		memset(message.buff, 0, sizeof(message.buff));
+		wcscpy_s(message.buff, name);
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetCreateSingleHIDName, &message);
+	}
+}

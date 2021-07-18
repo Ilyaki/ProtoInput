@@ -25,7 +25,8 @@ enum class PipeMessageType
 	SetUseOpenXinput,
 	SetDinputDeviceGuid,
 	SetDinputHookGetDeviceState,
-	SetSetWindowPosSettings
+	SetSetWindowPosSettings,
+	SetCreateSingleHIDName
 };
 
 struct PipeMessageHeader
@@ -142,6 +143,11 @@ struct PipeMessageSetSetWindowPosSettings
 	int posy;
 	int width;
 	int height;
+};
+
+struct PipeMessageSetCreateSingleHIDName
+{
+	wchar_t buff[1000]{};
 };
 
 }
