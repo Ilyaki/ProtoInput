@@ -21,7 +21,8 @@ enum ProtoHookIDs : unsigned int
 	XinputHookID,
 	DinputOrderHookID,
 	SetWindowPosHookID,
-	BlockRawInputHookID
+	BlockRawInputHookID,
+	FindWindowHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int

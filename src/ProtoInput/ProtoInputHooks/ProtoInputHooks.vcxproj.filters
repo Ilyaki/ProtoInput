@@ -162,6 +162,9 @@
     <ClInclude Include="BlockRawInputHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
+    <ClInclude Include="FindWindowHook.h">
+      <Filter>Source Files\Hooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -285,6 +288,9 @@
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="BlockRawInputHook.cpp">
+      <Filter>Source Files\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="FindWindowHook.cpp">
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
   </ItemGroup>

@@ -76,6 +76,8 @@ std::tuple<NTSTATUS, HookInfo> InstallHook(void* address, void* callback)
 
 std::tuple<NTSTATUS, HookInfo> InstallNamedHook(const LPCWSTR moduleHandle, const LPCSTR proc, void* callBack, const bool isOrdinal)
 {
+	printf("Installing hook %s in %ws\n", proc, moduleHandle);
+	
 	// Perform hooking
 	HOOK_TRACE_INFO hHook = { NULL }; // keep track of our hook
 		

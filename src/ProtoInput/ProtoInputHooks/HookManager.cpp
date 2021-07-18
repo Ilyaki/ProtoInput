@@ -15,6 +15,7 @@
 #include "DinputOrderHook.h"
 #include "SetWindowPosHook.h"
 #include "BlockRawInputHook.h"
+#include "FindWindowHook.h"
 
 namespace Proto
 {
@@ -40,6 +41,7 @@ HookManager::HookManager()
 	AddHook<DinputOrderHook>(ProtoHookIDs::DinputOrderHookID);
 	AddHook<SetWindowPosHook>(ProtoHookIDs::SetWindowPosHookID);
 	AddHook<BlockRawInputHook>(ProtoHookIDs::BlockRawInputHookID);
+	AddHook<FindWindowHook>(ProtoHookIDs::FindWindowHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)
