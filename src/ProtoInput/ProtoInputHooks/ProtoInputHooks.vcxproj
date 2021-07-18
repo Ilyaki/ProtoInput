@@ -192,6 +192,7 @@
     <ClInclude Include="BlockRawInputHook.h" />
     <ClInclude Include="Cleanup.h" />
     <ClInclude Include="ClipCursorHook.h" />
+    <ClInclude Include="CreateSingleHIDHook.h" />
     <ClInclude Include="CursorVisibilityHook.h" />
     <ClInclude Include="DinputOrderHook.h" />
     <ClInclude Include="FakeCursor.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="BlockRawInputHook.cpp" />
     <ClCompile Include="Cleanup.cpp" />
     <ClCompile Include="ClipCursorHook.cpp" />
+    <ClCompile Include="CreateSingleHIDHook.cpp" />
     <ClCompile Include="CursorVisibilityHook.cpp" />
     <ClCompile Include="DinputOrderHook.cpp" />
     <ClCompile Include="dllmain.cpp" />
