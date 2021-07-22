@@ -373,14 +373,18 @@ void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* n
 
 		ProtoPipe::PipeMessageSetCreateSingleHIDName message{};
 
-		if (wcslen(name) > sizeof(message.buff) / sizeof(wchar_t) - 2)
-		{
-			fprintf(stderr, "HID name \"%ws\" is too long and will not be sent\n", name);
-			return;
-		}
-
 		memset(message.buff, 0, sizeof(message.buff));
-		wcscpy_s(message.buff, name);
+
+		if (name != nullptr)
+		{
+			if (wcslen(name) > sizeof(message.buff) / sizeof(wchar_t) - 2)
+			{
+				fprintf(stderr, "HID name \"%ws\" is too long and will not be sent\n", name);
+				return;
+			}
+			
+			wcscpy_s(message.buff, name);
+		}
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetCreateSingleHIDName, &message);
 	}
