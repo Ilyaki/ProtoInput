@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include "HwndSelector.h"
 #include "FakeMouseKeyboard.h"
+#include "FakeCursor.h"
 
 namespace Proto
 {
@@ -20,6 +21,8 @@ BOOL WINAPI Hook_SetCursorPos(int X, int Y)
 		ScreenToClient((HWND)HwndSelector::GetSelectedHwnd(), &p);
 
 		FakeMouseKeyboard::SetMousePos(p.x, p.y);
+
+		FakeCursor::NotifyUpdatedCursorPosition();
 	}
 	return TRUE;
 }
