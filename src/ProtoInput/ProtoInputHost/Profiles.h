@@ -66,12 +66,16 @@ struct Profile
 		{ "Window Activate App", true, "Window Activate App", ProtoMessageFilterIDs::WindowActivateAppFilterID },
 		{ "Mouse Wheel Filter", true, "Mouse Wheel Filter", ProtoMessageFilterIDs::MouseWheelFilterID },
 		{ "Mouse Button", true, "Mouse Button", ProtoMessageFilterIDs::MouseButtonFilterID },
+		{ "Keyboard Button", true, "Keyboard Button", ProtoMessageFilterIDs::KeyboardButtonFilterID },
 	};
 
 	bool dinputToXinputRedirection = false;
 	bool useOpenXinput = false;
+
+	bool useFakeClipCursor = true;
 	
 	bool drawFakeMouseCursor = true;
+	bool allowMouseOutOfBounds = false;
 	bool sendMouseMovementMessages = true;
 	bool sendMouseButtonMessages = true;
 	bool sendMouseWheelMessages = true;
@@ -101,8 +105,10 @@ struct Profile
 
 			cereal::make_nvp("dinputToXinputRedirection", dinputToXinputRedirection),
 			cereal::make_nvp("useOpenXinput", useOpenXinput),
+			cereal::make_nvp("useFakeClipCursor", useFakeClipCursor),
 
 			cereal::make_nvp("drawFakeMouseCursor", drawFakeMouseCursor),
+			cereal::make_nvp("allowMouseOutOfBounds", allowMouseOutOfBounds),
 			cereal::make_nvp("sendMouseMovementMessages", sendMouseMovementMessages),
 			cereal::make_nvp("sendMouseButtonMessages", sendMouseButtonMessages),
 			cereal::make_nvp("sendMouseWheelMessages", sendMouseWheelMessages),

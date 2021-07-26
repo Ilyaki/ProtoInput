@@ -143,7 +143,10 @@ bool Launch()
         if (hookEnabled(GetAsyncKeyStateHookID))        InstallHook(instanceHandle, GetAsyncKeyStateHookID);
         if (hookEnabled(GetKeyboardStateHookID))        InstallHook(instanceHandle, GetKeyboardStateHookID);
         if (hookEnabled(CursorVisibilityStateHookID))   InstallHook(instanceHandle, CursorVisibilityStateHookID);
+
+        SetCursorClipOptions(instanceHandle, currentProfile.useFakeClipCursor);
         if (hookEnabled(ClipCursorHookID))              InstallHook(instanceHandle, ClipCursorHookID);
+    	
         if (hookEnabled(FocusHooksHookID))              InstallHook(instanceHandle, FocusHooksHookID);
         if (hookEnabled(RenameHandlesHookID))           InstallHook(instanceHandle, RenameHandlesHookID);
 
@@ -183,6 +186,8 @@ bool Launch()
                                   currentProfile.focusLoopSendWM_MOUSEACTIVATE);
 
         SetDrawFakeCursor(instanceHandle, currentProfile.drawFakeMouseCursor);
+    	
+        AllowFakeCursorOutOfBounds(instanceHandle, currentProfile.allowMouseOutOfBounds);
 
         for (const auto& renameHandle : currentProfile.renameHandles)
             AddHandleToRename(instanceHandle, utf8_decode(renameHandle).c_str());
@@ -270,7 +275,7 @@ void SelectFirstIndex()
 }
 
 void InstancesWindow()
-{
+{	
     // Current instances
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
@@ -851,6 +856,8 @@ void OptionsMenu()
     ImGui::Checkbox("Dinput to Xinput redirection", &currentProfile.dinputToXinputRedirection);
 
     ImGui::Checkbox("Use OpenXinput", &currentProfile.useOpenXinput);
+	
+    ImGui::Checkbox("Use fake clip cursor", &currentProfile.useFakeClipCursor);
 
     if (ImGui::CollapsingHeader("Message Filters", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
@@ -863,6 +870,8 @@ void OptionsMenu()
     if (ImGui::CollapsingHeader("Options", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         ImGui::Checkbox("Draw fake mouse cursor", &currentProfile.drawFakeMouseCursor);
+    	
+        ImGui::Checkbox("Allow fake cursor to go out of bounds", &currentProfile.allowMouseOutOfBounds);
 
         ImGui::Separator();
 

@@ -112,3 +112,7 @@ extern "C" __declspec(dllexport) void DinputHookAlsoHooksGetDeviceState(ProtoIns
 extern "C" __declspec(dllexport) void SetSetWindowPosSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height);
 
 extern "C" __declspec(dllexport) void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* name);
+
+extern "C" __declspec(dllexport) void SetCursorClipOptions(ProtoInstanceHandle instanceHandle, bool useFakeClipCursor);
+
+extern "C" __declspec(dllexport) void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOutOfBounds);

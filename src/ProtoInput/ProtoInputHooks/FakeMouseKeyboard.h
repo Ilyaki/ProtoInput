@@ -7,6 +7,14 @@ namespace Proto
 struct FakeMouseState
 {
 	int x, y;
+	
+	int clipClientLeft;
+	int clipClientTop;
+	int clipClientRight;
+	int clipClientBottom;
+	bool hasClipCursor = false;
+
+	bool ignoreMouseBounds = false;
 };
 
 struct FakeKeyboardState
@@ -35,6 +43,11 @@ public:
 	static const FakeMouseState& GetMouseState() { return mouseState; }
 	static void AddMouseDelta(int dx, int dy);
 	static void SetMousePos(int x, int y);
+	
+	static void SetClipCursor(int clientLeft, int clientTop, int clientRight, int clientBottom);
+	static void RemoveClipCursor();
+
+	static void SetIgnoreMouseBounds(bool ignore);
 	
 	static void ReceivedKeyPressOrRelease(int vkey, bool pressed);
 	static void ClearAsyncKeyState(int vkey);

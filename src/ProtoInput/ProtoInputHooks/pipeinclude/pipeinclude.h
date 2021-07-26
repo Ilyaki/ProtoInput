@@ -26,7 +26,9 @@ enum class PipeMessageType
 	SetDinputDeviceGuid,
 	SetDinputHookGetDeviceState,
 	SetSetWindowPosSettings,
-	SetCreateSingleHIDName
+	SetCreateSingleHIDName,
+	SetClipCursorHookOptions,
+	SetAllowFakeCursorOutOfBounds
 };
 
 struct PipeMessageHeader
@@ -148,6 +150,16 @@ struct PipeMessageSetSetWindowPosSettings
 struct PipeMessageSetCreateSingleHIDName
 {
 	wchar_t buff[1000]{};
+};
+
+struct PipeMessageSetClipCursorHookOptions
+{
+	bool useFakeClipCursor;
+};
+
+struct PipeMessageSetAllowFakeCursorOutOfBounds
+{
+	bool allowOutOfBounds;
 };
 
 }

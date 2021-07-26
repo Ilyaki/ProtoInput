@@ -182,6 +182,13 @@ void RawInputMenu()
         FakeCursor::EnableDisableFakeCursor(showFakeCursor);
     }
 
+    bool ignoreMouseBounds = FakeMouseKeyboard::GetMouseState().ignoreMouseBounds;
+    if (ImGui::Checkbox("Ignore mouse bounds", &ignoreMouseBounds))
+    {
+        FakeMouseKeyboard::SetIgnoreMouseBounds(showFakeCursor);
+    }
+    ShowTooltip("Allows the fake cursor to go beyond the window boundaries. Can fix a problem in some SDL2 games. ");
+	
     ImGui::Separator();
 	
     ImGui::Checkbox("Send mouse movement messages", &RawInput::rawInputState.sendMouseMoveMessages);

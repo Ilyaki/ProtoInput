@@ -25,14 +25,25 @@ extern "C" NTSTATUS __declspec(dllexport) __stdcall HookCompleteInjection(void* 
 
 bool Isx64(unsigned long pid)
 {
-	blackbone::Process proc;
-	proc.Attach(pid);
+	// blackbone::Process proc;
+	// proc.Attach(pid);
 
 	SYSTEM_INFO systemInfo;
 	GetNativeSystemInfo(&systemInfo);
 
-	bool is32 = proc.barrier().targetWow64 ||
-		(systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL); // x86
+	// const auto& barrier = proc.barrier();
+
+	// const bool b1 = barrier.targetWow64;
+
+	auto hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+
+	BOOL isWow64;
+	IsWow64Process(hProcess, &isWow64);
+	CloseHandle(hProcess);
+	
+	bool is32 = isWow64 || 
+		(systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL); // x86;
+	
 	return !is32;
 }
 
@@ -387,5 +398,39 @@ void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* n
 		}
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetCreateSingleHIDName, &message);
+	}
+}
+
+void SetCursorClipOptions(ProtoInstanceHandle instanceHandle, bool useFakeClipCursor)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetClipCursorHookOptions message
+		{
+			useFakeClipCursor
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetClipCursorHookOptions, &message);
+	}
+}
+
+void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOutOfBounds)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetAllowFakeCursorOutOfBounds message
+		{
+			allowOutOfBounds
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetAllowFakeCursorOutOfBounds, &message);
 	}
 }

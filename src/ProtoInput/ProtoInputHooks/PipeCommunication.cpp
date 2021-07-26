@@ -20,6 +20,8 @@
 #include "DinputOrderHook.h"
 #include "SetWindowPosHook.h"
 #include "CreateSingleHIDHook.h"
+#include "ClipCursorHook.h"
+#include "FakeMouseKeyboard.h"
 
 namespace Proto
 {
@@ -394,6 +396,26 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				printf("Received SetCreateSingleHIDName, Name = %ws\n", body->buff);
 
 				CreateSingleHIDHook::SetRawHidW(body->buff);
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetClipCursorHookOptions:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetClipCursorHookOptions*>(messageBuffer);
+
+				printf("Received SetClipCursorHookOptions, use fake clip = %d\n", body->useFakeClipCursor);
+
+				ClipCursorHook::SetUseFakeCursorClip(body->useFakeClipCursor);
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetAllowFakeCursorOutOfBounds:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetAllowFakeCursorOutOfBounds*>(messageBuffer);
+
+				printf("Received SetAllowFakeCursorOutOfBounds, allow = %d\n", body->allowOutOfBounds);
+
+				FakeMouseKeyboard::SetIgnoreMouseBounds(body->allowOutOfBounds);
 
 				break;
 			}

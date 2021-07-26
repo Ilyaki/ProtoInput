@@ -13,16 +13,33 @@ void FakeMouseKeyboard::AddMouseDelta(int dx, int dy)
 	mouseState.x += dx;
 	mouseState.y += dy;
 
-	if (mouseState.x < 0)
-		mouseState.x = 0;
-	if (mouseState.y < 0)
-		mouseState.y = 0;
+	if (!mouseState.ignoreMouseBounds)
+	{
+		if (mouseState.x < -1)
+			mouseState.x = -1;
+		if (mouseState.y < -1)
+			mouseState.y = -1;
 
-	if (mouseState.x > HwndSelector::windowWidth)
-		mouseState.x = HwndSelector::windowWidth;
+		if (mouseState.x > HwndSelector::windowWidth)
+			mouseState.x = HwndSelector::windowWidth;
 
-	if (mouseState.y > HwndSelector::windowHeight)
-		mouseState.y = HwndSelector::windowHeight;
+		if (mouseState.y > HwndSelector::windowHeight)
+			mouseState.y = HwndSelector::windowHeight;
+
+		if (mouseState.hasClipCursor)
+		{
+			if (mouseState.x < mouseState.clipClientLeft)
+				mouseState.x = mouseState.clipClientLeft;
+			if (mouseState.y < mouseState.clipClientTop)
+				mouseState.y = mouseState.clipClientTop;
+
+			if (mouseState.x > mouseState.clipClientRight)
+				mouseState.x = mouseState.clipClientRight;
+
+			if (mouseState.y > mouseState.clipClientBottom)
+				mouseState.y = mouseState.clipClientBottom;
+		}
+	}
 }
 
 void FakeMouseKeyboard::SetMousePos(int x, int y)
@@ -30,16 +47,52 @@ void FakeMouseKeyboard::SetMousePos(int x, int y)
 	mouseState.x = x;
 	mouseState.y = y;
 
-	if (mouseState.x < 0)
-		mouseState.x = 0;
-	if (mouseState.y < 0)
-		mouseState.y = 0;
+	if (!mouseState.ignoreMouseBounds)
+	{
+		if (mouseState.x < -1)
+			mouseState.x = -1;
+		if (mouseState.y < -1)
+			mouseState.y = -1;
 
-	if (mouseState.x > HwndSelector::windowWidth)
-		mouseState.x = HwndSelector::windowWidth;
+		if (mouseState.x > HwndSelector::windowWidth)
+			mouseState.x = HwndSelector::windowWidth;
 
-	if (mouseState.y > HwndSelector::windowHeight)
-		mouseState.y = HwndSelector::windowHeight;
+		if (mouseState.y > HwndSelector::windowHeight)
+			mouseState.y = HwndSelector::windowHeight;
+
+		if (mouseState.hasClipCursor)
+		{
+			if (mouseState.x < mouseState.clipClientLeft)
+				mouseState.x = mouseState.clipClientLeft;
+			if (mouseState.y < mouseState.clipClientTop)
+				mouseState.y = mouseState.clipClientTop;
+
+			if (mouseState.x > mouseState.clipClientRight)
+				mouseState.x = mouseState.clipClientRight;
+
+			if (mouseState.y > mouseState.clipClientBottom)
+				mouseState.y = mouseState.clipClientBottom;
+		}
+	}
+}
+
+void FakeMouseKeyboard::SetClipCursor(int clientLeft, int clientTop, int clientRight, int clientBottom)
+{
+	mouseState.hasClipCursor = true;
+	mouseState.clipClientLeft = clientLeft;
+	mouseState.clipClientTop = clientTop;
+	mouseState.clipClientRight = clientRight;
+	mouseState.clipClientBottom = clientBottom;
+}
+
+void FakeMouseKeyboard::RemoveClipCursor()
+{
+	mouseState.hasClipCursor = false;
+}
+
+void FakeMouseKeyboard::SetIgnoreMouseBounds(bool ignore)
+{
+	mouseState.ignoreMouseBounds = ignore;
 }
 
 void FakeMouseKeyboard::ReceivedKeyPressOrRelease(int vkey, bool pressed)
