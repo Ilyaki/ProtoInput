@@ -11,6 +11,7 @@ class CursorVisibilityHook final : public Hook
 private:
 	HookInfo hookInfoShowCursor{};
 	HookInfo hookInfoSetCursor{};
+	HookInfo hookInfoSetSystemCursor{};
 
 public:
 	const char* GetHookName() const override { return "Cursor Visibility"; }
