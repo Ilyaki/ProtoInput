@@ -173,6 +173,12 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 	const bool released = (data.Flags & RI_KEY_BREAK) != 0;
 	const bool pressed = !released;
 
+	if (pressed && FakeCursor::GetToggleVisilbityShorcutEnabled() &&  data.VKey == FakeCursor::GetToggleVisibilityVkey())
+	{
+		FakeCursor::SetCursorVisibility(!FakeCursor::GetCursorVisibility());
+		return;
+	}
+	
 	if (rawInputState.sendKeyboardPressMessages)
 	{
 		if (pressed)

@@ -189,6 +189,8 @@ bool Launch()
     	
         AllowFakeCursorOutOfBounds(instanceHandle, currentProfile.allowMouseOutOfBounds);
 
+        SetToggleFakeCursorVisibilityShortcut(instanceHandle, currentProfile.toggleFakeCursorVisibilityShortcut, VK_HOME);
+    	
         for (const auto& renameHandle : currentProfile.renameHandles)
             AddHandleToRename(instanceHandle, utf8_decode(renameHandle).c_str());
 
@@ -872,6 +874,8 @@ void OptionsMenu()
         ImGui::Checkbox("Draw fake mouse cursor", &currentProfile.drawFakeMouseCursor);
     	
         ImGui::Checkbox("Allow fake cursor to go out of bounds", &currentProfile.allowMouseOutOfBounds);
+
+        ImGui::Checkbox("Toggle fake cursor shortcut (Home)", &currentProfile.toggleFakeCursorVisibilityShortcut);
 
         ImGui::Separator();
 

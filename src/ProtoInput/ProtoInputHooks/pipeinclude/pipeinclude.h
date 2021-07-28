@@ -28,7 +28,8 @@ enum class PipeMessageType
 	SetSetWindowPosSettings,
 	SetCreateSingleHIDName,
 	SetClipCursorHookOptions,
-	SetAllowFakeCursorOutOfBounds
+	SetAllowFakeCursorOutOfBounds,
+	SetToggleCursorVisibilityShortcut
 };
 
 struct PipeMessageHeader
@@ -160,6 +161,12 @@ struct PipeMessageSetClipCursorHookOptions
 struct PipeMessageSetAllowFakeCursorOutOfBounds
 {
 	bool allowOutOfBounds;
+};
+
+struct PipeMessageSetToggleCursorVisibilityShortcut
+{
+	bool enabled;
+	unsigned int vkey;
 };
 
 }

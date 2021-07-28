@@ -188,6 +188,11 @@ void RawInputMenu()
         FakeMouseKeyboard::SetIgnoreMouseBounds(showFakeCursor);
     }
     ShowTooltip("Allows the fake cursor to go beyond the window boundaries. Can fix a problem in some SDL2 games. ");
+
+    ImGui::Checkbox("Toggle visibility shortcut", &FakeCursor::GetToggleVisilbityShorcutEnabled());
+    ShowTooltip("The Set Cursor Visibility hook doesn't work on some games, so a keyboard shortcut to toggle visibility can be used instead. ");
+
+    ImGui::InputInt("Toggle visibility keyboard VKey", (int*)&FakeCursor::GetToggleVisibilityVkey(), 1, 100);
 	
     ImGui::Separator();
 	

@@ -76,6 +76,7 @@ struct Profile
 	
 	bool drawFakeMouseCursor = true;
 	bool allowMouseOutOfBounds = false;
+	bool toggleFakeCursorVisibilityShortcut = false;
 	bool sendMouseMovementMessages = true;
 	bool sendMouseButtonMessages = true;
 	bool sendMouseWheelMessages = true;
@@ -109,6 +110,7 @@ struct Profile
 
 			cereal::make_nvp("drawFakeMouseCursor", drawFakeMouseCursor),
 			cereal::make_nvp("allowMouseOutOfBounds", allowMouseOutOfBounds),
+			cereal::make_nvp("toggleFakeCursorVisibilityShortcut", toggleFakeCursorVisibilityShortcut),
 			cereal::make_nvp("sendMouseMovementMessages", sendMouseMovementMessages),
 			cereal::make_nvp("sendMouseButtonMessages", sendMouseButtonMessages),
 			cereal::make_nvp("sendMouseWheelMessages", sendMouseWheelMessages),

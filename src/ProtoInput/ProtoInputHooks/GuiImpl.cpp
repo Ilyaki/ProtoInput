@@ -13,7 +13,7 @@
 #include "Cleanup.h"
 
 //TODO: default to hidden
-constexpr bool defaultGuiToHidden = false;
+constexpr bool defaultGuiToHidden = true;
 constexpr bool defaultConsoleToHidden = true;
 
 HGLRC   g_GLRenderContext;

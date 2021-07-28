@@ -419,6 +419,17 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetToggleCursorVisibilityShortcut:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetToggleCursorVisibilityShortcut*>(messageBuffer);
+
+				printf("Received SetToggleCursorVisibilityShortcut, enabeld = %d, key = 0x%X\n", body->enabled, body->vkey);
+
+				FakeCursor::GetToggleVisibilityVkey() = body->vkey;
+				FakeCursor::GetToggleVisilbityShorcutEnabled() = body->enabled;
+
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");

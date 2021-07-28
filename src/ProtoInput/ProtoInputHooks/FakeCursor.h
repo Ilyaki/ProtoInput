@@ -24,6 +24,9 @@ class FakeCursor
 
 	// This changes when the hook detects SetCursor/ShowCursor
 	bool showCursor = true;
+
+	bool toggleVisilbityShorcutEnabled = false;
+	unsigned int toggleVisibilityVkey = VK_HOME;
 	
 	void DrawCursor();
 	
@@ -32,6 +35,16 @@ public:
 
 	void StartInternal();
 	void StartDrawLoopInternal();
+
+	static bool& GetToggleVisilbityShorcutEnabled()
+	{
+		return state.toggleVisilbityShorcutEnabled;
+	}
+
+	static unsigned int& GetToggleVisibilityVkey()
+	{
+		return state.toggleVisibilityVkey;
+	}
 	
 	static void NotifyUpdatedCursorPosition()
 	{
@@ -51,6 +64,11 @@ public:
 	static void SetCursorVisibility(bool visible)
 	{
 		state.showCursor = visible;
+	}
+
+	static bool GetCursorVisibility()
+	{
+		return state.showCursor;
 	}
 
 	static void SetCursorHandle(HCURSOR newCursor)

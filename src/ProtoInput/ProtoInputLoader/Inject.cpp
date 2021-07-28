@@ -434,3 +434,21 @@ void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOu
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetAllowFakeCursorOutOfBounds, &message);
 	}
 }
+
+void SetToggleFakeCursorVisibilityShortcut(ProtoInstanceHandle instanceHandle, bool enabled, unsigned vkey)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetToggleCursorVisibilityShortcut message
+		{
+			enabled,
+			vkey
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetToggleCursorVisibilityShortcut, &message);
+	}
+}
