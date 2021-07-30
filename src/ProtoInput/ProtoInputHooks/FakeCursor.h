@@ -64,6 +64,7 @@ public:
 	static void SetCursorVisibility(bool visible)
 	{
 		state.showCursor = visible;
+		NotifyUpdatedCursorPosition();
 	}
 
 	static bool GetCursorVisibility()
