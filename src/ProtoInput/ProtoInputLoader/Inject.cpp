@@ -418,7 +418,7 @@ void SetCursorClipOptions(ProtoInstanceHandle instanceHandle, bool useFakeClipCu
 	}
 }
 
-void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOutOfBounds)
+void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOutOfBounds, bool extendBounds)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
@@ -428,7 +428,8 @@ void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOu
 
 		ProtoPipe::PipeMessageSetAllowFakeCursorOutOfBounds message
 		{
-			allowOutOfBounds
+			allowOutOfBounds,
+			extendBounds
 		};
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetAllowFakeCursorOutOfBounds, &message);

@@ -15,17 +15,18 @@ void FakeMouseKeyboard::AddMouseDelta(int dx, int dy)
 
 	if (!mouseState.ignoreMouseBounds)
 	{
-		if (mouseState.x < -1)
-			mouseState.x = -1;
-		if (mouseState.y < -1)
-			mouseState.y = -1;
+		int min = mouseState.extendMouseBounds ? -100 : -1;
+		if (mouseState.x < min)
+			mouseState.x = min;
+		if (mouseState.y < min)
+			mouseState.y = min;
 
-		if (mouseState.x > HwndSelector::windowWidth)
-			mouseState.x = HwndSelector::windowWidth;
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowWidth + 100 : HwndSelector::windowWidth; mouseState.x > max)
+			mouseState.x = max;
 
-		if (mouseState.y > HwndSelector::windowHeight)
-			mouseState.y = HwndSelector::windowHeight;
-
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowHeight + 100 : HwndSelector::windowHeight; mouseState.y > max)
+			mouseState.y = max;
+		
 		if (mouseState.hasClipCursor)
 		{
 			if (mouseState.x < mouseState.clipClientLeft)
@@ -49,16 +50,17 @@ void FakeMouseKeyboard::SetMousePos(int x, int y)
 
 	if (!mouseState.ignoreMouseBounds)
 	{
-		if (mouseState.x < -1)
-			mouseState.x = -1;
-		if (mouseState.y < -1)
-			mouseState.y = -1;
+		int min = mouseState.extendMouseBounds ? -100 : -1;
+		if (mouseState.x < min)
+			mouseState.x = min;
+		if (mouseState.y < min)
+			mouseState.y = min;
 
-		if (mouseState.x > HwndSelector::windowWidth)
-			mouseState.x = HwndSelector::windowWidth;
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowWidth + 100 : HwndSelector::windowWidth; mouseState.x > max)
+			mouseState.x = max;
 
-		if (mouseState.y > HwndSelector::windowHeight)
-			mouseState.y = HwndSelector::windowHeight;
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowHeight + 100 : HwndSelector::windowHeight; mouseState.y > max)
+			mouseState.y = max;
 
 		if (mouseState.hasClipCursor)
 		{
@@ -93,6 +95,11 @@ void FakeMouseKeyboard::RemoveClipCursor()
 void FakeMouseKeyboard::SetIgnoreMouseBounds(bool ignore)
 {
 	mouseState.ignoreMouseBounds = ignore;
+}
+
+void FakeMouseKeyboard::SetExtendMouseBounds(bool extend)
+{
+	mouseState.extendMouseBounds = extend;
 }
 
 void FakeMouseKeyboard::ReceivedKeyPressOrRelease(int vkey, bool pressed)

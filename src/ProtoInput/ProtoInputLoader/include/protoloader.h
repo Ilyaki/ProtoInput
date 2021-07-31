@@ -115,6 +115,6 @@ extern "C" __declspec(dllexport) void SetCreateSingleHIDName(ProtoInstanceHandle
 
 extern "C" __declspec(dllexport) void SetCursorClipOptions(ProtoInstanceHandle instanceHandle, bool useFakeClipCursor);
 
-extern "C" __declspec(dllexport) void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOutOfBounds);
+extern "C" __declspec(dllexport) void AllowFakeCursorOutOfBounds(ProtoInstanceHandle instanceHandle, bool allowOutOfBounds, bool extendBounds);
 
 extern "C" __declspec(dllexport) void SetToggleFakeCursorVisibilityShortcut(ProtoInstanceHandle instanceHandle, bool enabled, unsigned int vkey);

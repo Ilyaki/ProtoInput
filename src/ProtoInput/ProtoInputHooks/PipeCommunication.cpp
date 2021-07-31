@@ -413,9 +413,10 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetAllowFakeCursorOutOfBounds*>(messageBuffer);
 
-				printf("Received SetAllowFakeCursorOutOfBounds, allow = %d\n", body->allowOutOfBounds);
+				printf("Received SetAllowFakeCursorOutOfBounds, allow out of bounds = %d, extended bounds = %d\n", body->allowOutOfBounds, body->extendBounds);
 
 				FakeMouseKeyboard::SetIgnoreMouseBounds(body->allowOutOfBounds);
+				FakeMouseKeyboard::SetExtendMouseBounds(body->extendBounds);
 
 				break;
 			}

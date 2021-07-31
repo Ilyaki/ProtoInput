@@ -15,6 +15,7 @@ struct FakeMouseState
 	bool hasClipCursor = false;
 
 	bool ignoreMouseBounds = false;
+	bool extendMouseBounds = false;
 };
 
 struct FakeKeyboardState
@@ -48,6 +49,7 @@ public:
 	static void RemoveClipCursor();
 
 	static void SetIgnoreMouseBounds(bool ignore);
+	static void SetExtendMouseBounds(bool extend);
 	
 	static void ReceivedKeyPressOrRelease(int vkey, bool pressed);
 	static void ClearAsyncKeyState(int vkey);

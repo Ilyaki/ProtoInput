@@ -161,6 +161,7 @@ struct PipeMessageSetClipCursorHookOptions
 struct PipeMessageSetAllowFakeCursorOutOfBounds
 {
 	bool allowOutOfBounds;
+	bool extendBounds;
 };
 
 struct PipeMessageSetToggleCursorVisibilityShortcut

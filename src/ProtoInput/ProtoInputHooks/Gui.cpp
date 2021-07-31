@@ -185,9 +185,16 @@ void RawInputMenu()
     bool ignoreMouseBounds = FakeMouseKeyboard::GetMouseState().ignoreMouseBounds;
     if (ImGui::Checkbox("Ignore mouse bounds", &ignoreMouseBounds))
     {
-        FakeMouseKeyboard::SetIgnoreMouseBounds(showFakeCursor);
+        FakeMouseKeyboard::SetIgnoreMouseBounds(ignoreMouseBounds);
     }
     ShowTooltip("Allows the fake cursor to go beyond the window boundaries. Can fix a problem in some SDL2 games. ");
+
+    bool extendMouseBounds = FakeMouseKeyboard::GetMouseState().extendMouseBounds;
+    if (ImGui::Checkbox("Extend mouse bounds", &extendMouseBounds))
+    {
+        FakeMouseKeyboard::SetExtendMouseBounds(extendMouseBounds);
+    }
+    ShowTooltip("Allows the fake cursor to go slightly beyond the window boundaries. Useful if there is a mouse offset. ");
 
     ImGui::Checkbox("Toggle visibility shortcut", &FakeCursor::GetToggleVisilbityShorcutEnabled());
     ShowTooltip("The Set Cursor Visibility hook doesn't work on some games, so a keyboard shortcut to toggle visibility can be used instead. ");

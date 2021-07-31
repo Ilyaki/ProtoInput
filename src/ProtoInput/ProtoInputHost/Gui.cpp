@@ -187,7 +187,7 @@ bool Launch()
 
         SetDrawFakeCursor(instanceHandle, currentProfile.drawFakeMouseCursor);
     	
-        AllowFakeCursorOutOfBounds(instanceHandle, currentProfile.allowMouseOutOfBounds);
+        AllowFakeCursorOutOfBounds(instanceHandle, currentProfile.allowMouseOutOfBounds, currentProfile.extendMouseBounds);
 
         SetToggleFakeCursorVisibilityShortcut(instanceHandle, currentProfile.toggleFakeCursorVisibilityShortcut, VK_HOME);
     	
@@ -874,6 +874,7 @@ void OptionsMenu()
         ImGui::Checkbox("Draw fake mouse cursor", &currentProfile.drawFakeMouseCursor);
     	
         ImGui::Checkbox("Allow fake cursor to go out of bounds", &currentProfile.allowMouseOutOfBounds);
+        ImGui::Checkbox("Extend fake cursor boundaries", &currentProfile.extendMouseBounds);
 
         ImGui::Checkbox("Toggle fake cursor shortcut (Home)", &currentProfile.toggleFakeCursorVisibilityShortcut);
 
