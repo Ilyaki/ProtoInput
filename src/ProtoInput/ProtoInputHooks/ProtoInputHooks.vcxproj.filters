@@ -168,6 +168,9 @@
     <ClInclude Include="CreateSingleHIDHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
+    <ClInclude Include="WindowStyleHook.h">
+      <Filter>Source Files\Hooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -297,6 +300,9 @@
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="CreateSingleHIDHook.cpp">
+      <Filter>Source Files\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowStyleHook.cpp">
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
   </ItemGroup>

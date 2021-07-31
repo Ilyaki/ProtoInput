@@ -23,7 +23,8 @@ enum ProtoHookIDs : unsigned int
 	SetWindowPosHookID,
 	BlockRawInputHookID,
 	FindWindowHookID,
-	CreateSingleHIDHookID
+	CreateSingleHIDHookID,
+	WindowStyleHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int

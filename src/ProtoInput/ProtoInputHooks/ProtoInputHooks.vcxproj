@@ -234,6 +234,7 @@
     <ClInclude Include="StateInfo.h" />
     <ClInclude Include="WindowActivateAppFilter.h" />
     <ClInclude Include="WindowActivateFilter.h" />
+    <ClInclude Include="WindowStyleHook.h" />
     <ClInclude Include="XinputHook.h" />
   </ItemGroup>
   <ItemGroup>
@@ -279,6 +280,7 @@
     <ClCompile Include="SetCursorPosHook.cpp" />
     <ClCompile Include="SetWindowPosHook.cpp" />
     <ClCompile Include="StateInfo.cpp" />
+    <ClCompile Include="WindowStyleHook.cpp" />
     <ClCompile Include="XinputHook.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
