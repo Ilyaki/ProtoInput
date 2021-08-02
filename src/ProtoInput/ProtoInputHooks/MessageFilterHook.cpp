@@ -27,7 +27,7 @@ bool MessageFilterAllow(unsigned int message, unsigned int* lparam, unsigned int
 }
 
 inline BOOL FilterMessage(MSG* lpMsg)
-{
+{	
 	lpMsg->pt.x = FakeMouseKeyboard::GetMouseState().x;
 	lpMsg->pt.y = FakeMouseKeyboard::GetMouseState().y;
 	

@@ -150,6 +150,8 @@ bool Launch()
         if (hookEnabled(FocusHooksHookID))              InstallHook(instanceHandle, FocusHooksHookID);
         if (hookEnabled(RenameHandlesHookID))           InstallHook(instanceHandle, RenameHandlesHookID);
 
+        if (hookEnabled(BlockRawInputHookID))           InstallHook(instanceHandle, BlockRawInputHookID);
+    	
         SetUseOpenXinput(instanceHandle, currentProfile.useOpenXinput);
         SetUseDinputRedirection(instanceHandle, currentProfile.dinputToXinputRedirection);
         if (hookEnabled(XinputHookID))                  InstallHook(instanceHandle, XinputHookID);

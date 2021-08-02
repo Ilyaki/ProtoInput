@@ -5,6 +5,7 @@
 #include <bitset>
 #include "RawInput.h"
 #include <imgui.h>
+#include "HwndSelector.h"
 
 namespace Proto
 {
@@ -27,15 +28,19 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 	{
 		//TODO: hwndTarget can be NULL if raw input follows the keyboard focus.
 		const auto targetI = pRawInputDevices[i].hwndTarget;
-		if (targetI != NULL && targetI != RawInput::rawInputHwnd)
+		if (targetI != RawInput::rawInputHwnd)
 		{
 			if (targetHWND != NULL && targetHWND != targetI && RegisterRawInputHook::logCallsToRegisterRawInput)
 				printf("WARNING: The game appears to have multiple hwnds subscribed to raw input. We are only using one\n");
 
-			targetHWND = targetI;
+			if (targetI != NULL)
+				targetHWND = targetI;
 
 			const auto usage = pRawInputDevices[i].usUsage;
-
+			
+			if (RegisterRawInputHook::logCallsToRegisterRawInput)
+				printf("Detected raw input usage 0x%X\n", usage);
+			
 			if (usage < HID_USAGE_GENERIC_POINTER || usage > HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER)
 				fprintf(stderr, "Raw input usUsage out of range\n");
 			else
@@ -48,7 +53,9 @@ BOOL WINAPI Hook_RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT
 	if (targetHWND == nullptr)
 	{
 		if (RegisterRawInputHook::logCallsToRegisterRawInput)
-			printf("Couldn't find a hwnd subscribed to raw input (The call was probably to unsubscribe)\n");
+			printf("Couldn't find a hwnd subscribed to raw input (The call was probably to unsubscribe). Going to add the main window just in case it was trying to follow keyboard focus. \n");
+
+		registerRawInputHookPtr->AddWindowToForward((HWND)HwndSelector::GetSelectedHwnd(), usagesToForward);
 	}
 	else
 	{
@@ -72,7 +79,7 @@ void RegisterRawInputHook::FindAlreadySubscribedWindows()
 
 	if (numDevices == 0 || ret <= 0)
 	{
-		printf("Couldn't a window that's already subscribed to raw input. numDevices = %d, ret = 0x%X, GetLastError = 0x%X\n",
+		printf("Couldn't find a window that's already subscribed to raw input. numDevices = %d, ret = 0x%X, GetLastError = 0x%X\n",
 			   numDevices, ret, GetLastError());
 	}
 	else

@@ -53,6 +53,7 @@ struct Profile
 		{ "Clip Cursor", true, "Clip Cursor", ProtoHookIDs::ClipCursorHookID },
 		{ "Focus", true, "Focus", ProtoHookIDs::FocusHooksHookID },
 		{ "Rename Handles", true, "Rename Handles", ProtoHookIDs::RenameHandlesHookID },
+		{ "Block Raw Input", false, "Block Raw Input", ProtoHookIDs::BlockRawInputHookID },
 		{ "Dinput Order", false, "Dinput Order", ProtoHookIDs::DinputOrderHookID },
 		{ "Xinput", false, "Xinput", ProtoHookIDs::XinputHookID }		
 	};
