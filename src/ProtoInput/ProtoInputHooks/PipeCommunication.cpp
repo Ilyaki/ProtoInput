@@ -431,6 +431,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetRawInputBypass:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetRawInputBypass*>(messageBuffer);
+
+				printf("Received SetRawInputBypass, bypass enabled = %d\n", body->bypassEnabled);
+
+				RawInput::rawInputBypass = body->bypassEnabled;
+					
+				break;
+			}
 			default:
 				{
 					fprintf(stderr, "Unrecongnised message type, exiting pipe\n");

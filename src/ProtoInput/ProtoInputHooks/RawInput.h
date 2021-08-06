@@ -47,6 +47,9 @@ public:
 	static HWND rawInputHwnd;
 	static bool forwardRawInput;
 
+	// Passes input from all devices to the game. Proto Input doesn't process anything
+	static bool rawInputBypass;
+	
 	static std::vector<RAWINPUT> rawinputs;
 	static RAWINPUT inputBuffer[RawInputBufferSize];
 

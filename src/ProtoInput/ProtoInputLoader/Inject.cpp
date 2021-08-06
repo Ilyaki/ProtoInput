@@ -453,3 +453,20 @@ void SetToggleFakeCursorVisibilityShortcut(ProtoInstanceHandle instanceHandle, b
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetToggleCursorVisibilityShortcut, &message);
 	}
 }
+
+void SetRawInputBypass(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetRawInputBypass message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetRawInputBypass, &message);
+	}
+}

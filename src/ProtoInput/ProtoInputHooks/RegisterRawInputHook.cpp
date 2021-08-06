@@ -142,6 +142,16 @@ void RegisterRawInputHook::ShowGuiStatus()
 {
 	ImGui::Checkbox("Forward raw input", &RawInput::forwardRawInput);
 	ImGui::Checkbox("Log calls to registering raw input", &logCallsToRegisterRawInput);
+		
+	ImGui::Checkbox("Raw input bypass", &RawInput::rawInputBypass);
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted("Forwards Raw Input to the game without processing it. ");
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
 }
 
 void RegisterRawInputHook::InstallImpl()

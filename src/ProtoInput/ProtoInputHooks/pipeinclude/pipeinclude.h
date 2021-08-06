@@ -29,7 +29,8 @@ enum class PipeMessageType
 	SetCreateSingleHIDName,
 	SetClipCursorHookOptions,
 	SetAllowFakeCursorOutOfBounds,
-	SetToggleCursorVisibilityShortcut
+	SetToggleCursorVisibilityShortcut,
+	SetRawInputBypass
 };
 
 struct PipeMessageHeader
@@ -168,6 +169,11 @@ struct PipeMessageSetToggleCursorVisibilityShortcut
 {
 	bool enabled;
 	unsigned int vkey;
+};
+
+struct PipeMessageSetRawInputBypass
+{
+	bool bypassEnabled;
 };
 
 }

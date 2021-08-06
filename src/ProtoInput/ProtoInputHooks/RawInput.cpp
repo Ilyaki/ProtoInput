@@ -24,6 +24,7 @@ std::bitset<9> RawInput::usages{};
 std::vector<HWND> RawInput::forwardingWindows{};
 bool RawInput::forwardRawInput = true;
 bool RawInput::lockInputToggleEnabled = false;
+bool RawInput::rawInputBypass = false;
 
 
 RAWINPUT RawInput::inputBuffer[RawInputBufferSize]{};
@@ -237,6 +238,16 @@ void RawInput::ProcessKeyboardInput(const RAWKEYBOARD& data, HANDLE deviceHandle
 
 void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, const MSG& msg)
 {
+	// if (rawInputBypass)
+	// {
+	// 	for (const auto& hwnd : forwardingWindows)
+	// 	{
+	// 		PostMessageW(hwnd, WM_INPUT, msg.wParam, msg.lParam);
+	// 	}
+	// 	
+	// 	return;
+	// }
+	
 	RAWINPUT rawinput;
 	UINT cbSize;
 	
@@ -316,17 +327,33 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	
 	//TODO: handle forwarding HID input
 	
-	if (!rawInputState.externalFreezeInput && !rawInputState.freezeInput && (!rawInputState.freezeInputWhileGuiOpened || !rawInputState.guiOpened) && forwardRawInput)
+	if (
+		(	
+			(!rawInputState.externalFreezeInput && !rawInputState.freezeInput && (!rawInputState.freezeInputWhileGuiOpened || !rawInputState.guiOpened))
+			||
+			rawInputBypass
+		)
+		
+		&& 
+		
+		forwardRawInput)
 	{
-		const bool allowMouse = (rawinput.header.dwType == RIM_TYPEMOUSE && std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end());
-		const bool allowKeyboard = (rawinput.header.dwType == RIM_TYPEKEYBOARD && std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end());
+		const bool dataIsMouse = rawinput.header.dwType == RIM_TYPEMOUSE;
+		const bool dataIsKeyboard = rawinput.header.dwType == RIM_TYPEKEYBOARD;
+		const bool selectedThisMouse = std::find(rawInputState.selectedMouseHandles.begin(), rawInputState.selectedMouseHandles.end(), rawinput.header.hDevice) != rawInputState.selectedMouseHandles.end();
+		const bool selectedThisKeyboard = std::find(rawInputState.selectedKeyboardHandles.begin(), rawInputState.selectedKeyboardHandles.end(), rawinput.header.hDevice) != rawInputState.selectedKeyboardHandles.end();
+		const bool allowMouse = dataIsMouse && (rawInputBypass || selectedThisMouse);
+		const bool allowKeyboard = dataIsKeyboard && (rawInputBypass ||  selectedThisKeyboard);
 		
 		if (allowMouse || allowKeyboard)
 		{
-			if (allowMouse)
-				ProcessMouseInput(rawinput.data.mouse, rawinput.header.hDevice);
-			else if (allowKeyboard)
-				ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
+			if (!rawInputBypass)
+			{
+				if (allowMouse)
+					ProcessMouseInput(rawinput.data.mouse, rawinput.header.hDevice);
+				else if (allowKeyboard)
+					ProcessKeyboardInput(rawinput.data.keyboard, rawinput.header.hDevice);
+			}
 	
 			if ((allowMouse && usages[HID_USAGE_GENERIC_MOUSE]) || (allowKeyboard && usages[HID_USAGE_GENERIC_KEYBOARD]))
 			// if ((allowMouse) || (allowKeyboard))
@@ -336,7 +363,7 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 					static size_t inputBufferCounter = 0;
 	
 					// The game is going to lag behind the data we get by a few times, so store in an array and pass the index as a message parameter
-	
+					
 					inputBufferCounter = (inputBufferCounter + 1) % RawInputBufferSize;
 					inputBuffer[inputBufferCounter] = rawinput;
 	
