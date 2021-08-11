@@ -326,9 +326,12 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetControllerIndex*>(messageBuffer);
 
-				printf("Received set controller index to %d\n", body->controllerIndex);
+				printf("Received set controller index, 1st=%d, 2nd=%d, 3rd=%d, 4th=%d\n", body->controllerIndex, body->controllerIndex2, body->controllerIndex3, body->controllerIndex4);
 
 				XinputHook::controllerIndex = body->controllerIndex;
+				XinputHook::controllerIndex2 = body->controllerIndex2;
+				XinputHook::controllerIndex3 = body->controllerIndex3;
+				XinputHook::controllerIndex4 = body->controllerIndex4;
 
 				break;
 			}

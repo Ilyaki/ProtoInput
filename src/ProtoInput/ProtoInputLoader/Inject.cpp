@@ -149,7 +149,7 @@ extern "C" __declspec(dllexport) void AddSelectedKeyboardHandle(ProtoInstanceHan
 	AddSelectedInputHandleImpl(instanceHandle, keyboardHandle, false);
 }
 
-extern "C" __declspec(dllexport) void SetControllerIndex(ProtoInstanceHandle instanceHandle, unsigned int controllerIndex)
+extern "C" __declspec(dllexport) void SetControllerIndex(ProtoInstanceHandle instanceHandle, unsigned int controllerIndex, unsigned int controllerIndex2, unsigned int controllerIndex3, unsigned int controllerIndex4)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
@@ -159,7 +159,11 @@ extern "C" __declspec(dllexport) void SetControllerIndex(ProtoInstanceHandle ins
 
 		ProtoPipe::PipeMessageSetControllerIndex message
 		{
-			controllerIndex
+			controllerIndex,
+			controllerIndex2,
+			controllerIndex3,
+			controllerIndex4
+			
 		};
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetControllerIndex, &message);

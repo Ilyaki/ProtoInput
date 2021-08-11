@@ -114,6 +114,9 @@ struct PipeMessageAddHandleToRename
 struct PipeMessageSetControllerIndex
 {
 	unsigned int controllerIndex;
+	unsigned int controllerIndex2;
+	unsigned int controllerIndex3;
+	unsigned int controllerIndex4;
 };
 
 struct PipeMessageUseDinput

@@ -22,6 +22,9 @@ std::vector<GUID> dinputGuids{};
 std::vector<std::wstring> dinputDeviceNames{};
 
 unsigned int XinputHook::controllerIndex = 0;
+unsigned int XinputHook::controllerIndex2 = 0;
+unsigned int XinputHook::controllerIndex3 = 0;
+unsigned int XinputHook::controllerIndex4 = 0;
 
 typedef DWORD(WINAPI* t_XInputGetStateEx)(DWORD dwUserIndex, void* pState);
 t_XInputGetStateEx XInputGetStateExPtr = nullptr;
@@ -41,31 +44,48 @@ typedef struct _XINPUT_GAMEPAD_EX
 	DWORD dwUnknown;
 } XINPUT_GAMEPAD_EX, * PXINPUT_GAMEPAD_EX;
 
+inline std::pair<bool, unsigned int> GetTargetControllerIndex(DWORD dwUserIndex)
+{
+	// XinputHook::controllerIndex 0 means user wants no controller on this game
+	if (dwUserIndex == 0 || dwUserIndex == XUSER_INDEX_ANY)
+		return { XinputHook::controllerIndex == 0, XinputHook::controllerIndex - 1 };
+	
+	if (dwUserIndex == 1)
+		return { XinputHook::controllerIndex2 == 0, XinputHook::controllerIndex2 - 1 };
+	
+	if (dwUserIndex == 2)
+		return { XinputHook::controllerIndex3 == 0, XinputHook::controllerIndex3 - 1 };
+	
+	if (dwUserIndex == 3)
+		return { XinputHook::controllerIndex4 == 0, XinputHook::controllerIndex4 - 1 };
+	
+	return { false, 0 };
+}
+
 inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pState, bool extended)
 {
 	if (extended)
 		getStateExCounter++;
 	else
 		getStateCounter++;
-	
-	if (XinputHook::controllerIndex == 0) // user wants no controller on this game
-		return ERROR_DEVICE_NOT_CONNECTED;
 
-	if (dwUserIndex != 0 && dwUserIndex != XUSER_INDEX_ANY) // only give input for the first controller
+	auto [ connected, targetControllerIndex ] = GetTargetControllerIndex(dwUserIndex);	
+	
+	if (!connected)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
 	if (XinputHook::useOpenXinput)
 	{
-		return OpenXinput::ProtoOpenXinputGetState(XinputHook::controllerIndex - 1, pState, extended);
+		return OpenXinput::ProtoOpenXinputGetState(targetControllerIndex, pState, extended);
 	}
 
 	if (!XinputHook::GetUseDinput())
 	{
 		if (extended && XInputGetStateExPtr != nullptr)
 		{
-			return XInputGetStateExPtr(XinputHook::controllerIndex - 1, pState);
+			return XInputGetStateExPtr(targetControllerIndex, pState);
 		}
-		return XInputGetState(XinputHook::controllerIndex - 1, pState);
+		return XInputGetState(targetControllerIndex, pState);
 	}
 	if (dinputDevice == nullptr)
 		return ERROR_DEVICE_NOT_CONNECTED;
@@ -133,37 +153,38 @@ DWORD WINAPI Hook_XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 DWORD WINAPI Hook_XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-	if (XinputHook::controllerIndex == 0)
-		return ERROR_DEVICE_NOT_CONNECTED;
+	auto [connected, targetControllerIndex] = GetTargetControllerIndex(dwUserIndex);
 	
-	if (dwUserIndex != 0 && dwUserIndex != XUSER_INDEX_ANY) // only give input for the first controller
+	if (!connected)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
 	if (XinputHook::useOpenXinput)
 	{
-		return OpenXinput::ProtoOpenXinputSetState(XinputHook::controllerIndex - 1, pVibration);
+		return OpenXinput::ProtoOpenXinputSetState(targetControllerIndex, pVibration);
 	}
 
-	if (XinputHook::controllerIndex <= 4)
-		return XInputSetState(XinputHook::controllerIndex - 1, pVibration);
+	if (targetControllerIndex <= 3)
+		return XInputSetState(targetControllerIndex, pVibration);
+	
 	return ERROR_SUCCESS;
 }
+
 DWORD WINAPI Hook_XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-	if (XinputHook::controllerIndex == 0)
-		return ERROR_DEVICE_NOT_CONNECTED;
-	
-	if (dwUserIndex != 0 && dwUserIndex != XUSER_INDEX_ANY) // only give input for the first controller
+	auto [connected, targetControllerIndex] = GetTargetControllerIndex(dwUserIndex);
+
+	if (!connected)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
 	if (XinputHook::useOpenXinput)
 	{
-		return OpenXinput::ProtoOpenXinputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
+		return OpenXinput::ProtoOpenXinputGetCapabilities(targetControllerIndex, dwFlags, pCapabilities);
 	}
 
-	// Can have a higher index than 4 if using Dinput -> Xinput translation
-	if (XinputHook::controllerIndex <= 4)
-		return XInputGetCapabilities(XinputHook::controllerIndex - 1, dwFlags, pCapabilities);
+	// Can have a higher index than 3 if using Dinput -> Xinput translation or OpenXinput
+	if (targetControllerIndex <= 3)
+		return XInputGetCapabilities(targetControllerIndex, dwFlags, pCapabilities);
+	
 	return XInputGetCapabilities(0, dwFlags, pCapabilities);
 }
 
@@ -250,6 +271,7 @@ void PollDinputDevices()
 
 	const HRESULT dinputCreateResult = DirectInput8Create(GetModuleHandleW(0), DIRECTINPUT_VERSION, IID_IDirectInput8,
 														  (void**)&(dinputPtr), nullptr);
+	
 	if (dinputCreateResult != DI_OK)
 	{
 		fprintf(stderr, "Failed DirectInput8Create: 0x%X\n", dinputCreateResult);
@@ -295,6 +317,11 @@ void XinputHook::ShowGuiStatus()
 
 	if (ImGui::SliderInt("Controller index", (int*)&controllerIndex, 0, 16, "%d", ImGuiSliderFlags_AlwaysClamp))
 		SelectDinputDevice();
+
+	ImGui::SliderInt("Controller index 2", (int*)&controllerIndex2, 0, 16, "%d", ImGuiSliderFlags_AlwaysClamp);
+	ImGui::SliderInt("Controller index 3", (int*)&controllerIndex3, 0, 16, "%d", ImGuiSliderFlags_AlwaysClamp);
+	ImGui::SliderInt("Controller index 4", (int*)&controllerIndex4, 0, 16, "%d", ImGuiSliderFlags_AlwaysClamp);
+	
 	if (dinputDevice != nullptr)
 	{
 		ImGui::TextWrapped("Selected Dinput device \"%ws\" (GUID %lu-%u-%u)",
