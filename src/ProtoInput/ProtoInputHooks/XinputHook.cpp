@@ -48,16 +48,16 @@ inline std::pair<bool, unsigned int> GetTargetControllerIndex(DWORD dwUserIndex)
 {
 	// XinputHook::controllerIndex 0 means user wants no controller on this game
 	if (dwUserIndex == 0 || dwUserIndex == XUSER_INDEX_ANY)
-		return { XinputHook::controllerIndex == 0, XinputHook::controllerIndex - 1 };
+		return { XinputHook::controllerIndex != 0, XinputHook::controllerIndex - 1 };
 	
 	if (dwUserIndex == 1)
-		return { XinputHook::controllerIndex2 == 0, XinputHook::controllerIndex2 - 1 };
+		return { XinputHook::controllerIndex2 != 0, XinputHook::controllerIndex2 - 1 };
 	
 	if (dwUserIndex == 2)
-		return { XinputHook::controllerIndex3 == 0, XinputHook::controllerIndex3 - 1 };
+		return { XinputHook::controllerIndex3 != 0, XinputHook::controllerIndex3 - 1 };
 	
 	if (dwUserIndex == 3)
-		return { XinputHook::controllerIndex4 == 0, XinputHook::controllerIndex4 - 1 };
+		return { XinputHook::controllerIndex4 != 0, XinputHook::controllerIndex4 - 1 };
 	
 	return { false, 0 };
 }
