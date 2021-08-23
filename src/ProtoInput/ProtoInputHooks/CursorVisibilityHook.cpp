@@ -13,8 +13,10 @@ int WINAPI Hook_ShowCursor(BOOL bShow)
 
 HCURSOR WINAPI Hook_SetCursor(HCURSOR hCursor)
 {
-	FakeCursor::SetCursorVisibility(hCursor != nullptr);
-
+	// FakeCursor::SetCursorVisibility(hCursor != nullptr);
+	if (hCursor == nullptr)
+		FakeCursor::SetCursorVisibility(false);
+	
 	if (hCursor != nullptr)
 		FakeCursor::SetCursorHandle(hCursor); // Custom cursor image
 	
