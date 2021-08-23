@@ -1,6 +1,8 @@
 ## Proto Input
 Proto Input is a set of libraries that enables split screen on PC games by hooking Windows functions and redirecting input from multiple keyboards/mice/controllers. ProtoInput contains many improvements over my previous works on [Universal Split Screen](https://universalsplitscreen.github.io/ "Universal Split Screen") and [ZeroFox\'s Nucleus Coop Mod](https://github.com/zerofox5866/nucleuscoop "ZeroFox's Nucleus Coop Mod"). The project is in a modular form so it can be easily used in any project with its C function API.
 
+Proto Input is now included as part of [Nucleus Co-Op](https://nucleus-coop.github.io/). This is the best way to use Proto Input, as it is fully scriptable.
+
 The main highlights are:
 
 ### In-game GUI control interface
