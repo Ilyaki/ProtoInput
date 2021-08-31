@@ -22,6 +22,7 @@
 #include "CreateSingleHIDHook.h"
 #include "ClipCursorHook.h"
 #include "FakeMouseKeyboard.h"
+#include "CursorVisibilityHook.h"
 
 namespace Proto
 {
@@ -149,7 +150,7 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 					else
 					{
 						*ptr = body->block;
-						printf("Set message block to %s on message %d", body->block ? "enabled" : "disabled", body->message);
+						printf("Set message block to %s on message %d\n", body->block ? "enabled" : "disabled", body->message);
 					}
 					
 					break;
@@ -442,6 +443,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				RawInput::rawInputBypass = body->bypassEnabled;
 					
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetShowCursorWhenImageUpdated:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageShowCursorWhenImageUpdated*>(messageBuffer);
+
+				printf("Received ShowCursorWhenImageUpdated, enabled = %d\n", body->ShowCursorWhenImageUpdated);
+
+				CursorVisibilityHook::ShowCursorWhenImageUpdated = body->ShowCursorWhenImageUpdated;
+
 				break;
 			}
 			default:

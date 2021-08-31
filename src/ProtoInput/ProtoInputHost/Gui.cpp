@@ -142,6 +142,8 @@ bool Launch()
         if (hookEnabled(GetKeyStateHookID))             InstallHook(instanceHandle, GetKeyStateHookID);
         if (hookEnabled(GetAsyncKeyStateHookID))        InstallHook(instanceHandle, GetAsyncKeyStateHookID);
         if (hookEnabled(GetKeyboardStateHookID))        InstallHook(instanceHandle, GetKeyboardStateHookID);
+
+        SetShowCursorWhenImageUpdated(instanceHandle, currentProfile.showCursorWhenImageUpdated);
         if (hookEnabled(CursorVisibilityStateHookID))   InstallHook(instanceHandle, CursorVisibilityStateHookID);
 
         SetCursorClipOptions(instanceHandle, currentProfile.useFakeClipCursor);
@@ -863,6 +865,8 @@ void OptionsMenu()
     ImGui::Checkbox("Use OpenXinput", &currentProfile.useOpenXinput);
 	
     ImGui::Checkbox("Use fake clip cursor", &currentProfile.useFakeClipCursor);
+	
+    ImGui::Checkbox("Show fake cursor when image updated", &currentProfile.showCursorWhenImageUpdated);
 
     if (ImGui::CollapsingHeader("Message Filters", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {

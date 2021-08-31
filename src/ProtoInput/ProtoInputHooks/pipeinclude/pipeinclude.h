@@ -30,7 +30,8 @@ enum class PipeMessageType
 	SetClipCursorHookOptions,
 	SetAllowFakeCursorOutOfBounds,
 	SetToggleCursorVisibilityShortcut,
-	SetRawInputBypass
+	SetRawInputBypass,
+	SetShowCursorWhenImageUpdated
 };
 
 struct PipeMessageHeader
@@ -177,6 +178,11 @@ struct PipeMessageSetToggleCursorVisibilityShortcut
 struct PipeMessageSetRawInputBypass
 {
 	bool bypassEnabled;
+};
+
+struct PipeMessageShowCursorWhenImageUpdated
+{
+	bool ShowCursorWhenImageUpdated;
 };
 
 }

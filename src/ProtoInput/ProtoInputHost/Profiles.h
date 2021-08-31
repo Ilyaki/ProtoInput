@@ -74,6 +74,8 @@ struct Profile
 	bool useOpenXinput = false;
 
 	bool useFakeClipCursor = true;
+
+	bool showCursorWhenImageUpdated = false;
 	
 	bool drawFakeMouseCursor = true;
 	bool allowMouseOutOfBounds = false;
@@ -109,6 +111,7 @@ struct Profile
 			cereal::make_nvp("dinputToXinputRedirection", dinputToXinputRedirection),
 			cereal::make_nvp("useOpenXinput", useOpenXinput),
 			cereal::make_nvp("useFakeClipCursor", useFakeClipCursor),
+			cereal::make_nvp("showCursorWhenImageUpdated", showCursorWhenImageUpdated),
 
 			cereal::make_nvp("drawFakeMouseCursor", drawFakeMouseCursor),
 			cereal::make_nvp("allowMouseOutOfBounds", allowMouseOutOfBounds),

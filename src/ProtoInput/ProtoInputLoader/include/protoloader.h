@@ -121,3 +121,5 @@ extern "C" __declspec(dllexport) void AllowFakeCursorOutOfBounds(ProtoInstanceHa
 extern "C" __declspec(dllexport) void SetToggleFakeCursorVisibilityShortcut(ProtoInstanceHandle instanceHandle, bool enabled, unsigned int vkey);
 
 extern "C" __declspec(dllexport) void SetRawInputBypass(ProtoInstanceHandle instanceHandle, bool enabled);
+
+extern "C" __declspec(dllexport) void SetShowCursorWhenImageUpdated(ProtoInstanceHandle instanceHandle, bool enabled);

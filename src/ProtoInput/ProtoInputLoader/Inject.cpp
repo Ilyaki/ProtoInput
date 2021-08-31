@@ -474,3 +474,20 @@ void SetRawInputBypass(ProtoInstanceHandle instanceHandle, bool enabled)
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetRawInputBypass, &message);
 	}
 }
+
+void SetShowCursorWhenImageUpdated(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageShowCursorWhenImageUpdated message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetShowCursorWhenImageUpdated, &message);
+	}
+}
