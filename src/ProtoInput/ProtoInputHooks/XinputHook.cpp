@@ -29,6 +29,16 @@ unsigned int XinputHook::controllerIndex4 = 0;
 typedef DWORD(WINAPI* t_XInputGetStateEx)(DWORD dwUserIndex, void* pState);
 t_XInputGetStateEx XInputGetStateExPtr = nullptr;
 
+typedef DWORD(WINAPI* t_XInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
+t_XInputGetState XInputGetStatePtr = nullptr;
+
+typedef DWORD(WINAPI* t_XInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+t_XInputSetState XInputSetStatePtr = nullptr;
+
+typedef DWORD(WINAPI* t_XInputGetCapabilities)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
+t_XInputGetCapabilities XInputGetCapabilitiesPtr = nullptr;
+
+
 unsigned int getStateCounter = 0;
 unsigned int getStateExCounter = 0;
 
@@ -85,7 +95,7 @@ inline DWORD WINAPI XInputGetState_Inline(DWORD dwUserIndex, XINPUT_STATE* pStat
 		{
 			return XInputGetStateExPtr(targetControllerIndex, pState);
 		}
-		return XInputGetState(targetControllerIndex, pState);
+		return XInputGetStatePtr(targetControllerIndex, pState);
 	}
 	if (dinputDevice == nullptr)
 		return ERROR_DEVICE_NOT_CONNECTED;
@@ -164,7 +174,7 @@ DWORD WINAPI Hook_XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration
 	}
 
 	if (targetControllerIndex <= 3)
-		return XInputSetState(targetControllerIndex, pVibration);
+		return XInputSetStatePtr(targetControllerIndex, pVibration);
 	
 	return ERROR_SUCCESS;
 }
@@ -183,9 +193,9 @@ DWORD WINAPI Hook_XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT
 
 	// Can have a higher index than 3 if using Dinput -> Xinput translation or OpenXinput
 	if (targetControllerIndex <= 3)
-		return XInputGetCapabilities(targetControllerIndex, dwFlags, pCapabilities);
+		return XInputGetCapabilitiesPtr(targetControllerIndex, dwFlags, pCapabilities);
 	
-	return XInputGetCapabilities(0, dwFlags, pCapabilities);
+	return XInputGetCapabilitiesPtr(0, dwFlags, pCapabilities);
 }
 
 BOOL CALLBACK DIEnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
@@ -384,7 +394,23 @@ void XinputHook::InstallImpl()
 	if (nullptr != LoadLibraryW(L"xinput1_3.dll"))
 	{
 		hookInfos.push_back(std::get<1>(InstallNamedHook(L"xinput1_3.dll", (LPCSTR)(100), Hook_XInputGetStateEx, true)));
+		
 		XInputGetStateExPtr = t_XInputGetStateEx(GetProcAddress(GetModuleHandleW(L"xinput1_3.dll"), (LPCSTR)(100)));
+		XInputGetStatePtr = t_XInputGetState(GetProcAddress(GetModuleHandleW(L"xinput1_3.dll"), "XInputGetState"));
+		XInputSetStatePtr = t_XInputSetState(GetProcAddress(GetModuleHandleW(L"xinput1_3.dll"), "XInputSetState"));
+		XInputGetCapabilitiesPtr = t_XInputGetCapabilities(GetProcAddress(GetModuleHandleW(L"xinput1_3.dll"), "XInputGetCapabilities"));
+
+		if (XInputGetStateExPtr == nullptr)
+			MessageBoxA(NULL, "XInputGetStateExPtr is null", "Error", MB_OK);
+
+		if (XInputGetStatePtr == nullptr)
+			MessageBoxA(NULL, "XInputGetStatePtr is null", "Error", MB_OK);
+
+		if (XInputSetStatePtr == nullptr)
+			MessageBoxA(NULL, "XInputSetStatePtr is null", "Error", MB_OK);
+
+		if (XInputGetCapabilitiesPtr == nullptr)
+			MessageBoxA(NULL, "XInputGetCapabilitiesPtr is null", "Error", MB_OK);
 	}
 }
 

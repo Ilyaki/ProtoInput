@@ -99,7 +99,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IMGUI_IMPL_WIN32_DISABLE_GAMEPAD;IMGUI_IMPL_WIN32_DISABLE_LINKING_XINPUT;WIN32;_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -121,7 +121,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IMGUI_IMPL_WIN32_DISABLE_GAMEPAD;IMGUI_IMPL_WIN32_DISABLE_LINKING_XINPUT;_DEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;IMGUI_IMPL_OPENGL_LOADER_GLEW;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -145,7 +145,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLEW;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IMGUI_IMPL_WIN32_DISABLE_GAMEPAD;IMGUI_IMPL_WIN32_DISABLE_LINKING_XINPUT;WIN32;NDEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLEW;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -170,7 +170,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLEW;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IMGUI_IMPL_WIN32_DISABLE_GAMEPAD;IMGUI_IMPL_WIN32_DISABLE_LINKING_XINPUT;NDEBUG;PROTOINPUTHOOKS_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLEW;%(PreprocessorDefinitions);GLEW_NO_GLU;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>

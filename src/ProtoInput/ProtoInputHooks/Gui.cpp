@@ -265,7 +265,12 @@ void FocusMessageLoopMenu()
     else if (!FocusMessageLoop::running && ImGui::Button("Resume"))
         FocusMessageLoop::StartMessageLoop();
 
+    ImGui::InputInt("Interval (ms)", &FocusMessageLoop::sleepMilliseconds, 1, 100);
+    if (FocusMessageLoop::sleepMilliseconds < 0)
+        FocusMessageLoop::sleepMilliseconds = 0;
+	
     ImGui::TextWrapped("Messages to send:");
+		
     ImGui::Checkbox("WM_ACTIVATE", &FocusMessageLoop::messagesToSend.wm_activate);
     ImGui::Checkbox("WM_NCACTIVATE", &FocusMessageLoop::messagesToSend.wm_ncactivate);
     ImGui::Checkbox("WM_ACTIVATEAPP", &FocusMessageLoop::messagesToSend.wm_activateapp);
