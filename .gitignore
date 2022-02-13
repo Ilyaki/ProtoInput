@@ -3,6 +3,7 @@ x86
 Debug
 bin
 .vs
+.vscode
 out
 Release
 /src/ProtoInput/ProtoInputHost/imgui.ini

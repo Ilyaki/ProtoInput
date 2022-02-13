@@ -51,7 +51,9 @@ void WaitClientConnect(Proto::ProtoInstance& instance)
 		while (count < 10)
 		{
 			//FIXME: This needs a timeout
-			if (ConnectNamedPipe(instance.pipeHandle, NULL))
+			auto connected = ConnectNamedPipe(instance.pipeHandle, NULL);
+			auto lastError = GetLastError();
+			if (connected || lastError == ERROR_PIPE_CONNECTED)
 			{
 				std::cout << "Connected named pipe to pid " << instance.pid << std::endl;
 				instance.clientConnected = true;
