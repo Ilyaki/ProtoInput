@@ -77,6 +77,8 @@ extern "C" __declspec(dllexport) void StopFocusMessageLoop(ProtoInstanceHandle i
 
 extern "C" __declspec(dllexport) void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable);
 
+extern "C" __declspec(dllexport) void SetDrawFakeCursorFix(ProtoInstanceHandle instanceHandle, bool enable);
+
 extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze);
 
 extern "C" __declspec(dllexport) void AddSelectedMouseHandle(ProtoInstanceHandle instanceHandle, unsigned int mouseHandle);

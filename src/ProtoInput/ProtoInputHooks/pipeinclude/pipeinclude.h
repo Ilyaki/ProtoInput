@@ -16,6 +16,7 @@ enum class PipeMessageType
 	SetupState,
 	SetupMessagesToSend,
 	SetDrawFakeCursor,
+	SetDrawFakeCursorFix,
 	SetExternalFreezeFakeInput,
 	AddSelectedMouseOrKeyboard,
 	AddHandleToRename,
@@ -94,7 +95,10 @@ struct PipeMessageSetDrawFakeCursor
 {
 	bool enable;
 };
-
+struct PipeMessageSetDrawFakeCursorFix
+{
+	bool enable;
+};
 struct PipeMessageSetExternalFreezeFakeInput
 {
 	bool freezeEnabled;

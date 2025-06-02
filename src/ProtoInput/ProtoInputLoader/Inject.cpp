@@ -104,6 +104,23 @@ void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable)
 	}
 }
 
+void SetDrawFakeCursorFix(ProtoInstanceHandle instanceHandle, bool enable)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetDrawFakeCursorFix message
+		{
+			enable
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDrawFakeCursorFix, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
@@ -129,7 +146,7 @@ void AddSelectedInputHandleImpl(ProtoInstanceHandle instanceHandle, unsigned int
 
 		WaitClientConnect(instance);
 
-		ProtoPipe::PipeMesasgeAddSelectedMouseOrKeyboard message
+		ProtoPipe::PipeMesasgeAddSelectedMouseOrKeyboard message //spelling okay?
 		{
 			mouse ? handle : -1,
 			mouse ? -1 : handle

@@ -191,6 +191,8 @@ bool Launch()
                                   currentProfile.focusLoopSendWM_MOUSEACTIVATE);
 
         SetDrawFakeCursor(instanceHandle, currentProfile.drawFakeMouseCursor);
+
+        SetDrawFakeCursorFix(instanceHandle, currentProfile.drawFakeCursorFix);
     	
         AllowFakeCursorOutOfBounds(instanceHandle, currentProfile.allowMouseOutOfBounds, currentProfile.extendMouseBounds);
 
@@ -880,6 +882,8 @@ void OptionsMenu()
     {
         ImGui::Checkbox("Draw fake mouse cursor", &currentProfile.drawFakeMouseCursor);
     	
+        ImGui::Checkbox("Fake cursor offset fix", &currentProfile.drawFakeCursorFix);
+
         ImGui::Checkbox("Allow fake cursor to go out of bounds", &currentProfile.allowMouseOutOfBounds);
         ImGui::Checkbox("Extend fake cursor boundaries", &currentProfile.extendMouseBounds);
 

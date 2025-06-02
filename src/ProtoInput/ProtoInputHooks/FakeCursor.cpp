@@ -40,29 +40,92 @@ BOOL CALLBACK EnumWindowsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
     }
     return true;
 }
-
 void FakeCursor::DrawCursor()
 {
-	//TODO: width/height probably needs to change
-    constexpr int cursorWidth = 40;
-    constexpr int cursorHeight = 40;
 
-    if (oldHadShowCursor)
+    if (oldHadShowCursor) //erase cursor
     {
         RECT fill{ oldX, oldY, oldX + cursorWidth, oldY + cursorHeight };
         FillRect(hdc, &fill, transparencyBrush); // Note: window, not screen coordinates!
+
     }
 
     oldHadShowCursor = showCursor;
 
-    POINT pos = { FakeMouseKeyboard::GetMouseState().x,FakeMouseKeyboard::GetMouseState().y };
+    POINT pos = { FakeMouseKeyboard::GetMouseState().x,FakeMouseKeyboard::GetMouseState().y }; 
     ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), &pos);
     ScreenToClient(pointerWindow, &pos);
 
-	if (showCursor)
-	    DrawIcon(hdc, pos.x, pos.y, hCursor);
-	    // DrawIconEx(hdc, pos.x, pos.y, hCursor, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
-	
+    if (DrawFakeCursorFix)
+    {
+        pos.x -= cursoroffsetx;
+        pos.y -= cursoroffsety;
+
+        if (pos.x < 0) pos.x = 0;
+        if (pos.y < 0) pos.y = 0;
+
+        if (showCursor)// && hdc && hCursor
+        {
+            if (DrawIconEx(hdc, pos.x, pos.y, hCursor, cursorWidth, cursorHeight, 0, transparencyBrush, DI_NORMAL))
+            {
+                if (offsetSET == 1 && hCursor != LoadCursorW(NULL, IDC_ARROW) && IsWindowVisible(pointerWindow)) //offset setting
+                {
+                    HDC hdcMem = CreateCompatibleDC(hdc);
+                    HBITMAP hbmScreen = CreateCompatibleBitmap(hdc, cursorWidth, cursorHeight);
+                    SelectObject(hdcMem, hbmScreen);
+                    BitBlt(hdcMem, 0, 0, cursorWidth, cursorHeight, hdc, pos.x, pos.y, SRCCOPY);
+                    // Scan within the cursor screenshot pixel area
+                    cursoroffsetx = -1;
+                    cursoroffsety = -1;
+                    for (int y = 0; y < cursorHeight; y++)
+                    {
+                        for (int x = 0; x < cursorWidth; x++)
+                        {
+                            COLORREF pixelColor = GetPixel(hdcMem, x, y); // Get copied pixel color
+                            if (pixelColor != transparencyKey)
+                            {
+                                cursoroffsetx = x;
+                                cursoroffsety = y;
+                                break;
+                            }
+                        }
+                        if (cursoroffsetx != -1) break;
+                    }
+                    if (cursoroffsetx < 2) cursoroffsetx = 0;
+                    if (cursoroffsety < 2) cursoroffsety = 0;
+                    offsetSET ++; //offset set to 2 should do drawing only now
+                    DeleteDC(hdcMem);
+                    DeleteObject(hbmScreen);
+                }
+                if (offsetSET == 0 && hCursor != LoadCursorW(NULL, IDC_ARROW) && IsWindowVisible(pointerWindow)) //size setting
+                {
+                    ICONINFO ii;
+                    BITMAP bitmap;
+                    if (GetIconInfo(hCursor, &ii))
+                    {
+                        if (GetObject(ii.hbmMask, sizeof(BITMAP), &bitmap))
+                        {
+                            cursorWidth = bitmap.bmWidth;
+                            if (ii.hbmColor == NULL)
+                            {//For monochrome icons, the hbmMask is twice the height of the icon and hbmColor is NULL
+                                cursorHeight = bitmap.bmHeight / 2;
+                            }
+                            else
+                            {
+                                cursorHeight = bitmap.bmHeight;
+                            }
+                            DeleteObject(ii.hbmColor);
+                            DeleteObject(ii.hbmMask);
+                        }
+
+                    }
+                    offsetSET++; //size set, doing offset next run
+                }
+            }
+        }
+    }
+    else if (showCursor)
+        DrawIcon(hdc, pos.x, pos.y, hCursor);
     oldX = pos.x;
     oldY = pos.y;
 }

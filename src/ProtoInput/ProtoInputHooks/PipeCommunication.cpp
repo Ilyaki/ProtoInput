@@ -286,6 +286,17 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetDrawFakeCursorFix:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetDrawFakeCursorFix*>(messageBuffer);
+
+				printf("Received message to %s fake cursor fix\n", body->enable ? "enable" : "disable");
+
+					// Not sure about this...
+					FakeCursor::state.DrawFakeCursorFix = body->enable;
+
+				break;
+			}
 			case ProtoPipe::PipeMessageType::SetExternalFreezeFakeInput:
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetExternalFreezeFakeInput*>(messageBuffer);
